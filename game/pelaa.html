@@ -4,17 +4,37 @@
 	<meta charset="UTF-8">
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 	<title> Pelaa </title>
+	
+	<script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+	<script language="javascript" type="text/javascript">
+	$(document).ready(function(){
+		$("#ohje").click(function(){
+			$(".ohjeruutu").show();
+		});
+	});
+	</script>
+	<script language="javascript" type="text/javascript">
+	$(document).ready(function(){
+		$(".ohjeruutu").click(function(){
+			$(".ohjeruutu").hide();
+		});
+	});
+	</script>
+	
+	
+	
+	
 </head>
 
-<body style="background-color:#e5e5ff">
+<body>
 
 <div id="header">
 
 	<h1> PELAA </h1>
 	
-	<a href="peliohje.html">
+
 		<div id="ohje"> HELP </div>
-	</a>
+
 
 
 	<a href="pyorailypeli.html">  
@@ -29,7 +49,7 @@
 
 
 <div class="level" id="level1">
-	<a href="valmistelu.html"><img src="http://www.koulut.kuopio.fi/kansalaisopisto/matkat/pietari/Katu.jpg"/></a>
+	<a href="peli.html"><img src="http://www.koulut.kuopio.fi/kansalaisopisto/matkat/pietari/Katu.jpg"/></a>
 </div>
 
 <div class="level" id="level2">
@@ -62,7 +82,16 @@
 	<p> PISTEET:  </p>
 </div>
 
-
+<div class="ohjeruutu hidden">
+		<p> Ohjeet </p>
+		<p> Tässä pelissä sinun tehtävänäsi on bla bla bla bla. <br>
+		 Valitse valikosta haluamasi taso.<br>
+		Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. <br>
+		 Pisteesi näkyvät sivun alalaidassa.<br>
+		 Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>
+		
+			
+</div>
 
 
 </body>

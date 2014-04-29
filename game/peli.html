@@ -4,9 +4,42 @@
 	<meta charset="UTF-8">
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 	<title> Peli </title>
+	
+	<script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+	
+	<script language="javascript" type="text/javascript">
+		$(document).ready(function(){
+			$(".ohjeruutu").click(function(){
+				$(".ohjeruutu").hide();
+				startVideo();
+			});
+		});
+	</script>
+	
+<!--	<script language="javascript" type="text/javascript">
+		$(document).ready(function(){
+			$("#pysaytys1").click(function(){
+				$("#klipinloppu").show();
+			});
+		});
+	</script>  -->
+	
+	<script language="javascript" type="text/javascript">
+		$(document).ready(function(){
+			$("#pysaytys2").click(function(){
+				$("#tasonloppu").show();
+			});
+		});
+	</script>
+	
+	
+	
+	<script type="text/javascript" src="peli.js"></script>
+	
+	
 </head>
 
-<body background="main_street_large.jpg">
+<body>
 
 
 
@@ -19,17 +52,49 @@
 
 
 
-<div id="pysaytys">
-	<p> Kun sinä testaaja olet ajanut yhden klipin läpi, pääset <a href="klipinloppu.html"> tähän</a></p>
-</div>
+<!--<div class="pysaytys" id="pysaytys1">
+	<p> Kun sinä testaaja olet ajanut yhden klipin läpi, pääset tähän</p>
+</div> -->
 
-<div id="pysaytys">
-	<p> Kun sinä testaaja olet ajanut kaikki klipit läpi, pääset <a href="tasonloppu.html"> tähän</a></p>
+<div class="pysaytys" id="pysaytys2">
+	<p> Kun sinä testaaja olet ajanut kaikki klipit läpi, pääset tähän</p>
 </div>
 
 <div id="pisteet">
 	<p> PISTEET:  </p>
 </div>
+
+
+	<div class="ohjeruutu">
+		<p> Tämä on ohjeruutu jossa sinulle annetaan ohjeita pelistä. </p>
+		<p> Tässä pelissä sinun täytyy tehdä sitä ja tätä bla bla. </p>
+		<p> Klikkaa jostakin kohtaa tätä ruutua aloittaaksesi pelin. </p>
+
+	</div>
+	
+	<div class="ohjeruutu hidden" id="klipinloppu">
+		<p> Hienoa! Selvisit ensimmäisestä klipistä. </p>
+		<p> Sait näin ja näin monta pistettä! </p>
+		<p> Jatka klikkaamalla tätä ruutua </p>
+
+	</div>
+	
+	<a href="pelaa.html">
+		<div class="ohjeruutu hidden" id="tasonloppu">
+			<p> Hienoa! Selvisit ensimmäisestä tasosta. </p>
+			<p> Sait näin ja näin monta pistettä! </p>
+			<p> Jatka seuraavalle tasolle klikkaamalla tätä ruutua. </p>
+
+		</div>
+	</a>
+	
+	
+	
+	<div onclick=videoClicked(event)>
+    <video id="videoplayer" 
+        onended=videoEnded(event)
+        src="">
+    </video>
 
 </body>
 </html>
