@@ -26,7 +26,7 @@ var targets = []
 var clipset_pos = 0
 
 var clipset = [["1", "clips/hertton_pkoti.mp4"], 
-               ["2", "clips/hertton_pkoti.mp4"]]
+               ["2", "clips/hertton_pkoti2.mp4"]]
 
                
 function checkTargetHit(shot) {
