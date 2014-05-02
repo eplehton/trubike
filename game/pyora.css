@@ -226,7 +226,19 @@ body {
 	border-radius:3px;	}
 
 
+#login {
+	text-align:center;
+	text-decoration:none;
+	font-family:Arial, serif;
+	
+	height:3%;
+	width:10%;
+	
+	background-image:  linear-gradient(to bottom, #ffffff, #61533e);
+	border-width:1px;
+	border-radius:5px;
 
+}
 
 /* MUUT 
 --------------------------------------------------------------------------------------------------------------------------------
@@ -249,6 +261,22 @@ body {
 	position:absolute;
 	top:250px;
 	right:400px;
+	}
+	
+#kayttaja {
+	border-radius:10px;
+	direction: ltr;
+	height: 30px;
+	width:300px;
+	font-size: 16px;
+	}
+	
+#salasana {
+	border-radius:10px;
+	direction: ltr;
+	height: 30px;
+	width:300px;
+	font-size: 16px;
 	}
 	
 .pysaytys {

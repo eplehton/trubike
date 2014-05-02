@@ -25,8 +25,9 @@ var targets = []
 
 var clipset_pos = 0
 
-var clipset = [["1", "clips/hertton_pkoti.mp4"], 
-               ["2", "clips/hertton_pkoti2.mp4"]]
+var clipset =  [ ["1", "clips/WP_20131214_144652Z.mp4"], ["2", "clips/WP_20131214_144938Z.mp4"] , ["3", "clips/WP_20131214_145212Z.mp4"]]
+				/*["4", "clips/WP_20131124_122348Z.mp4"], ["5", "clips/hertton_pkoti.mp4"],
+               ["6", "clips/hertton_pkoti2.mp4"]] */
 
                
 function checkTargetHit(shot) {
@@ -112,16 +113,17 @@ function videoClicked(ev) {
 }
 
 function videoEnded(ev) {
-    $("#klipinloppu").show();
+    
 	
 	var video = document.getElementById("videoplayer")
     video.src = "" 
     clipset_pos += 1
     
-    if (clipset_pos >= clipset.length) {
-        var cs_done = document.getElementById("clipset_done")
-        cs_done.display = "block"
-    }
+    if (clipset_pos < clipset.length) {
+		$("#klipinloppu").show();
+    } else {
+		$("#tasonloppu").show();
+	}
 }
 
 function submitData() {
@@ -145,3 +147,18 @@ function submitData() {
     req.send(form_data)
 
 }
+
+
+function tallennaNimi(nimi) {
+	sessionStorage.setItem(nimi, "0"); 
+}
+
+var kayttaja = ""
+
+/*function getNimi(nimi) {
+	kayttaja = sessionStorage.getItem(nimi));
+	
+	document.write(sessionStorage.getItem(nimi));
+	sessionStorage.getItem(nimi));
+	}
+*/

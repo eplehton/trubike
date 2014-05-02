@@ -6,6 +6,24 @@
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 </head>
 
+		<script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+		<script language="javascript" type="text/javascript">
+			$(document).ready(function() {
+				$("#kirjautumisruutu").on('submit', function(e) {
+					if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
+						return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
+					}
+					else {
+						tallennaNimi(($("#kayttaja").val()));
+						}
+				});
+				
+				
+			})
+		</script>
+
+		<script type="text/javascript" src="peli.js"></script>
+
 
 <body>
 
@@ -18,12 +36,27 @@
 		<div id="back_header">TAKAISIN VALIKKOON</div> 
 	</a>
 	
-
-<div id="nimi">
-	<p>Nimi: </p>
-	
-	<p>Salasana: </p>
 </div>
+
+
+	
+<div id="nimi">
+
+    <form id="kirjautumisruutu" method="post" action="pyorailypeli.html">
+   
+        <input id="kayttaja" type="text"  placeholder="Käyttäjänimi" /> <br> <br>
+        <input id="salasana" type="password" placeholder="Salasana" />
+        <input id="submit" class="submit" type="submit" value="Kirjaudu" />
+		
+    </form>
+    
+</div>
+
+<div id="kirjautuneena">
+	Kirjautuneena: 
+</div>
+
+
 
 
 
