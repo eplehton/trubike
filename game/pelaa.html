@@ -8,17 +8,28 @@
 	<script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 	<script language="javascript" type="text/javascript">
 	$(document).ready(function(){
-		$("#ohje").click(function(){
+	
+	$("#kirjautuneena" ).text(function( index ) {
+		var kayttaja = sessionStorage.getItem("kayttaja")
+		if (kayttaja == null) {
+			return "Et ole kirjautuneena"
+		}else {
+		return  "\u260E  "+ kayttaja;
+		}
+	});
+	
+	
+	$("#ohje").click(function(){
 			$(".ohjeruutu").show();
 		});
 	});
-	</script>
-	<script language="javascript" type="text/javascript">
+	
 	$(document).ready(function(){
 		$(".ohjeruutu").click(function(){
 			$(".ohjeruutu").hide();
 		});
 	});
+	
 	</script>
 	
 	
@@ -41,6 +52,9 @@
 		<div id="back_header">TAKAISIN VALIKKOON</div> 
 	</a>
 
+	
+	<div id="kirjautuneena">
+	</div>
 
 
 
@@ -92,6 +106,8 @@
 		
 			
 </div>
+
+
 
 
 </body>

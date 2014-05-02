@@ -19,6 +19,15 @@
 				});
 				
 				
+				$("#kirjautuneena" ).text(function( index ) {
+					var kayttaja = sessionStorage.getItem("kayttaja")
+					if (kayttaja == null) {
+						return "Et ole kirjautuneena"
+					}else {
+					return "\u260E  " + kayttaja;
+					}
+				});
+				
 			})
 		</script>
 
@@ -36,11 +45,14 @@
 		<div id="back_header">TAKAISIN VALIKKOON</div> 
 	</a>
 	
+	<div id="kirjautuneena">
+	</div>
+	
 </div>
 
 
 	
-<div id="nimi">
+<div id="kirjautumiskenttä">
 
     <form id="kirjautumisruutu" method="post" action="pyorailypeli.html">
    
@@ -52,9 +64,7 @@
     
 </div>
 
-<div id="kirjautuneena">
-	Kirjautuneena: 
-</div>
+
 
 
 

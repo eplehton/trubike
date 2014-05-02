@@ -150,15 +150,9 @@ function submitData() {
 
 
 function tallennaNimi(nimi) {
-	sessionStorage.setItem(nimi, "0"); 
+	sessionStorage.setItem("kayttaja", nimi); 
+	
+	
 }
 
-var kayttaja = ""
 
-/*function getNimi(nimi) {
-	kayttaja = sessionStorage.getItem(nimi));
-	
-	document.write(sessionStorage.getItem(nimi));
-	sessionStorage.getItem(nimi));
-	}
-*/
