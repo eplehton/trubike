@@ -90,8 +90,8 @@ body {
 
 	
 
-.level { height:200px;
-	width:250px;
+.level { height:30%;
+	width:20%;
 	border-color:#bda98a;
 	border-style:solid;
 	border-width:1px;
@@ -99,8 +99,8 @@ body {
 	background-image:         linear-gradient(to bottom, #bda98a, #806b4b);}   
 
 
-.level img {	height:180px;
-	width:230px;}
+.level img {	height:100%;
+	width:100%;}
 
 
 #level1{
