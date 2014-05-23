@@ -9,20 +9,25 @@
 	<script language="javascript" type="text/javascript">
 	$(document).ready(function(){
 	
-	$("#kirjautuneena" ).text(function( index ) {
+	$("#alkuohje").click(function(){
+		var a = document.getElementById("alkuohje")
+		a.style.display = "none"; 
+		});
+	
+	$("#kirjautuminen" ).text(function( index ) {
 		var kayttaja = sessionStorage.getItem("kayttaja")
-		if (kayttaja == null) {
-			return "Et ole kirjautuneena"
-		}else {
-		return  "\u260E  "+ kayttaja;
+		if (kayttaja != null) {
+			$("#kirjautuminen").html("\u260E  " + kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
 		}
 	});
 	
+	showPoints();
 	
 	$("#ohje").click(function(){
 			$(".ohjeruutu").show();
 		});
 	});
+	
 	
 	$(document).ready(function(){
 		$(".ohjeruutu").click(function(){
@@ -32,69 +37,76 @@
 	
 	</script>
 	
-	
+	<script type="text/javascript" src="peli.js"></script>
 	
 	
 </head>
 
 <body>
 
-<div id="header">
-
-	<h1> PELAA </h1>
-	
-
-		<div id="ohje"> HELP </div>
 
 
 
-	<a href="pyorailypeli.html">  
-		<div id="back_header">TAKAISIN VALIKKOON</div> 
-	</a>
+		<li class="blue">
+			<p><a href="pyorailypeli.html"> Takaisin </a></p>
+		</li>	
+        <li class="blue">
+            <p><a href="pelaa.html">Pelaa</a></p>
+        </li>
+		<li class="blue">
+            <p id="pisteet">Pisteet</p>
+        </li>
+		 <li class="blue">
+            <p id="ohje">Ohje</p>  <!---ei toimi nyt kun on alkuohje-divi, ei tietoa miksi.... -->
+        </li>
+		<li class="blue">
+            <p id="kirjautuminen"><a href="kirjaudu.html">Kirjaudu</a></p>
+        </li>
 
-	
-	<div id="kirjautuneena">
-	</div>
 
+		<div id="alkuohje">
+			<h1> Tervetuloa pyöräilypeliin! </h1>
+			<p> Tässä pelissä pääset etsimään vaaroja liikenteestä. Sinulle näytetään videoita, ja tehtävänäsi <br>
+				on klikata vaaroja heti kun näet ne. Jokaisesta oikasta osumasta saat yhden pisteen, ja pisteet <br> 
+				näkyvät laatikossa ruudun alareunassa. Pisteesi näet myös tasojen välillä headerista. <br> </p>
+			<p> Aloita ensimmäisestä tasosta, ja jatka sitten seuraaville. Päästäksesi seuraavalle <br>
+				tasolle, sinulla täytyy olla tietty määrä pisteitä edellisellä tasolla. <br>
+				Ruudun yläreunasta löytyy ohjenappi, josta saat apua. </p>
+		</div>		
+				
+		
 
+<a href="peli.html">
+<div  id="level1">
+		<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+</div>
+</a>
+
+<div id="level2">
+	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+</div>
+
+<div  id="level3">
+	<img class="level"src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+</div>
+
+<div  id="level4">
+	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+</div>
+
+<div id="level5">
+	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+</div>
+
+<div id="level6">
+	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+</div>
 
 </div>
 
 
 
-<div class="level" id="level1">
-	<a href="peli.html"><img src="http://www.koulut.kuopio.fi/kansalaisopisto/matkat/pietari/Katu.jpg"/></a>
-</div>
 
-<div class="level" id="level2">
-	<img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div class="level" id="level3">
-	<img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div class="level" id="level4">
-	<img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div class="level" id="level5">
-	<img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div class="level" id="level6">
-	<img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-</div>
-
-
-
-
-
-<div id="pisteet">
-	<p> PISTEET:  </p>
-</div>
 
 <div class="ohjeruutu hidden">
 		<p> Ohjeet </p>

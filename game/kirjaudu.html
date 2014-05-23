@@ -19,12 +19,10 @@
 				});
 				
 				
-				$("#kirjautuneena" ).text(function( index ) {
-					var kayttaja = sessionStorage.getItem("kayttaja")
-					if (kayttaja == null) {
-						return "Et ole kirjautuneena"
-					}else {
-					return "\u260E  " + kayttaja;
+				$("#kirjautuminen" ).text(function( index ) {
+				var kayttaja = sessionStorage.getItem("kayttaja")
+				if (kayttaja != null) {
+						$("#kirjautuminen").html("\u260E  " + kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
 					}
 				});
 				
@@ -36,19 +34,21 @@
 
 <body>
 
-<div id="header">
-
-	<h1> KIRJAUDU </h1>
-	
-
-	<a href="pyorailypeli.html">  
-		<div id="back_header">TAKAISIN VALIKKOON</div> 
-	</a>
-	
-	<div id="kirjautuneena">
-	</div>
-	
-</div>
+		<li class="blue">
+			<p><a href="pyorailypeli.html"> Takaisin </a></p>
+        <li class="blue">
+            <p><a href="pelaa.html">Pelaa</a></p>
+        </li>
+		<li class="blue">
+            <p id="pisteet">Pisteet</p>
+        </li>
+		 <li class="blue">
+            <p id="ohje">Ohje</p>
+        </li>
+        <li class="blue">
+            <p id="kirjautuminen"><a href="kirjaudu.html">Kirjaudu</a></p>
+        </li>
+		
 
 
 	
@@ -63,11 +63,6 @@
     </form>
     
 </div>
-
-
-
-
-
 
 
 

@@ -8,36 +8,38 @@
 	<script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 	
 	<script language="javascript" type="text/javascript">
-		$(document).ready(function(){	/* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
-			$(".ohjeruutu").click(function(){
-				$(".ohjeruutu").hide();
+		$(document).ready(function(){	
+		
+			$("#instruction").click(function(){/* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
+				var instr = document.getElementById("instruction")
+				instr.style.display = "none"; 
+				console.log("RUIRUIRUIRUIRUIRUIR")
+				startVideo(); 
+			}); 
+		
+	
+			showPoints();
+
+		
+		   
+			$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
+				console.log("RAIRAIRAIRAIRAI")  
+				var elem = document.getElementById("klipinloppu")
+			    elem.style.display = "none"; 			
+												
 				startVideo();
+				
 			});
-		
-	
-	
-	
-		   /* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
-			$(".klipinloppu").click(function(){
-				$(".klipinloppu").hide();
-				startVideo();
-			});
-		
-	
-	
-	
-		
-			$("#pysaytys_loppu").click(function(){
-				$("#tasonloppu").show();
-			});
+
+			
+
 		});
 		
 		
 		
 	</script>
 	
-	
-	
+
 	
 	<script type="text/javascript" src="peli.js"></script>
 	
@@ -52,24 +54,25 @@
 
 
 <a href="pelaa.html">  
-	<div id="back">KESKEYTÄ PELI </div>
+	<div id="keskeyta">KESKEYTÄ PELI </div>
 </a>
 
 
 
 
-<div id="pisteet">
-	<p> PISTEET:  </p>
+<div id="pisteruutu">
+	 PISTEET: 
 </div>
 
 
-	<div class="ohjeruutu">
+	<div class="ohjeruutu" id="instruction">
 		<p> Tämä on ohjeruutu jossa sinulle annetaan ohjeita pelistä. </p>
 		<p> Tässä pelissä sinun täytyy tehdä sitä ja tätä bla bla. </p>
 		<p> Klikkaa jostakin kohtaa tätä ruutua aloittaaksesi pelin. </p>
 
 	</div>
 	
+
 	<div class="ohjeruutu hidden" id="klipinloppu">
 		<p> Hienoa! Selvisit ensimmäisestä klipistä. </p>
 		<p> Sait näin ja näin monta pistettä! </p>
@@ -92,7 +95,16 @@
     <video id="videoplayer" 
         onended=videoEnded(event)
         src="">
-    </video>
+    </video> 
+	</div>
+
+	
+	<div id="hitpoint_tmpl" class="hitpoint">
+	X
+	</div>
+	
+	<audio id="targethitplayer" src="media/targethit.mp3"> </audio>
+
 
 </body>
 </html>

@@ -19,15 +19,15 @@ Target.prototype.addPoint = function(x, y, t) {
     this.t.push(t)
 }
 
-
-var shoots = []
+var points = 0
+	
+var shots = [] 
 var targets = []
 
 var clipset_pos = 0
 
-var clipset =  [ ["1", "clips/WP_20131214_144652Z.mp4"], ["2", "clips/WP_20131214_144938Z.mp4"] , ["3", "clips/WP_20131214_145212Z.mp4"]]
-				/*["4", "clips/WP_20131124_122348Z.mp4"], ["5", "clips/hertton_pkoti.mp4"],
-               ["6", "clips/hertton_pkoti2.mp4"]] */
+var clipset =  [ ["1", "clips/potkulautailija.mp4"], ["2", "clips/isoroba.mp4"]] /*,["3", "clips/jalankulkija_ja_suojatie.mp4" ] , ["4", "clips/jalankulkijat2.mp4"], ["5", "clips/vastaantulijat.mp4"], ["6", "clips/ratikka.mp4"]] */
+
 
                
 function checkTargetHit(shot) {
@@ -54,7 +54,7 @@ function registerShot(x, y, t) {
     console.log("x=" + x + " y=" + y + " time=" + t)
     src = clipset[clipset_pos][1]
     var shot = new Shot(x, y, t, src)
-    shoots.push(shot)
+    shots.push(shot)
     return shot
     //console.log(hit_data[hit_data.length-1][0])
 }
@@ -70,51 +70,51 @@ function stopVideo() {
    vplayer.stop()
 }
 
-function hideInstruction() {
-    var instr = document.getElementById("instruction")
-    instr.style.display = "none";    
-}
+var i = 0
 
 function videoClicked(ev) {
     
     var vplayer = document.getElementById("videoplayer")
     var thplayer = document.getElementById("targethitplayer")
     var ctime = vplayer.currentTime
-    
-    if (ctime == 0.0) {
-       hideInstruction()
-       startVideo()
-    } else {
+	
+    //if (ctime == 0.0) {
+       //hideInstruction()
+       //startVideo()
+    //} else {  
+	if (ctime > 0.0) {
         var x = ev.clientX
         var y = ev.clientY
         
         // gui update
-        var hp_tmpl = document.getElementById("hitpoint_tmpl")
-        var hp = hp_tmpl.cloneNode() 
-        hp.id = hp.id + "_" + Math.round(ctime*1000)
-        setTimeout( function(){ hp.style.display = "none"}, 250)
-        document.body.appendChild(hp)
+        var hp_tmpl = document.getElementById("hitpoint_tmpl") 				//etsii hitpoint_tmpl nimisen divin html-tiedostosta
+        var hp = hp_tmpl.cloneNode() 										//kloonaa sen
+        hp.id = "hitpoint_" + Math.round(ctime*1000) 						 // antaa kloonille (hp) id:n "hitpoint_" ja ajan millisekunteina
+        setTimeout( function(){ hp.style.display = "none"}, 250) 			 // setTimeout kutsuu anonyymin funktion: eli (piilottaa hp:n, 250 ms kuluttua)
+        document.body.appendChild(hp)  										//dokumenttiin lisätään uusi klooni hp
+      
+        hp.style.display = "block"  										// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
+        hp.style.position = "absolute" 										// displayataan absoluuttisesti x:n ja y:n mukaan 
+        hp.style.left = x + "px"
+        hp.style.top = y  + "px"
         
-        hp.style.display = "block"
-        hp.style.position = "absolute"
-        hp.style.left = x
-        hp.style.top = y 
-        
-        var shot = registerShot(x, y, ctime)
-        var was_hit = checkTargetHit(shot)
-        console.log("was_hit: " + was_hit)
+        var shot = registerShot(x, y, ctime) 								//rekisteröi klikkauksen kordinaatit ja ajan
+        var was_hit = checkTargetHit(shot) 									// tsekkaa osuiko targettiin
+        console.log("was_hit: " + was_hit)  								//printtaa konsoliin "was_hit: " ja true tai false
         if (was_hit) {
+			points += 1
+			showPoints()
             hp.style.background = "green"
-            thplayer.currentTime = 0.0
-            thplayer.play()
+            thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
+            thplayer.play()  												//soittaa audioplayerista äänen että osuttiin oikeaan
         }
-        
+		
     }
 }
 
 function videoEnded(ev) {
-    
-	
+    sessionStorage.setItem(clipset_pos + "_videoshots", shots)    //tekee sessionstorageen shotslistan nimeltä "0_videoshots"  jonka value on ekan videon shotit, sitten 1_videoshots.....
+												
 	var video = document.getElementById("videoplayer")
     video.src = "" 
     clipset_pos += 1
@@ -124,6 +124,9 @@ function videoEnded(ev) {
     } else {
 		$("#tasonloppu").show();
 	}
+	
+	printToLog()
+	shots = []					// tyhjentää shotslistan seuraavaa videota varten
 }
 
 function submitData() {
@@ -152,7 +155,30 @@ function submitData() {
 function tallennaNimi(nimi) {
 	sessionStorage.setItem("kayttaja", nimi); 
 	
-	
 }
 
+function showPoints() {
+	/*var current_points = document.getElementById("pisteet")
+	current_points.innerHTML="Pisteet: " + points;  */             //Tämän aktivoiminen tekee mm. sen, että klipinlopun hideaminen ja videon starttaaminen (jQueryssä) ei toimi...?
+	
+	var current_points2 = document.getElementById("pisteruutu")
+	current_points2.innerHTML="Pisteet: " + points;
+	}
+	
 
+	
+	
+function printToLog() {            //printtaa konsoliin kaikki shotit jotka on shots-listalla
+	console.log("tässä printToLogin outputti:")
+	var j = 0
+	while (j < shots.length) {
+		console.log(shots[j].x)
+		console.log(shots[j].y)
+		console.log(shots[j].t)
+		j += 1
+		}
+	}
+
+
+	
+	

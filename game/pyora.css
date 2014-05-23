@@ -1,10 +1,3 @@
-html, body {
-	height: 100%;
-	}
-	
-body {
-  background-image:         linear-gradient(to bottom, #ffffff, #ad9879);
-}
 
 
 #header {
@@ -16,13 +9,45 @@ body {
 	background-image:         linear-gradient(to bottom, #bda98a, #806b4b);
 	opacity:0.9;
 }
-#header h1 {	font-family:Arial, serif;
-		text-transform:bold;
-		font-size:200%;
-		color:black;
-		text-align:center; }
-		
 
+		
+html, body {
+ margin:0; padding:0; height:100%; width:100%;	}
+	
+body {
+    background-image:url('tausta.jpg');         
+}
+
+
+#juurekko{
+    text-align: center}
+
+#globalheader { z-index:9998; top:18px; margin:0 auto; }
+
+#header h1 {	font-family:Arial, serif;
+		float:none;
+        width: 100px;
+        text-transform:bold;
+		font-size:250%;
+		color:black;
+		text-align:center;}
+		
+		
+#alkuohje {
+	font-size:130%;
+	border-radius:10px;
+	background-color:#FFF;
+	opacity:0.9;
+	z-index:3;
+	width:80%;
+	height:80%;
+	position:absolute;
+	top:10%;
+	right:10%;
+	text-align:center;	
+	display:block;
+	}
+		
 /* OHJERUUTU ----------------------------------------------------------------------------------------------------------------------- */		
 		
 .ohjeruutu {
@@ -39,6 +64,7 @@ body {
 	opacity:0.9;
 
 	position:absolute;
+	z-index: 2;
 	top:20%;
 	right:25%;
 	}
@@ -51,20 +77,34 @@ body {
 	
 .kuvake{   /* Pelaa ja Harjoittele */
 	font-size:150%;
-	height:45%;
-	width:35%;
-	border-color:#bda98a;
-	border-style:solid;
-	border-width:1px;
-	border-radius:5px;
-	background-image:         linear-gradient(to bottom, #bda98a, #806b4b);} 
+	height:150px;
+	width:150px;
+	border-radius:50%;
+	background:#0292C0;
+    opacity: 0.8;
+
+} 
 
 
 #alku_harjoittele{
 	text-align:center;
 	position:absolute;
-	top:30%;
-	right:10%;	}
+	top:40%;
+	right:25%;	}
+
+
+
+
+#alku_pelaa {
+	text-align:center;
+	position:absolute;
+	top:40%;
+	left:25%;
+}
+    
+
+
+
 
 #alku_harjoittele img {
 	position:fixed;
@@ -74,11 +114,6 @@ body {
 	right:12%;}
 
 
-#alku_pelaa {
-	text-align:center;
-	position:absolute;
-	top:30%;
-	right:55%;}
 
 #alku_pelaa img {
 	position:fixed;
@@ -90,17 +125,16 @@ body {
 
 	
 
-.level { height:30%;
-	width:20%;
+.level { 
+	background-image:url('level.jpg');
+	height:70%;
+	width:70%;
 	border-color:#bda98a;
 	border-style:solid;
 	border-width:1px;
-	border-radius:3px;
-	background-image:         linear-gradient(to bottom, #bda98a, #806b4b);}   
+	border-radius:50%;
+	z-index:2;}
 
-
-.level img {	height:100%;
-	width:100%;}
 
 
 #level1{
@@ -120,6 +154,13 @@ body {
 
 #level6{
 	position:absolute;top:60%;right:10%;}
+	
+
+.lock {
+	z-index:2;}
+
+.pic {
+	z-index:1;}
 
 	
 	
@@ -129,8 +170,8 @@ body {
 */
 
 
-#kirjaudu {   /*sopii napille, jossa kaksi riviä tekstiä, kuten "kirjaudu sisään" */
-	text-align:center;
+/* #kirjaudu {   /*sopii napille, jossa kaksi riviä tekstiä, kuten "kirjaudu sisään" */
+/* 	text-align:center;
 	text-decoration:none;
 	font-size:120%;
 	font-family:Arial, serif;
@@ -146,10 +187,10 @@ body {
 	position:absolute;
 	top:10%;
 	right:20%;
-	}
+	} */ 
 	
-#ohje {  /*sopii napille, jossa yksi rivi tekstiä, kuten "ohje" */
-	text-align:center;
+/*#ohje {  /*sopii napille, jossa yksi rivi tekstiä, kuten "ohje" */
+/*	text-align:center;
 	text-decoration:none;
 	font-size:150%;
 	font-family:Arial, serif;
@@ -165,9 +206,9 @@ body {
 	position:absolute;
 	top:10%;
 	right:5%;
-	}
+	}   */
 
-#back_header {
+/* #back_header {
 	text-align:center;
 	font-size:120%;
 	font-family:Arial, serif;
@@ -184,9 +225,9 @@ body {
 	position:absolute;
 	top:10%;
 	right:88%;
-	}
+	} */
 	
-#back {
+#keskeyta {
 	text-align:center;
 	font-size:120%;
 	font-family:Arial, serif;
@@ -205,10 +246,12 @@ body {
 	position:absolute;
 	top:2%;
 	right:88%;
+	
+	z-index:3;
 	}
 
 
-#pisteet p {	
+#pisteruutu {	
 	font-family:serif;
 	font-size:24px;
 
@@ -222,10 +265,12 @@ body {
 	background-color:#00bbf2;
 	border-style:solid;
 	border-width:1px;
-	border-radius:3px;	}
+	border-radius:3px;	
+	
+	z-index:3;}
 
 
-#login {
+/*#login {
 	text-align:center;
 	text-decoration:none;
 	font-family:Arial, serif;
@@ -237,7 +282,7 @@ body {
 	border-width:1px;
 	border-radius:5px;
 
-}
+}   */
 
 /* MUUT 
 --------------------------------------------------------------------------------------------------------------------------------
@@ -245,7 +290,7 @@ body {
 
 /* KIRJAUTUMINEN --------------------------------------------------------------------------------------------------------------------------------------
 */
-
+/*
 #kirjautuneena {
 
 	height: 35%;
@@ -257,11 +302,11 @@ body {
 	position:absolute;
 	top:30%;
 	right:70%;
-}
+}  
 
 #kirjautuneena i {
 	font-size:40px;
-}
+}  */
 	
 #kirjautumiskenttä{
 	font-family:serif;
@@ -305,6 +350,68 @@ body {
 #videoplayer {
 	height:100%;
 	width:100%;
+	z-index: 1;
+    position: absolute;
 	}
+
+.hitpoint {
+    width: 2em;
+    height: 2em;
+    background-color: red;
+    z-index: 2;
+    display: none;
+    position: absolute;
+}
+
+#hr {
+    color: #123455;
+}
+
+
+/*Valikko*/
+/*ul{
+    margin: 0;
+    padding:0;
+    list-style: disc;
+}   */
+ 
+li{
+    width:20%;
+    height:7%;
+    float:left;
+    color:#FFF;
+    text-align:center;
+    overflow:hidden;
+	list-style-type: none;
+}
+ 
+li p a{
+    color:#FFF;
+    text-decoration:none;
+}
+
+li a p{
+    color:#FFF;
+    text-decoration:none;
+}
+ 
+li p{
+    font-family: ARIAL;
+    font-size: 20px;
+    
+}
+ 
+ /*   .subtext{
+        padding-top:-200%;
+    }  */
+ 
+/*Menu Color Classes*/
+.green{background:#6AA63B;}
+.yellow{background:#FBC700;}
+.red{background:#D52100;}
+.purple{background:#5122B4;}
+.blue{background:#0292C0;
+opacity: 0.8;}
+
 
 
