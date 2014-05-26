@@ -19,6 +19,8 @@ Target.prototype.addPoint = function(x, y, t) {
     this.t.push(t)
 }
 
+
+
 var points = 0
 	
 var shots = [] 
