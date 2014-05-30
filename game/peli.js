@@ -24,22 +24,24 @@ Target.prototype.addPoint = function(x, y, t) {
 var points = 0
 	
 var shots = [] 
+var correct_shots = []
+
 var targets = []
 
 var clipset_pos = 0
 
-var clipset =  [ ["1", "clips/potkulautailija.mp4"], ["2", "clips/isoroba.mp4"]] /*,["3", "clips/jalankulkija_ja_suojatie.mp4" ] , ["4", "clips/jalankulkijat2.mp4"], ["5", "clips/vastaantulijat.mp4"], ["6", "clips/ratikka.mp4"]] */
+var clipset =  [ ["1", "clips/potkulautailija.mp4"], ["2", "clips/isoroba.mp4"],["3", "clips/jalankulkija_ja_suojatie.mp4" ] , ["4", "clips/jalankulkijat2.mp4"], ["5", "clips/vastaantulijat.mp4"], ["6", "clips/ratikka.mp4"]]
 
 
                
 function checkTargetHit(shot) {
     var vplayer = document.getElementById("videoplayer")
     var ctime = vplayer.currentTime
-    var targett = 5.0
-    var targetx = 200
+    var targett = 11.0
+    var targetx = 600
     var targety = 200
-    var hit_radius = 200
-    var hit_interval = 1.0
+    var hit_radius = 100
+    var hit_interval = 3.0
     
     console.log(shot.t, ctime)
     
@@ -102,9 +104,23 @@ function videoClicked(ev) {
         
         var shot = registerShot(x, y, ctime) 								//rekisteröi klikkauksen kordinaatit ja ajan
         var was_hit = checkTargetHit(shot) 									// tsekkaa osuiko targettiin
-        console.log("was_hit: " + was_hit)  								//printtaa konsoliin "was_hit: " ja true tai false
+        console.log("was_hit: " + was_hit) 									//printtaa konsoliin "was_hit: " ja true tai false
+		
+		if (was_hit){
+			correct_shots.push(shot)
+			}
+		
+
+		var k = correct_shots.length-1
         if (was_hit) {
-			points += 1
+			if (k == 0){
+				points += 1;
+			} 
+ 			else if (k >= 1){
+				if (((correct_shots[k].t) - (correct_shots[k-1].t)) > 2.0 ){
+					points += 1;
+				}
+			} 
 			showPoints()
             hp.style.background = "green"
             thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
@@ -115,7 +131,7 @@ function videoClicked(ev) {
 }
 
 function videoEnded(ev) {
-    sessionStorage.setItem(clipset_pos + "_videoshots", shots)    //tekee sessionstorageen shotslistan nimeltä "0_videoshots"  jonka value on ekan videon shotit, sitten 1_videoshots.....
+    sessionStorage.setItem("videoshots_" + clipset_pos, shots)    //tekee sessionstorageen shotslistan nimeltä "videoshots_0"  jonka value on ekan videon shotit, sitten videoshots_1.....
 												
 	var video = document.getElementById("videoplayer")
     video.src = "" 
@@ -129,6 +145,7 @@ function videoEnded(ev) {
 	
 	printToLog()
 	shots = []					// tyhjentää shotslistan seuraavaa videota varten
+	console.log(targets)
 }
 
 function submitData() {
@@ -182,5 +199,6 @@ function printToLog() {            //printtaa konsoliin kaikki shotit jotka on s
 	}
 
 
+	
 	
 	
