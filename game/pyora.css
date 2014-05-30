@@ -4,36 +4,23 @@ html, body {
  margin:0; padding:0; height:100%; width:100%;	}
 	
 body {
-    background-image:url('tausta.jpg');         
+    background-image:url('tausta.jpg');
+    font-family: Helvetica Neue;
+    color: #fff;
 }
-
-
-/* #juurekko{
-    text-align: center} */
-
-/* #globalheader { z-index:9998; top:18px; margin:0 auto; } */
-
-/* #header h1 {	font-family:Arial, serif;
-		float:none;
-        width: 100px;
-        text-transform:bold;
-		font-size:250%;
-		color:black;
-		text-align:center;} */
-		
-		
+				
 #alkuohje {
-	font-size:130%;
+	padding-top: 20px;
 	border-radius:10px;
-	background-color:#FFF;
-	opacity:0.9;
-	z-index:3;
+	background:#0292C0;
+    opacity: 0.8;
+	z-index:2;
 	width:80%;
-	height:80%;
 	position:absolute;
-	top:10%;
 	right:10%;
+    top: 30%;
 	text-align:center;	
+<<<<<<< HEAD
 	display:none;
 	}
 
@@ -41,7 +28,18 @@ body {
 	height:15%;
 	position:absolute;
 	right:1%;
+=======
+	display:block;
+    cursor: pointer;
+>>>>>>> 23d20a05f40a40f721cd461d7847286bbd9f2444
 	}
+#alkuohje h1{
+    font-weight: 100;
+
+}
+alkuohje p {
+    font-weight: 100;
+}
 		
 /* OHJERUUTU ----------------------------------------------------------------------------------------------------------------------- */		
 		
@@ -51,20 +49,24 @@ body {
 	font-size:20px;
  	height:60%;
 	width:50%;
-	border-color:#66CD00;
-	border-style:solid;
-	border-width:2px;
 	border-radius:10px;
-	background-color:#7cfc00;
-	opacity:0.9;
+	background:#0292C0;
+    opacity: 0.8;
 
 	position:absolute;
 	z-index: 10;
 	top:20%;
 	right:25%;
+    cursor:pointer;
 	}
 .hidden {
-	display:none;}		
+	display:none;
+}
+.ohjeruutu h1{
+    font-weight: 100;
+    padding-bottom: 80px;
+}
+
 
 
 
@@ -107,6 +109,7 @@ body {
 .pic {
 	z-index:1;} */
 
+<<<<<<< HEAD
 	
 	
 	
@@ -117,20 +120,20 @@ body {
 
 
 	
+=======
+
+>>>>>>> 23d20a05f40a40f721cd461d7847286bbd9f2444
 #keskeyta {
 	text-align:center;
 	font-size:120%;
-	font-family:Arial, serif;
 	text-decoration:none;
 	
 	height:9%;
 	line-height: 150%;
 	width:9%;
 	
-	border-color:#61533e;
-	background-image: linear-gradient(to bottom, #ffffff, #61533e);
-	border-style:solid;
-	border-width:1px;
+	background:#0292C0;
+    opacity: 0.8;
 	border-radius:5px;
 	
 	position:absolute;
@@ -151,9 +154,8 @@ body {
 
 	height:50px;
 	width:200px;
-	border-color:#0f92bd;
-	background-color:#00bbf2;
-	border-style:solid;
+	background:#0292C0;
+    opacity: 0.8;
 	border-width:1px;
 	border-radius:3px;	
 	
@@ -193,8 +195,8 @@ body {
 	border-style:solid;
 	border-width:2px;
 	border-radius:10px;
-	background-color:#7cfc00;
-	opacity:0.8;
+	background:#0292C0;
+    opacity: 0.8;
 	padding-top: 15px;
 	padding-bottom: 15px;
 
@@ -245,38 +247,38 @@ body {
 
 
 /*Valikko*/
-/*ul{
+ul{
     margin: 0;
-    padding:0;
-    list-style: disc;
-}   */
+    padding:0px;
+    list-style: none;
+    z-index:2;
+
+}   
  
 li{
+<<<<<<< HEAD
     width:25%;
+=======
+    width: 25%;
+>>>>>>> 23d20a05f40a40f721cd461d7847286bbd9f2444
     height:7%;
+    padding-bottom: 5px;
     float:left; 
     color:#FFF;
     text-align:center;
     overflow:hidden;
 	list-style-type: none;
-
-}
- 
-li p a{
-    color:#FFF;
-    text-decoration:none;
 }
 
-li a p{
-    color:#FFF;
-    text-decoration:none;
-}
- 
-li p{
-    font-family: ARIAL;
-    font-size: 20px;
+li h2 a{
+    
+    color: #fff;
+    font-size: 35px;
+    font-weight: 100;
+    text-decoration: none;
     
 }
+
  
  /*   .subtext{
         padding-top:-200%;
@@ -290,5 +292,12 @@ li p{
 .blue{background:#0292C0;
 opacity: 0.8;}
 
+/*Fontit*/
 
-
+h1{
+}
+h2{
+}
+h3{
+    font-weight: 100px;
+}
