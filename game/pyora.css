@@ -8,18 +8,7 @@ body {
 }
 
 
-/* #juurekko{
-    text-align: center} */
 
-/* #globalheader { z-index:9998; top:18px; margin:0 auto; } */
-
-/* #header h1 {	font-family:Arial, serif;
-		float:none;
-        width: 100px;
-        text-transform:bold;
-		font-size:250%;
-		color:black;
-		text-align:center;} */
 		
 		
 #alkuohje {
@@ -245,11 +234,11 @@ body {
 
 
 /*Valikko*/
-/*ul{
+ul{
     margin: 0;
     padding:0;
     list-style: disc;
-}   */
+}  
  
 li{
     width:25%;

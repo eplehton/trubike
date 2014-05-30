@@ -26,7 +26,7 @@ var points = 0
 var shots = [] 
 var correct_shots = []
 
-var targets = [[(801,259, 3.789), (615, 259, 9.877)],  
+var targets = [[[801,259, 3.789], [615, 259, 9.877]],  
 [(434, 292, 2.224), (506, 284, 6.623), (778, 272, 12.407999), (380, 337, 14.664), (490, 302, 17.351), (582, 300, 19.487),(385, 283, 21.015), (630, 298, 21.968), (671, 264, 23.345), (819, 271, 26.103999), (435, 297, 29.072), (487, 296, 29.967), (854, 302, 33.64), (871, 275, 35.255999) ], 
 [(517, 246, 6.983), (759, 246, 8.502999), (385, 261, 10.289)], 
 [(602, 291, 5.647), (795, 255, 12.535999), (789, 272, 17.4)], 
@@ -38,26 +38,32 @@ var clipset_pos = 0
 
 var clipset =  [ ["1", "clips/potkulautailija.mp4"], ["2", "clips/isoroba.mp4"],["3", "clips/jalankulkija_ja_suojatie.mp4" ] , ["4", "clips/jalankulkijat2.mp4"], ["5", "clips/vastaantulijat.mp4"], ["6", "clips/ratikka.mp4"]]
 
+var h = 0
 
                
 function checkTargetHit(shot) {
     var vplayer = document.getElementById("videoplayer")
     var ctime = vplayer.currentTime
-    var targett = 11.0
-    var targetx = 600
-    var targety = 200
-    var hit_radius = 100
+	var hit_radius = 100
     var hit_interval = 3.0
-    
+	while (h < 13) {
+		var targett = targets[clipset_pos][h][2]
+		var targetx = targets[clipset_pos][h][0]
+		var targety = targets[clipset_pos][h][1]
+		h += 1
+		
+		if (Math.abs(shot.t - targett) < hit_interval) {
+		   var d2 = Math.sqrt(Math.pow(shot.x - targetx, 2) + Math.pow(shot.y - targety, 2))
+		   if (d2 < hit_radius) {
+				return true
+		   }
+		}
+	
+	}
+    return false
     console.log(shot.t, ctime)
     
-    if (Math.abs(shot.t - targett) < hit_interval) {
-       var d2 = Math.sqrt(Math.pow(shot.x - targetx, 2) + Math.pow(shot.y - targety, 2))
-       if (d2 < hit_radius) {
-            return true
-       }
-    }
-    return false
+
 }
 
 function registerShot(x, y, t) {
@@ -152,6 +158,7 @@ function videoEnded(ev) {
 	printToLog()
 	shots = []					// tyhjentää shotslistan seuraavaa videota varten
 	console.log(targets)
+	h = 0
 }
 
 function submitData() {
