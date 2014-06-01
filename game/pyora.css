@@ -17,7 +17,7 @@ body {
 	border-radius:10px;
     padding-top: 20px;
 	background:#0292C0;
-    opacity: 0.8;
+    opacity: 0.85;
 	z-index:2;
 	width:80%;
 	height:80%;
@@ -253,7 +253,7 @@ li{
  
 li h2 a{
     color: #fff;
-    font-size: 35px;
+    font-size: 25px;
     font-weight: 100;
     text-decoration: none;
       
@@ -261,7 +261,7 @@ li h2 a{
   
 li h2{
     color: #fff;
-    font-size: 35px;
+    font-size: 25px;
     font-weight: 100;
     text-decoration: none;
       
@@ -276,7 +276,7 @@ li h2{
 .red{background:#D52100;}
 .purple{background:#5122B4;}
 .blue{background:#0292C0;
-opacity: 0.8;}
+opacity: 0.85;}
 
 /*Fontit*/
   

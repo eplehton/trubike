@@ -13,10 +13,20 @@
 	
 	
 	$(document).ready(function(){
+	
+	$("#ohje").click(function(){
+			console.log("toimii");
+			$(".ohjeruutu").show("fast");
+		});
+		
+	
+	$(".ohjeruutu").click(function(){
+		$(".ohjeruutu").hide("slow");
+	});
+
 
  	
 	if (sessionStorage.getItem("isFirst") != "false") {
-			console.log("lol")
 			var b = document.getElementById("alkuohje")
 			 b.style.display = "block";
 			sessionStorage.setItem("isFirst", false);
@@ -36,15 +46,8 @@
 	
 	showPoints();
 	
-	$("#ohje").click(function(){
-			$(".ohjeruutu").show("fast");
-		});
-	
-	
 
-	$(".ohjeruutu").click(function(){
-		$(".ohjeruutu").hide("slow");
-	});
+	
 
 	
 	
