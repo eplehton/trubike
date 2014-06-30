@@ -8,76 +8,34 @@
 
 	<script language="javascript" type="text/javascript" src="jquery-2.1.0.min.js"></script>
     <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-<!-- 	<script type="text/javascript" src="js/effects.js"></script> -->
-	<script type="text/javascript" src="js/peli.js"></script>
-	<script language="javascript" type="text/javascript">
+	<script type=text/javascript src="js/kirjautuminen.js"></script>
+    <script type="text/javascript" src="js/peli.js"></script>
+    
 	
-			$(document).ready(function() {
-			
-				
-				$("#ohje").click(function(){
-						$(".ohjeruutu").show("fast");
-					});
-			
-		
-				$(".ohjeruutu").click(function(){
-					$(".ohjeruutu").hide("slow");
-				});
-
-				$("#kirjautumisruutu").on('submit', function(e) {
-					if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
-						return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
-					}
-					else {
-						tallennaNimi(($("#kayttaja").val()));
-						}
-				});
-						
-						
-				$("#kirjautuminen" ).text(function( index ) {
-				var kayttaja = sessionStorage.getItem("kayttaja")
-				if (kayttaja != null) {
-						$("#kirjautuminen").html("\u260E  " + kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
-					}
-				});
-						
-			});
-	
-	</script>
 </head>
 
 <body>
-    <ul>
-		<li class="blue">
-			<h2><a href="index.html">Etusivu</a></h2>
-		<li class="blue">
-            <h2 id="pisteet"><a>Pisteet</a></h2>
-        </li>
-        <li class="blue">
-            <h2 id="ohje"><a>Ohje</a></h2>
-        </li>
-        <li class="blue">
-            <h2 id="kirjautuminen"><a href="kirjaudu.html">Kirjaudu</a></h2>
-        </li>
-	</ul>	
-
-		
-
+<header>
+        <div class="container clearfix">
+        <nav>
+            <ul>
+                <li><a href="index.html">Etusivu<a></li>	
+                <li><a href="">Pisteet</a></li>
+                <li><a href="">Ohje</a></li>
+                <li><a href="kirjaudu.html">Kirjaudu</a></li>
+            </ul>
+        </nav>
+        </div>
+    </header>
 	
 <div id="kirjautumiskenttä">
-
     <form id="kirjautumisruutu" method="post" action="index.html">
-   
         <input id="kayttaja" type="text"  placeholder="Käyttäjänimi" /> <br> <br>
         <input id="salasana" type="password" placeholder="Salasana" />
         <input id="submit" class="submit" type="submit" value="Kirjaudu" />
 		
-    </form>
-    
+    </form>   
 </div>
-
-
-
-
+    
 </body>
 </html>

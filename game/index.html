@@ -5,132 +5,41 @@
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 	<title> Pelaa </title>
 	
+    <script language="javascript" type="text/javascript"></script>
 	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-	<script language="javascript" type="text/javascript">
-	
-	
-	$(document).ready(function(){
-	
-
-
- 	
-	if (sessionStorage.getItem("isFirst") != "false") {
-			var b = document.getElementById("alkuohje")
-			 b.style.display = "block";
-			sessionStorage.setItem("isFirst", false);
-			
-		} 
-		
-	$("#ruksi").click(function(){
-		$("#alkuohje").hide("slow");
-		});
-	
-	$("#kirjautuminen").text(function( index ) {
-		var kayttaja = sessionStorage.getItem("kayttaja")
-		if (kayttaja != null) {
-			$("#kirjautuminen").html("\u260E  " + kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
-			}
-		});
-	
-	showPointsBanner();
-	
-	
-	$("#ohje").click(function(){
-			$(".ohjeruutu").show("fast");
-		});
-		
-	
-	$(".ohjeruutu").click(function(){
-		$(".ohjeruutu").hide("slow");
-	});
-	
-
-	
-	
-});
-	
-	</script>
-	
-
-	<!--<script type="text/javascript" src="effects.js"></script>-->
-	<script type="text/javascript" src="peli.js"></script>
-		
+    <script type="text/javascript" src="js/kirjautuminen.js"></script>
 
 </head>
-
 <body>
-
-
-
-    <ul>
-		<li class="blue">
-			<h2><a>Etusivu</a></h2>
-		</li>	
-		<li class="blue">
-            <h2 id="pisteet"><a>Pisteet</a></h2>
-        </li>
-		 <li class="blue">
-            <h2 id="ohje"><a>Ohje</a></h2>
-        </li>
-		<li class="blue">
-            <h2 id="kirjautuminen"><a href="kirjaudu.html">Kirjaudu</a></h2>
-        </li>
-    </ul>
-
-
-		<div id="alkuohje">
-			<img id="ruksi" src="ruksi.jpg"/>
-			<h1> Tervetuloa pyöräilypeliin! </h1>
-			<p> Tässä pelissä pääset etsimään vaaroja liikenteestä. Sinulle näytetään videoita, ja tehtävänäsi <br>
-				on klikata vaaroja heti kun näet ne. Jokaisesta oikasta osumasta saat yhden pisteen, ja pisteet <br> 
-				näkyvät laatikossa ruudun alareunassa. Pisteesi näet myös tasojen välillä headerista. <br> </p>
-			<p> Aloita ensimmäisestä tasosta, ja jatka sitten seuraaville. Päästäksesi seuraavalle <br>
-				tasolle, sinulla täytyy olla tietty määrä pisteitä edellisellä tasolla. <br>
-				Ruudun yläreunasta löytyy ohjenappi, josta saat apua. </p>
-		</div>		
-				
-		
-
-<a href="peli.html">
-<div  id="level1">
-		<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
+    <header>
+        <div class="container clearfix">
+        <nav>
+            <ul>
+                <a href=""><li>Etusivu</li></a>
+                <a href=""><li>Pisteet</li></a>
+                <a href=""><li>Ohje</li></a>
+                <a href="kirjaudu.html"><li>Kirjaudu</li></a>
+            </ul>
+        </nav>
+        </div>
+    </header>
+<div class="container">
+    <div class="grid">
+    <div id="alkuohje">
+        <h1> Tervetuloa pyöräilypeliin! </h1>
+        <p> Tässä pelissä pääset etsimään vaaroja liikenteestä. Sinulle näytetään videoita, ja tehtävänäsi on klikata vaaroja heti kun näet ne. Jokaisesta oikasta osumasta saat yhden pisteen, ja pisteet näkyvät laatikossa ruudun alareunassa. Pisteesi näet myös tasojen välillä headerista. Aloita ensimmäisestä tasosta, ja jatka sitten seuraaville. Päästäksesi seuraavalle tasolle, sinulla täytyy olla tietty määrä pisteitä edellisellä tasolla. Ruudun yläreunasta löytyy ohjenappi, josta saat apua. </p>
+    </div>
+    
+    <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
+        <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
+        <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
+        <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
 </div>
-</a>
-
-<div id="level2">
-	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div  id="level3">
-	<img class="level"src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div  id="level4">
-	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div id="level5">
-	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
-<div id="level6">
-	<img class="level" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Status-object-locked-icon.png"/>
-</div>
-
 
 <div class="ohjeruutu hidden">
-		<p> Ohjeet </p>
-		<p> Tässä pelissä sinun tehtävänäsi on bla bla bla bla. <br>
-		 Valitse valikosta haluamasi taso.<br>
-		Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. <br>
-		 Pisteesi näkyvät sivun alalaidassa.<br>
-		 Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>
-		
-			
+		<h1> Ohjeet </h1> Tässä pelissä sinun tehtävänäsi on bla bla bla bla. Valitse valikosta haluamasi taso. Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. Pisteesi näkyvät sivun alalaidassa. Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>	
+    </div>
 </div>
-
-
-
 
 </body>
 </html>
