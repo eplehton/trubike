@@ -28,7 +28,12 @@ var targets = []
 
 var clipset_pos = 0
 
-var clipset =  [ ["1", "clips/potkulautailija.mp4"], ["2", "clips/isoroba.mp4"]] /*,["3", "clips/jalankulkija_ja_suojatie.mp4" ] , ["4", "clips/jalankulkijat2.mp4"], ["5", "clips/vastaantulijat.mp4"], ["6", "clips/ratikka.mp4"]] */
+var clipset =  [ ["1", "clips/potkulautailija.mp4"], 
+                 ["2", "clips/isoroba.mp4"],
+                 ["3", "clips/jalankulkija_ja_suojatie.mp4" ], 
+                 ["4", "clips/jalankulkijat2.mp4"], 
+                 ["5", "clips/vastaantulijat.mp4"], 
+                 ["6", "clips/ratikka.mp4"] ]
 
 
                
