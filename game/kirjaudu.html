@@ -4,69 +4,38 @@
 	<meta charset="UTF-8">
 	<title> Kirjaudu </title>
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
+
+
+	<script language="javascript" type="text/javascript" src="jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type=text/javascript src="js/kirjautuminen.js"></script>
+    <script type="text/javascript" src="js/peli.js"></script>
+    
+	
 </head>
 
-		<script language="javascript" type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-		<script language="javascript" type="text/javascript">
-			$(document).ready(function() {
-				$("#kirjautumisruutu").on('submit', function(e) {
-					if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
-						return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
-					}
-					else {
-						tallennaNimi(($("#kayttaja").val()));
-						}
-				});
-				
-				
-				$("#kirjautuminen" ).text(function( index ) {
-				var kayttaja = sessionStorage.getItem("kayttaja")
-				if (kayttaja != null) {
-						$("#kirjautuminen").html("\u260E  " + kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
-					}
-				});
-				
-			})
-		</script>
-
-		<script type="text/javascript" src="peli.js"></script>
-
-
 <body>
-
-		<li class="blue">
-			<p><a href="pelaa.html"> Takaisin </a></p>
-        <li class="blue">
-            <p><a href="pelaa.html">Pelaa</a></p>
-        </li>
-		<li class="blue">
-            <p id="pisteet">Pisteet</p>
-        </li>
-		 <li class="blue">
-            <p id="ohje">Ohje</p>
-        </li>
-        <li class="blue">
-            <p id="kirjautuminen"><a href="kirjaudu.html">Kirjaudu</a></p>
-        </li>
-		
-
-		
-
+<header>
+        <div class="container clearfix">
+        <nav>
+            <ul>
+                <li><a href="index.html">Etusivu<a></li>	
+                <li><a href="">Pisteet</a></li>
+                <li><a href="">Ohje</a></li>
+                <li><a href="kirjaudu.html">Kirjaudu</a></li>
+            </ul>
+        </nav>
+        </div>
+    </header>
 	
 <div id="kirjautumiskenttä">
-
-    <form id="kirjautumisruutu" method="post" action="pelaa.html">
-   
+    <form id="kirjautumisruutu" method="post" action="index.html">
         <input id="kayttaja" type="text"  placeholder="Käyttäjänimi" /> <br> <br>
         <input id="salasana" type="password" placeholder="Salasana" />
         <input id="submit" class="submit" type="submit" value="Kirjaudu" />
 		
-    </form>
-    
+    </form>   
 </div>
-
-
-
-
+    
 </body>
 </html>
