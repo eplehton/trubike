@@ -1,0 +1,411 @@
+<html>
+<head>
+    <title>Videoclip annotator</title>
+
+    <style>
+
+    body {    
+        background-color: #eeeeee;
+    }
+
+    #videobox {
+        position: relative;        
+    }
+    
+    #videoplayer {
+        background-color: #aaaaaa;
+        height: 80%;
+        z-index: 1;
+        float:left;
+    }
+
+    #targetlist{
+        background-color: #fff;
+        width: 20em;
+        float: left;
+    }
+    
+
+    .target_icon {
+        width: 2em;
+        height: 2em;
+        background-color: red;
+        z-index: 2;
+        display: none;
+        position: absolute;
+    }
+
+
+
+    </style>
+    <script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/peli.js"></script>
+
+    <script type="text/javascript">
+    
+    var anno_targets = null;
+    var anno_target_icons = []; // icon elements to display each target
+    
+    
+    function delAnnoTarget(trg_ind) {
+        if (current_anno_target == anno_targets[trg_ind]) {
+            current_anno_target = null;
+        }
+        anno_targets.splice(trg_ind, 1);
+    }
+    
+    function findFirstPosIndex(arr) {
+        for (var i=0; i<arr.length; i++) {
+            if (arr[i] > 0) { 
+                return i;
+            }
+        }
+        return null;
+    }
+    
+    function findLastNegIndex(arr) {
+        //console.log("arr: " + arr)
+        var lni = null;
+        for (var i=0; i<arr.length; i++) {
+            if (arr[i] < 0) { 
+                lni = i;
+            } else {
+                break
+            }
+        }
+        return lni;
+    }
+    
+    
+    
+    var current_anno_target = null;
+
+    var update_target_icon_interval_id = null;
+    
+    
+    function loadVideo() {
+       var vplayer = document.getElementById("videoplayer")
+       var videosrc = document.getElementById("videosrc")
+       
+       var src = "../clips/" + videosrc.value // hard coded so far
+       //console.log(src)
+       vplayer.src = src
+       
+       // load video specific targets
+       var all_targets = loadLocalTargets();
+       anno_targets = getSourceTargets(all_targets, vplayer.src);
+        
+       //setInterval( function(){ updateTargetList() }, 200)
+    }
+
+    function createTarget() {
+        current_anno_target = new Target()
+        anno_targets.push(current_anno_target);
+    }
+    
+    function selectTarget(trg_ind) {
+        console.log("selectTarget: " + trg_ind)
+        current_anno_target = anno_targets[trg_ind];
+    }
+
+    function videoClicked(ev) {
+        
+        var vplayer = document.getElementById("videoplayer");
+        var ctime = vplayer.currentTime;
+        var src = vplayer.src;
+        
+        if (ctime > 0.0) {
+            var relcoords = client2Rel(ev.clientX, ev.clientY)
+            var x = relcoords[0]
+            var y = relcoords[1]
+            
+            if (current_anno_target == null) {
+                //console.log("create target")
+                createTarget();
+                 
+            }
+            addTargetPoint(current_anno_target, x, y, ctime)
+            
+            //console.log(current_anno_target)
+            
+            updateTargetList()
+        }
+        
+        
+    }
+
+    
+    function updateTargetIcon() {
+       
+        var vplayer = document.getElementById("videoplayer");
+        var target_icon_tmpl = document.getElementById("target_icon_tmpl");
+        var ctime = vplayer.currentTime;
+        
+        
+        
+
+        var src_trgs = anno_targets; // getSourceTargets(vplayer.src, targets);
+        
+
+        
+        //console.log('src_trgs: ' + src_trgs)
+        
+        for (var i=0; i < src_trgs.length; i++) {
+            
+            // copy a new target icon if not present
+            if (! anno_target_icons.hasOwnProperty(i)) {
+                anno_target_icons[i] = target_icon_tmpl.cloneNode(true);
+                anno_target_icons[i].id = "target_icon_" + Math.round(src_trgs[i].id); 		
+                document.body.appendChild(anno_target_icons[i]);
+            }
+            var trg = src_trgs[i];
+            
+            if ((trg.t[0] <= ctime ) && (ctime < trg.end_t)) {
+
+                var delta_t = trg.t.map(function(x) { return x - ctime });
+                var last_neg = findLastNegIndex(delta_t);
+
+                //if (last_neg != null) {
+                var videoCoords = rel2Video(trg.x[last_neg], trg.y[last_neg]);
+                
+                anno_target_icons[i].style.left = videoCoords[0];
+                anno_target_icons[i].style.top = videoCoords[1];
+                anno_target_icons[i].style.display = "block";
+                
+                // If it is the current, use another color
+                if (current_anno_target != null && trg.id == current_anno_target.id) {
+                    anno_target_icons[i].style.background = "red";
+                } else {
+                    anno_target_icons[i].style.background = "green";
+                }
+                //}
+            } else { // make it hide if not currently visible
+                anno_target_icons[i].style.display = "none";
+            }
+        }
+        
+    }
+
+
+    function updateTargetList() {
+        var vplayer = document.getElementById("videoplayer")
+        var src_trgs = anno_targets; // getSourceTargets(vplayer.src, targets);
+        
+        var html = "";
+        
+        html += '<p>';
+        for (var j=0; j<src_trgs.length; j++) {
+            html += '<button onclick="selectTarget('+ j +'); updateTargetList();">'+ j + '</button>'; 
+        }
+        html += '<button onclick="createTarget(); updateTargetList();">+</button>'; 
+
+        html += '</p>';
+        for (var j=0; j<src_trgs.length; j++) {        
+            if (current_anno_target != null && current_anno_target.id == src_trgs[j].id) {
+                var trg = current_anno_target;
+               
+                html += '<p>';
+                html += 'Current target: ' + j + '<button onclick=delAnnoTarget('+ j +'); updateTargetList();">X</button>';
+                html += '</p>';
+                
+                html += "<table>";
+            
+                // Show points
+                for (var i=0; i<trg.t.length; i++) {  
+                
+                    var t = trg.t[i].toPrecision(3);
+                    var x =  trg.x[i].toPrecision(3);
+                    var y = trg.y[i].toPrecision(3);
+                    var end_t = trg.end_t.toPrecision(3);
+                    var line = "".concat("<tr><td>",
+                                            '<button onclick="seekVideo('+t+')">'+t+'</button>',
+                                            "</td><td>",
+                                            x,
+                                            "</td><td>",
+                                            y,
+                                            "</td><td>",
+                                            '<button onclick="delTargetPoint(anno_targets[' + j +'],'+ i +'); updateTargetList();">X</button>',
+                                            "</td></tr>");
+                    html += line;
+                }
+                    
+                // Show end
+                if (end_t == Infinity) {
+                    html +='<tr><td>End: Infinity</td><td colspan="3"></td></tr>'
+                } else {
+                    html += '<tr><td>';
+                    html += '<button onclick="seekVideo('+end_t+')">End: '+end_t+'</button>';
+                    html += '</td><td colspan="2"></td>';
+                    html += '<td>';
+                    html +='<button onclick="delTargetEnd(anno_targets['+ j +']); updateTargetList();">X</button>';
+                    html +='</td></tr>';
+                }
+                html += "</table>"
+            }
+        }
+        
+        var targetlist = document.getElementById("targetlist");
+        targetlist.innerHTML = html;
+    }
+    
+    function endTarget() {
+        var vplayer = document.getElementById("videoplayer");
+        current_anno_target.end_t = vplayer.currentTime;
+        updateTargetList()
+        saveTarget(current_anno_target)
+        
+    }
+    
+    function pauseVideo() {
+        var vplayer = document.getElementById("videoplayer");
+        vplayer.pause();
+    }
+    
+    function playPauseVideo() {
+        var vplayer = document.getElementById("videoplayer");
+        if (!vplayer.paused) {
+            vplayer.pause();
+        } else {
+            vplayer.play();
+        }
+    }
+    
+    function playVideo(rate) {
+        //console.log("playVideo " + rate)
+        var vplayer = document.getElementById("videoplayer");
+        vplayer.playbackRate = rate;
+        vplayer.play();
+        
+    }
+
+
+    function saveTarget(trg) {
+        var src = document.getElementById("videoplayer").src;
+        var clipname = src.split("/").pop();
+
+        all_targets = loadLocalTargets();
+        
+        // // should be redundant if the targets is loaded properly
+        //if (! targets.hasOwnProperty(clipname)) { 
+        //    targets[clipname] = [];
+        //}
+        //console.log(typeof targets);
+        all_targets[clipname].push(trg);
+        
+        saveLocalTargets(all_targets);
+    }
+    
+    function seekVideo(time, relative=false) {
+       var vplayer = document.getElementById("videoplayer")
+       if (relative) { // time is relative to the currentTime
+            vplayer.currentTime = vplayer.currentTime + time;
+       } else {
+            vplayer.currentTime = time;
+       }
+    }
+    
+    $(document).ready(function(){	
+           
+        // Events
+        // When video is playing or seeked, update the target icons
+        var vplayer = document.getElementById("videoplayer");
+        
+        vplayer.addEventListener("playing", function() {
+            if (update_target_icon_interval_id == null) { // do not make duplicates
+                update_target_icon_interval_id = setInterval( function(){ updateTargetIcon() }, 200); 
+            }
+        });
+        
+        vplayer.addEventListener("pause", function() {
+            clearInterval(update_target_icon_interval_id);
+            update_target_icon_interval_id = null;
+        });
+                
+                
+        vplayer.addEventListener("seeked", function() { updateTargetIcon() });
+
+        vplayer.addEventListener("canplay", function() { updateTargetList() });
+ 
+        // Keypresses
+        $(document).keypress(function(event){	
+            //console.log("rairairai" + event.which + " " + "2".charCodeAt(0))
+            switch (event.which) {
+                case "a".charCodeAt(0):
+                    seekVideo(-2, true);
+                    break;
+                case "s".charCodeAt(0):
+                    playPauseVideo()
+                    break;
+                case  "d".charCodeAt(0):
+                    seekVideo(2, true);
+                    break;
+                case "e".charCodeAt(0):
+                    endTarget()
+                    break;
+                case "1".charCodeAt(0): 
+                    playVideo(1.0);
+                    break;
+                case "2".charCodeAt(0): 
+                    playVideo(0.5);
+                    break;
+                case "3".charCodeAt(0):
+                    playVideo(0.33);
+                    break;
+                case "4".charCodeAt(0):
+                    playVideo(0.25);
+                    break;
+            }   
+        });
+       
+        
+    });
+    
+    
+    
+    </script>
+</head>
+
+<body>
+
+<div>
+<input id="videosrc" type="file"/>
+<button onclick="loadVideo(event)">Load</button>
+<button onclick="playVideo(1.0)">Play</button>
+<button onclick="playVideo(0.5)">Play 0.5 speed</button>
+<button onclick="playVideo(0.25)">Play 0.25 speed</button>
+<button onclick="pauseVideo()">Pause</button>
+
+<button onclick="seekVideo(-10, true)">-10</button>
+<button onclick="seekVideo(-1, true)">-1</button>
+<button onclick="seekVideo(1, true)">1</button>
+<button onclick="seekVideo(10, true)">10</button>
+<button onclick="endTarget()">End target</button>
+</div>
+
+
+
+
+
+<video id="videoplayer"
+       onclick="videoClicked(event)"    
+       src="">
+</video>
+
+<div class="target_icon" id="target_icon_tmpl">
+X
+</div>
+
+
+<div id="targetlist">
+rai
+</div>
+
+
+</div>
+
+
+
+
+
+</body>
+</html>
