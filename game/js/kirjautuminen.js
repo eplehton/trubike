@@ -19,24 +19,25 @@ jQuery(function(){
 	});
     
     //kirjautumisominaisuudet
+    
 	$("#kirjautuminen").text(function( index ) {
 		var kayttaja = sessionStorage.getItem("kayttaja")
 		if (kayttaja != null) {
 			$("#kirjautuminen").html(kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä
 			};
-	showPointsBanner();
+        //showPointsBanner();
     });
 
     $("#kirjautumisruutu").on('submit', function(e) {
         if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
             return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
         } else {
-            tallennaNimi(($("#kayttaja").val()));
+            setPlayer(($("#kayttaja").val()));
         };
     });
     
     $("#kirjautuminen").text(function( index ) {
-        var kayttaja = sessionStorage.getItem("kayttaja")
+        var kayttaja = sessionStorage.getItem("player_id")
         if (kayttaja != null) {
             $("#kirjautuminen").html(kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
         };

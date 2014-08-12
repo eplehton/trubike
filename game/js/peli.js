@@ -1,8 +1,9 @@
 function Shot(x, y, t, src){
-    this.x = x
-    this.y = y
-    this.t = t
+    this.t = t;
+    this.x = x;
+    this.y = y;
     this.src = src;
+    this.hit = null;
 }
 
 function Target(str=null){
@@ -29,11 +30,10 @@ function Target(str=null){
 }
 
 addTargetPoint = function(trg, x, y, t) {
-
     var loc = findInsertIndex(trg, t);
-    trg.splice(loc, 0, t);
-    trg.splice(loc, 0, x);
-    trg.splice(loc, 0, y);
+    trg.t.splice(loc, 0, t);
+    trg.x.splice(loc, 0, x);
+    trg.y.splice(loc, 0, y);
 }
 delTargetEnd = function(trg) {
     console.log("delTargetEnd")
@@ -97,7 +97,6 @@ function loadLocalTargets() {
     // Load targets from JSON data stored on localstorage, from item "targets"
     var targets = {};
     var targets_s = localStorage.getItem("targets");
-    console.log("targets_s: " + targets_s);
     if (targets_s != null) { // if not available, make empty dict
         targets = JSON.parse(targets_s);
     } 
@@ -117,57 +116,60 @@ function getSourceTargets(all_targets, src) {
     // If the clipname is not present, an empty array is returned for convenience. 
     var clipname = src.split("/").pop();
     var src_trgs = all_targets[clipname];
-    console.log(src +" - "+ clipname + " - " + src_trgs);
+    //console.log(src +" - "+ clipname + " - " + src_trgs);
     if (typeof src_trgs == "undefined") { // if empty
         src_trgs = [];
     }
     
-    console.log(src_trgs);
     return src_trgs;
 }
 
 var clipset_pos = 0;
 
-var clipset =  [ ["1", "../clips/potkulautailija.mp4"] , 
-                 ["2", "../clips/isoroba.mp4"], 
-                 ["3", "../clips/jalankulkija_ja_suojatie.mp4" ] , 
-                 ["4", "../clips/jalankulkijat2.mp4"], 
-                 ["5", "../clips/vastaantulijat.mp4"], 
-                 ["6", "../clips/ratikka.mp4"]];
+var clipset =  [ ["1", "../clips/jalankulkijat.mp4"],
+                 ["2", "../clips/potkulautailija.mp4"] , 
+                 ["3", "../clips/isoroba.mp4"], 
+                 ["4", "../clips/jalankulkija_ja_suojatie.mp4" ] , 
+                 ["5", "../clips/jalankulkijat2.mp4"], 
+                 ["6", "../clips/vastaantulijat.mp4"], 
+                 ["7", "../clips/ratikka.mp4"]];
 
 var correct_hit_interval = 2.5;
    
 function checkTargetHit(shot){
-    var vplayer = document.getElementById("videoplayer");
-    var ctime = vplayer.currentTime;
-	var hit_radius = 100;
-    var hit_interval = correct_hit_interval;
+    // version 2 using anno targets
 
-	for (var h = 0; h < targets[clipset_pos].length; h++){
-		var targett = targets[clipset_pos][h][2];
-		var targetx = targets[clipset_pos][h][0];
-		var targety = targets[clipset_pos][h][1];
+    var all_targets = loadLocalTargets(); // this should not be done everytime, cache
+    var trgs = getSourceTargets(all_targets, shot.src);
 
-		if (Math.abs(shot.t - targett) < hit_interval){
-		   var d2 = Math.sqrt(Math.pow(shot.x - targetx, 2) + Math.pow(shot.y - targety, 2));
-		   if (d2 < hit_radius){
-				return true;
-		   };
+	var hit_radius = 0.1;
+    
+	for (var i=0; i< trgs.length; i++) {
+		var trg = trgs[i]; 
+        
+        var loc = findInsertIndex(trg.t, shot.t);
+        if ((loc > 0) && (shot.t < trg.end_t)) {
+            loc = loc - 1; // set the right index to the target to be compared 
+            var d2 = Math.sqrt(Math.pow(shot.x - trg.x[loc], 2) + Math.pow(shot.y - trg.y[loc], 2));
+            if (d2 < hit_radius){
+                return true;
+            };
 		};
 	};
     return false;
-    console.log(shot.t, ctime);
 };
 
 function registerShot(x, y, t) {
-    console.log("x=" + x + " y=" + y + " time=" + t);
-    console.log("Suhteellinen sijainti: " + video2rel(x,y));
-    console.log(rel2video(video2rel(x,y)));
-    src = clipset[clipset_pos][1];
-    var shot = new Shot(x, y, t, src);
+    var src = clipset[clipset_pos][1];
+    var relCoords = client2Rel(x, y);
+
+    console.log("x=" + x + " y=" + y + " time=" + t + " src=" + src);
+    console.log("Suhteellinen sijainti: " + relCoords);
+
+    
+    var shot = new Shot(relCoords[0], relCoords[0], t, src);
     shots.push(shot);
     return shot;
-    //console.log(hit_data[hit_data.length-1][0])
 }
 
 function startVideo() {
@@ -209,12 +211,15 @@ function videoClicked(ev) {
         hp.style.top = y  + "px"
         
         var shot = registerShot(x, y, ctime) 								//rekisteröi klikkauksen kordinaatit ja ajan
-        var was_hit = checkTargetHit(shot) 									// tsekkaa osuiko targettiin
+        var was_hit = checkTargetHit(shot)     						// tsekkaa osuiko targettiin
         console.log("was_hit: " + was_hit) 									//printtaa konsoliin "was_hit: " ja true tai false
 
 		if (was_hit){
+            shot.hit = true;
 			correct_shots.push(shot)
-			}
+        } else {
+            shot.hit = false;
+        }
 
 
 		var k = correct_shots.length-1
@@ -229,8 +234,8 @@ function videoClicked(ev) {
 			} 
 			showPoints()
             hp.style.background = "green"
-            thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
-            thplayer.play()  												//soittaa audioplayerista äänen että osuttiin oikeaan
+            //thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
+            //thplayer.play()  												//soittaa audioplayerista äänen että osuttiin oikeaan
         }
 
     }
@@ -247,7 +252,7 @@ function videoEnded(ev) {
 	temp_videoshots.push(line)
 
     sessionStorage.setItem("videoshots_" + (clipset_pos+1), temp_videoshots)    //tekee sessionstorageen shotslistan nimeltä "videoshots_0"  jonka value on ekan videon shotit, sitten videoshots_1.....
-
+        
 	var video = document.getElementById("videoplayer")
     video.src = "" 
     clipset_pos += 1
@@ -262,7 +267,23 @@ function videoEnded(ev) {
 
 	sessionStorage.setItem("Points", points);
 
+    saveShots();
 }
+
+function saveShots() {
+    var gameshots_str = localStorage.getItem("gameshots");
+    var gameshots = null;
+    if (gameshots_str == null) {
+        gameshots = {};
+    } else {
+        gameshots = JSON.parse(gameshots_str);
+    }
+    
+    var player_id = sessionStorage.getItem("player_id");
+    gameshots[player_id] = shots;  
+    localStorage.setItem("gameshots", JSON.stringify(gameshots));
+}
+
 
 function submitData() {
     var req = XMLHttpRequest()
@@ -285,8 +306,8 @@ function submitData() {
 
 }
 
-function tallennaNimi(nimi) {
-	sessionStorage.setItem("kayttaja", nimi); 
+function setPlayer(player_id) {
+	sessionStorage.setItem("player_id", player_id); 
 
 }
 

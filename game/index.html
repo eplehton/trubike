@@ -8,6 +8,14 @@
     <script language="javascript" type="text/javascript"></script>
 	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/kirjautuminen.js"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){	
+            var player_id = sessionStorage.getItem("player_id");
+            if (player_id == null) {
+                $("kirjautumiskentta").display = "block";
+            }
+        });
+    </script>
 
 </head>
 <body>
@@ -18,7 +26,7 @@
                 <a href=""><li>Etusivu</li></a>
                 <a href=""><li>Pisteet</li></a>
                 <a href=""><li>Ohje</li></a>
-                <a href="kirjaudu.html"><li>Kirjaudu</li></a>
+                <a href="kirjaudu.html"><li id="kirjautuminen">Kirjaudu</li></a>
             </ul>
         </nav>
         </div>
@@ -40,6 +48,21 @@
 		<h1> Ohjeet </h1> Tässä pelissä sinun tehtävänäsi on bla bla bla bla. Valitse valikosta haluamasi taso. Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. Pisteesi näkyvät sivun alalaidassa. Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>	
     </div>
 </div>
+
+<div id="kirjautumiskentta">
+
+    
+        <h1> Tervetuloa pyöräilypeliin! </h1>
+        <p> Tässä pelissä pääset etsimään vaaroja liikenteestä. Sinulle näytetään videoita, ja tehtävänäsi on klikata vaaroja heti kun näet ne. Jokaisesta oikasta osumasta saat yhden pisteen, ja pisteet näkyvät laatikossa ruudun alareunassa. Pisteesi näet myös tasojen välillä headerista. Aloita ensimmäisestä tasosta, ja jatka sitten seuraaville. Päästäksesi seuraavalle tasolle, sinulla täytyy olla tietty määrä pisteitä edellisellä tasolla. Ruudun yläreunasta löytyy ohjenappi, josta saat apua. </p>
+       
+        <p>Pelataksesi sinun täytyy kirjautua.</p>
+        <form id="kirjautumisruutu" method="post" action="index.html">
+            <input id="kayttaja" type="text"  placeholder="Käyttäjänimi" /> <br/><br/>
+            <input id="salasana" type="password" placeholder="Salasana" /> <br/><br/>
+            <input id="submit" class="submit" type="submit" value="Kirjaudu" />
+        </form>   
+</div>
+
 
 </body>
 </html>
