@@ -5,100 +5,66 @@
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 	<title> Peli </title>
 	
-	<script language="javascript" type="text/javascript" src="jquery-2.1.0.min.js"></script>
+	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
 	
-	<script language="javascript" type="text/javascript">
-		$(document).ready(function(){	
-		
-			$("#instruction").click(function(){/* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
-				var instr = document.getElementById("instruction")
-				instr.style.display = "none"; 
-				console.log("RUIRUIRUIRUIRUIRUIR")
-				startVideo(); 
-			}); 
-		
-	
-			showPoints();
+    <script type="text/javascript" src="js/peli.js"></script>
+    <script type="text/javascript" src="js/kirjautuminen.js"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){	
+            $("#instruction").click(function(){/* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
+                var instr = document.getElementById("instruction")
+                instr.style.display = "none"; 
+                console.log("Aloitetaan toisto")
+                startVideo(); 
+            }); 
+                showPoints();
 
-		
-		   
-			$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
-				console.log("RAIRAIRAIRAIRAI")  
-				var elem = document.getElementById("klipinloppu")
-			    elem.style.display = "none"; 			
-												
-				startVideo();
-				
-			});
+            $("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
+                console.log("Seuraava video")  
+                var elem = document.getElementById("klipinloppu")
+                elem.style.display = "none"; 			
+                startVideo();		
+            });
+        });
+    </script>
 
-			
-
-		});
-		
-		
-		
-	</script>
-	
-
-	
-	<script type="text/javascript" src="peli.js"></script>
-	
-	
-	
 </head>
 
 <body>
+    <a id="stop" href="index.html" class="btn btn-large">Keskeytä peli
+    </a>
+    
+    <div id="pisteruutu">PISTEET: 
+    </div>
 
-<a href="index.html">  
-	<div id="keskeyta">KESKEYTÄ PELI </div>
-</a>
+    <div class="ohjeruutu" id="instruction">
+        <p> Tämä on ohjeruutu jossa sinulle annetaan ohjeita pelistä. Tässä pelissä sinun täytyy tehdä sitä ja tätä bla bla. Klikkaa jostakin kohtaa tätä ruutua aloittaaksesi pelin. 
+        </p>
+    </div>
 
+    <div class="ohjeruutu hidden" id="klipinloppu">
+        <p> Hienoa! Selvisit ensimmäisestä klipistä. Sait näin ja näin monta pistettä! Jatka klikkaamalla tätä ruutua </p>
+        </div>
 
-<div id="pisteruutu">
-	 PISTEET: 
-</div>
-
-
-	<div class="ohjeruutu" id="instruction">
-		<p> Tämä on ohjeruutu jossa sinulle annetaan ohjeita pelistä. </p>
-		<p> Tässä pelissä sinun täytyy tehdä sitä ja tätä bla bla. </p>
-		<p> Klikkaa jostakin kohtaa tätä ruutua aloittaaksesi pelin. </p>
-
-	</div>
-	
-
-	<div class="ohjeruutu hidden" id="klipinloppu">
-		<p> Hienoa! Selvisit ensimmäisestä klipistä. </p>
-		<p> Sait näin ja näin monta pistettä! </p>
-		<p> Jatka klikkaamalla tätä ruutua </p>
-
-	</div>
-	
-	<a href="index.html">
-		<div class="ohjeruutu hidden" id="tasonloppu">
-			<p> Hienoa! Selvisit ensimmäisestä tasosta. </p>
-			<p> Sait näin ja näin monta pistettä! </p>
-			<p> Jatka seuraavalle tasolle klikkaamalla tätä ruutua. </p>
-
-		</div>
-	</a>
-	
-	
-	
-	<div onclick=videoClicked(event)>
-    <video id="videoplayer" 
-        onended=videoEnded(event)
-        src="">
-    </video> 
-	</div>
-
-	
-	<div id="hitpoint_tmpl" class="hitpoint">
-	X
-	</div>
-	
-	<audio id="targethitplayer" src="media/targethit.mp3"> </audio>
-
-
+        <a href="index.html">
+            <div class="ohjeruutu hidden" id="tasonloppu">
+                <p> Hienoa! Selvisit ensimmäisestä tasosta. Sait näin ja näin monta pistettä! Jatka seuraavalle tasolle klikkaamalla tätä ruutua. </p>
+            </div>
+        </a>
+        
+        <div>
+            <video id="videoplayer" onclick=videoClicked(event)
+                muted
+                onended=videoEnded(event)
+                src="">
+            </video> 
+        
+        
+            <div id="hitpoint_tmpl" class="hitpoint">
+            X
+            </div>
+        </div>
+	   
+    <audio id="targethitplayer" src="media/targethit.mp3">           </audio>
 </body>
 </html>
