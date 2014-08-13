@@ -1,4 +1,4 @@
-function Shot(x, y, t, src){
+function Shot(x, y, t, src) {
     this.t = t;
     this.x = x;
     this.y = y;
@@ -6,27 +6,12 @@ function Shot(x, y, t, src){
     this.hit = null;
 }
 
-function Target(str=null){
-     //if (str == null) {
+function Target(){
     this.id = Date.now();
     this.x = [];
     this.y = [];
     this.t = [];
     this.end_t = Infinity;
-    /*} else {
-        var parts = str.split(';');
-        var id = parts[0];
-        var t = parts[1].split(',');
-        var x = parts[2].split(',');
-        var y = parts[3].split(',');
-        var end_t = parts[4];
-        
-        this.id = parseInt(id);
-        this.t = t.map(parseFloat);
-        this.x = x.map(parseFloat);
-        this.y = y.map(parseFloat);
-        this.end_t = parseFloat(end_t)
-    }*/
 }
 
 
