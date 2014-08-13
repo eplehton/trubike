@@ -1,4 +1,4 @@
-jQuery(function(){
+$(function(){
 	//ohjeiden näyttö ja piilotus
 	if (sessionStorage.getItem("isFirst") != "false") {
 			var b = document.getElementById("alkuohje")

@@ -4,42 +4,54 @@
 	<meta charset="UTF-8">
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 	<title> Pelaa </title>
-	
-    <script language="javascript" type="text/javascript"></script>
-	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/kirjautuminen.js"></script>
-
 </head>
 <body>
+    <div class="background">
+    </div>
     <header>
         <div class="container clearfix">
         <nav>
             <ul>
-                <a href=""><li>Etusivu</li></a>
                 <a href=""><li>Pisteet</li></a>
-                <a href=""><li>Ohje</li></a>
-                <a href="kirjaudu.html"><li>Kirjaudu</li></a>
+                <li id="ohje">Ohje</li>
+                <li id="kirjaudu">Kirjaudu</li>
             </ul>
         </nav>
         </div>
     </header>
-<div class="container">
-    <div class="grid">
-    <div id="alkuohje">
+<div class="grid grid-pad">
+    <div id="alkuohje" class="col-1-3 push-1-3">
         <h1> Tervetuloa pyöräilypeliin! </h1>
         <p> Tässä pelissä pääset etsimään vaaroja liikenteestä. Sinulle näytetään videoita, ja tehtävänäsi on klikata vaaroja heti kun näet ne. Jokaisesta oikasta osumasta saat yhden pisteen, ja pisteet näkyvät laatikossa ruudun alareunassa. Pisteesi näet myös tasojen välillä headerista. Aloita ensimmäisestä tasosta, ja jatka sitten seuraaville. Päästäksesi seuraavalle tasolle, sinulla täytyy olla tietty määrä pisteitä edellisellä tasolla. Ruudun yläreunasta löytyy ohjenappi, josta saat apua. </p>
     </div>
-    
-    <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
-        <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
-        <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
-        <a href="peli.html" class="btn btn-large">Ensimmäinen kenttä</a>
-</div>
-
-<div class="ohjeruutu hidden">
-		<h1> Ohjeet </h1> Tässä pelissä sinun tehtävänäsi on bla bla bla bla. Valitse valikosta haluamasi taso. Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. Pisteesi näkyvät sivun alalaidassa. Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>	
+    <div class="ohjeruutu col-1-3 push-1-3">
+		<h1> Ohjeet </h1><p>Tässä pelissä sinun tehtävänäsi on bla bla bla bla. Valitse valikosta haluamasi taso. Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. Pisteesi näkyvät sivun alalaidassa. Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>	
     </div>
 </div>
+<div class="grid grid-pad">
+    <div class="col-1-6 level">
+        <div class="level-picture">
+            <img src="img/Road.jpg" width="200px">
+        </div>
+        <div class="circle">
+        </div>
+        <h3>Taajamat</h3>
+    </div>
+    <div class="col-1-6 level">
+        <div class="level-picture">
+            <img src="img/Road.jpg" width="200px">
+        </div>
+        <a href="peli.html">
+            <div class="circle">
+            </div>
+        </a>
+    </div>
+</div>
+    
+    
+<script language="javascript" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="js/PopUp.js"></script>
 
 </body>
 </html>
