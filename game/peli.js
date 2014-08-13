@@ -88,7 +88,7 @@ function stopVideo() {
    vplayer.stop()
 }
 
-var i = 0
+//var i = 0
 
 function videoClicked(ev) {
     
