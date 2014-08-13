@@ -97,7 +97,7 @@ alkuohje p {
 /* KIRJAUTUMINEN --------------------------------------------------------------------------------------------------------------------------------------
 */
 
-#kirjautumiskenttä{
+#kirjautumiskentta{
 	font-family:serif;
 	font-size:20px;
  	height:100%;
@@ -105,7 +105,7 @@ alkuohje p {
     text-align: center;
 	border-radius:10px;
 	background:#0292C0;
-    opacity: 0.8;
+    #opacity: 0.8;
 	padding-top: 15px;
 	padding-bottom: 15px;
 	position: fixed;
