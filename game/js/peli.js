@@ -191,8 +191,8 @@ function videoClicked(ev) {
 			} 
 			showPoints()
             hp.style.background = "green"
-            //thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
-            //thplayer.play()  												//soittaa audioplayerista äänen että osuttiin oikeaan
+            thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
+            thplayer.play()  												//soittaa audioplayerista äänen että osuttiin oikeaan
         }
 
     }
