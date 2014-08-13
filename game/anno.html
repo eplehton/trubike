@@ -29,7 +29,9 @@
     .target_icon {
         width: 2em;
         height: 2em;
+        border-radius: 50%;
         background-color: red;
+        opacity: 50%;
         z-index: 5;
         display: none;
         position: absolute;
@@ -45,6 +47,35 @@
     
     var anno_targets = null;
     var anno_target_icons = []; // icon elements to display each target
+    
+    addTargetPoint = function(trg, x, y, t) {
+        var loc = findInsertIndex(trg.t, t);
+        trg.t.splice(loc, 0, t);
+        trg.x.splice(loc, 0, x);
+        trg.y.splice(loc, 0, y);
+    }
+    delTargetEnd = function(trg) {
+        console.log("delTargetEnd")
+        trg.end_t = Infinity;
+    }
+
+    delTargetPoint = function(trg, loc) {
+        console.log("delTargetPoint")
+        trg.x.splice(loc, 1);
+        trg.y.splice(loc, 1);
+        trg.t.splice(loc, 1);
+    }
+
+    /*Target.prototype.toString = function() {
+        var s = "" + this.id
+        s += ';' + this.t.map( function(x) { return x.toPrecision(3); }).join();
+        s += ';' + this.x.map( function(x) { return x.toPrecision(3); }).join();
+        s += ';' + this.y.map( function(x) { return x.toPrecision(3); }).join();
+        s += ';' + this.end_t.toPrecision(3);
+        return s
+    }*/
+
+
     
     
     function delAnnoTarget(trg_ind) {
@@ -280,12 +311,11 @@
         var src = document.getElementById("videoplayer").src;
         var clipname = src.split("/").pop();
 
-        all_targets = loadLocalTargets();
+        var all_targets = loadLocalTargets();
         
-        // // should be redundant if the targets is loaded properly
-        //if (! targets.hasOwnProperty(clipname)) { 
-        //    targets[clipname] = [];
-        //}
+        if (! all_targets.hasOwnProperty(clipname)) { 
+            all_targets[clipname] = [];
+        }
         //console.log(typeof targets);
         all_targets[clipname].push(trg);
         

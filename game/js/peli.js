@@ -29,34 +29,6 @@ function Target(str=null){
     }*/
 }
 
-addTargetPoint = function(trg, x, y, t) {
-    var loc = findInsertIndex(trg, t);
-    trg.t.splice(loc, 0, t);
-    trg.x.splice(loc, 0, x);
-    trg.y.splice(loc, 0, y);
-}
-delTargetEnd = function(trg) {
-    console.log("delTargetEnd")
-    trg.end_t = Infinity;
-}
-
-delTargetPoint = function(trg, loc) {
-    console.log("delTargetPoint")
-    trg.x.splice(loc, 1);
-    trg.y.splice(loc, 1);
-    trg.t.splice(loc, 1);
-}
-
-/*Target.prototype.toString = function() {
-    var s = "" + this.id
-    s += ';' + this.t.map( function(x) { return x.toPrecision(3); }).join();
-    s += ';' + this.x.map( function(x) { return x.toPrecision(3); }).join();
-    s += ';' + this.y.map( function(x) { return x.toPrecision(3); }).join();
-    s += ';' + this.end_t.toPrecision(3);
-    return s
-}*/
-
-Target.prototype
 
 var points = 0;
 
@@ -99,7 +71,7 @@ function loadLocalTargets() {
     var targets_s = localStorage.getItem("targets");
     if (targets_s != null) { // if not available, make empty dict
         targets = JSON.parse(targets_s);
-    } 
+    }
     return targets;
 }
 
