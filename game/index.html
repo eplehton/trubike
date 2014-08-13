@@ -6,15 +6,42 @@
 	<title> Pelaa </title>
 	
     <script language="javascript" type="text/javascript"></script>
+	<script type="text/javascript" src="js/peli.js"></script>
 	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/kirjautuminen.js"></script>
     <script language="javascript" type="text/javascript">
-        $(document).ready(function(){	
-            var player_id = sessionStorage.getItem("player_id");
-            if (player_id == null) {
-                $("kirjautumiskentta").show();
-            }
-        });
+			$("#alkuohje").click(function(){
+				$("#alkuohje").hide("slow");
+			});
+    
+			$("ohje").click(function(){
+				$(".ohjeruutu").show("fast");
+			});
+		
+			$(".ohjeruutu").click(function(){
+				$(".ohjeruutu").hide("slow");
+			});
+	
+	
+			$(document).ready(function(){	
+				var player_id = sessionStorage.getItem("player_id");
+				if (player_id == null) {
+					$("kirjautumiskentta").show();
+				} 
+
+			
+				$("#submit_login").click(function(e) {
+					if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
+						return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
+					} else {
+					    console.log("rairairai");
+						setPlayer(($("#kayttaja").val()));
+						var b = document.getElementById("kirjautumiskentta")
+						b.style.display = "block";
+					};
+				});
+			});
+    
+		
     </script>
 
 </head>
@@ -56,11 +83,11 @@
         <p> Tässä pelissä pääset etsimään vaaroja liikenteestä. Sinulle näytetään videoita, ja tehtävänäsi on klikata vaaroja heti kun näet ne. Jokaisesta oikasta osumasta saat yhden pisteen, ja pisteet näkyvät laatikossa ruudun alareunassa. Pisteesi näet myös tasojen välillä headerista. Aloita ensimmäisestä tasosta, ja jatka sitten seuraaville. Päästäksesi seuraavalle tasolle, sinulla täytyy olla tietty määrä pisteitä edellisellä tasolla. Ruudun yläreunasta löytyy ohjenappi, josta saat apua. </p>
        
         <p>Pelataksesi sinun täytyy kirjautua.</p>
-        <form id="kirjautumisruutu" method="post" action="index.html">
+        <div id="kirjautumisruutu" >
             <input id="kayttaja" type="text"  placeholder="Käyttäjänimi" /> <br/><br/>
             <input id="salasana" type="password" placeholder="Salasana" /> <br/><br/>
-            <input id="submit" class="submit" type="submit" value="Kirjaudu" />
-        </form>   
+            <input id="submit_login" type="submit" value="Kirjaudu" />
+        </div>   
 </div>
 
 
