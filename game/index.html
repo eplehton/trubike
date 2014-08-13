@@ -30,13 +30,14 @@
 
 			
 				$("#submit_login").click(function(e) {
+                    console.log("rairairai0");
 					if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
 						return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
 					} else {
 					    console.log("rairairai");
 						setPlayer(($("#kayttaja").val()));
 						var b = document.getElementById("kirjautumiskentta")
-						b.style.display = "block";
+						b.style.display = "none";
 					};
 				});
 			});

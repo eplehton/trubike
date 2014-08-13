@@ -112,7 +112,7 @@ alkuohje p {
     z-index: 10;
 	top:0%;
 	#right:30%;
-    display: hidden; // EL 12.8.
+    display: none; // EL 12.8.
 }
 	
 #kayttaja {

@@ -265,7 +265,6 @@ function submitData() {
 
 function setPlayer(player_id) {
 	sessionStorage.setItem("player_id", player_id); 
-
 }
 
 function showPoints() {  
