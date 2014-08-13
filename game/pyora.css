@@ -20,7 +20,7 @@ body {
     padding: 80px;
 }
 		
-#alkuohje {
+/*#alkuohje {
 	font-size:110%;
 	border-radius:10px;
     padding-top: 20px;
@@ -36,7 +36,7 @@ body {
     align-content: center;
 	text-align:center;	
     cursor: pointer;
-	}
+	} */
 		
 #alkuohje h1{
     font-weight: 100;
@@ -112,16 +112,17 @@ alkuohje p {
     z-index: 10;
 	top:0%;
 	#right:30%;
-    display: none; // EL 12.8.
+    display: none; /*EL 12.8. */
 }
 	
-#kayttaja {
+#kayttaja {	
 	border-radius:10px;
 	direction: ltr;
 	height: 30px;
 	width:300px;
 	font-size: 16px;
 }
+	
 	
 #salasana {
 	border-radius:10px;
@@ -130,6 +131,7 @@ alkuohje p {
 	width:300px;
 	font-size: 16px;
 }
+
 	
 /* VIDEO -----------------------------------------------------------------------------------------------------------------------------------*/
 	
