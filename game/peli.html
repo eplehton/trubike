@@ -7,25 +7,27 @@
 	
 	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
 	
-<script language="javascript" type="text/javascript">
-    $(document).ready(function(){	
-		$("#instruction").click(function(){/* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
-            var instr = document.getElementById("instruction")
-            instr.style.display = "none"; 
-            console.log("Aloitetaan toisto")
-            startVideo(); 
-        }); 
-			showPoints();
+    <script type="text/javascript" src="js/peli.js"></script>
+    <script type="text/javascript" src="js/kirjautuminen.js"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){	
+            $("#instruction").click(function(){/* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
+                var instr = document.getElementById("instruction")
+                instr.style.display = "none"; 
+                console.log("Aloitetaan toisto")
+                startVideo(); 
+            }); 
+                showPoints();
 
-        $("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
-            console.log("Seuraava video")  
-            var elem = document.getElementById("klipinloppu")
-            elem.style.display = "none"; 			
-            startVideo();		
+            $("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
+                console.log("Seuraava video")  
+                var elem = document.getElementById("klipinloppu")
+                elem.style.display = "none"; 			
+                startVideo();		
+            });
         });
-    });
-</script>
-	<script type="text/javascript" src="js/peli.js"></script>
+    </script>
+
 </head>
 
 <body>
@@ -50,17 +52,18 @@
             </div>
         </a>
         
-        <div onclick=videoClicked(event)>
-            <video id="videoplayer"
+        <div>
+            <video id="videoplayer" onclick=videoClicked(event)
                 muted
                 onended=videoEnded(event)
                 src="">
             </video> 
-        </div>
         
-        <div id="hitpoint_tmpl" class="hitpoint">
-	   X
-	   </div>
+        
+            <div id="hitpoint_tmpl" class="hitpoint">
+            X
+            </div>
+        </div>
 	   
     <audio id="targethitplayer" src="media/targethit.mp3">           </audio>
 </body>

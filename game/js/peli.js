@@ -1,72 +1,132 @@
-function Shot(x, y, t, src){
+function Shot(x, y, t, src) {
+    this.t = t;
     this.x = x;
     this.y = y;
-    this.t = t;
     this.src = src;
-};
+    this.hit = null;
+}
 
-function Target(src){
+function Target(){
+    this.id = Date.now();
     this.x = [];
     this.y = [];
     this.t = [];
-    this.src = src;
-};
+    this.end_t = Infinity;
+}
 
-Target.prototype.addPoint = function(x, y, t){
-    this.x.push(x);
-    this.y.push(y);
-    this.t.push(t);
-};
 
 var points = 0;
 
 var shots = [];
 var correct_shots = [];
 
-var targets = [[[801,259, 3.789], [615, 259, 9.877]],  
+/* var targets = [[[801,259, 3.789], [615, 259, 9.877]],  
 [[434, 292, 2.224], [506, 284, 6.623], [778, 272, 12.407999], [380, 337, 14.664], [490, 302, 17.351], [582, 300, 19.487],[385, 283, 21.015], [630, 298, 21.968], [671, 264, 23.345], [819, 271, 26.103999], [435, 297, 29.072], [487, 296, 29.967], [854, 302, 33.64], [871, 275, 35.255999] ] , 
 [[517, 246, 6.983], [759, 246, 8.502999], [385, 261, 10.289]], 
 [[602, 291, 5.647], [795, 255, 12.535999], [789, 272, 17.4]], 
 [ [618, 282, 9.396], [478, 285, 12.947], [368,308, 14.958]],
 [ [789, 284, 18.063], [621, 260, 26.302999]]];
+*/
+
+
+function findInsertIndex(arr, val) {
+    /*
+        Assuming a sorted array arr, return the index where the val 
+        should be inserted in order to keep the arr sorted.
+        Helper function for keeping the targets sorted in time. 
+    */
+    var ipnt = arr.length;
+    for (var i=0; i<arr.length; i++) {
+        if (val < arr[i]) { 
+            ipnt = i;
+            break;
+        } 
+    }
+    return ipnt;
+}
+
+
+
+// Targets loading saving functions
+
+
+function loadLocalTargets() {
+    // Load targets from JSON data stored on localstorage, from item "targets"
+    var targets = {};
+    var targets_s = localStorage.getItem("targets");
+    if (targets_s != null) { // if not available, make empty dict
+        targets = JSON.parse(targets_s);
+    }
+    return targets;
+}
+
+function saveLocalTargets(all_targets) {
+    // save targets to localStorage as JSON
+    localStorage.setItem("targets", JSON.stringify(all_targets))
+}
+
+function getSourceTargets(all_targets, src) {
+    
+    // Helper function to get an array of targets for the specific video
+    // The file name of the clip is parsed, and used as the key to pick the right targets, regardless of
+    // the path of the clip.
+    // If the clipname is not present, an empty array is returned for convenience. 
+    var clipname = src.split("/").pop();
+    var src_trgs = all_targets[clipname];
+    //console.log(src +" - "+ clipname + " - " + src_trgs);
+    if (typeof src_trgs == "undefined") { // if empty
+        src_trgs = [];
+    }
+    
+    return src_trgs;
+}
 
 var clipset_pos = 0;
 
-var clipset =  [ ["1", "clips/potkulautailija.mp4"] , ["2", "clips/isoroba.mp4"],["3", "clips/jalankulkija_ja_suojatie.mp4" ] , ["4", "clips/jalankulkijat2.mp4"], ["5", "clips/vastaantulijat.mp4"], ["6", "clips/ratikka.mp4"]];
+var clipset =  [ ["1", "../clips/jalankulkijat.mp4"],
+                 ["2", "../clips/potkulautailija.mp4"] , 
+                 ["3", "../clips/isoroba.mp4"], 
+                 ["4", "../clips/jalankulkija_ja_suojatie.mp4" ] , 
+                 ["5", "../clips/jalankulkijat2.mp4"], 
+                 ["6", "../clips/vastaantulijat.mp4"], 
+                 ["7", "../clips/ratikka.mp4"]];
 
 var correct_hit_interval = 2.5;
    
 function checkTargetHit(shot){
-    var vplayer = document.getElementById("videoplayer");
-    var ctime = vplayer.currentTime;
-	var hit_radius = 100;
-    var hit_interval = correct_hit_interval;
+    // version 2 using anno targets
 
-	for (var h = 0; h < targets[clipset_pos].length; h++){
-		var targett = targets[clipset_pos][h][2];
-		var targetx = targets[clipset_pos][h][0];
-		var targety = targets[clipset_pos][h][1];
+    var all_targets = loadLocalTargets(); // this should not be done everytime, cache
+    var trgs = getSourceTargets(all_targets, shot.src);
 
-		if (Math.abs(shot.t - targett) < hit_interval){
-		   var d2 = Math.sqrt(Math.pow(shot.x - targetx, 2) + Math.pow(shot.y - targety, 2));
-		   if (d2 < hit_radius){
-				return true;
-		   };
+	var hit_radius = 0.1;
+    
+	for (var i=0; i< trgs.length; i++) {
+		var trg = trgs[i]; 
+        
+        var loc = findInsertIndex(trg.t, shot.t);
+        if ((loc > 0) && (shot.t < trg.end_t)) {
+            loc = loc - 1; // set the right index to the target to be compared 
+            var d2 = Math.sqrt(Math.pow(shot.x - trg.x[loc], 2) + Math.pow(shot.y - trg.y[loc], 2));
+            if (d2 < hit_radius){
+                return true;
+            };
 		};
 	};
     return false;
-    console.log(shot.t, ctime);
 };
 
 function registerShot(x, y, t) {
-    console.log("x=" + x + " y=" + y + " time=" + t);
-    console.log("Suhteellinen sijainti: " + video2rel(x,y));
-    console.log(rel2video(video2rel(x,y)));
-    src = clipset[clipset_pos][1];
-    var shot = new Shot(x, y, t, src);
+    var src = clipset[clipset_pos][1];
+    var relCoords = client2Rel(x, y);
+
+    console.log("x=" + x + " y=" + y + " time=" + t + " src=" + src);
+    console.log("Suhteellinen sijainti: " + relCoords);
+
+    
+    var shot = new Shot(relCoords[0], relCoords[0], t, src);
     shots.push(shot);
     return shot;
-    //console.log(hit_data[hit_data.length-1][0])
 }
 
 function startVideo() {
@@ -108,12 +168,15 @@ function videoClicked(ev) {
         hp.style.top = y  + "px"
         
         var shot = registerShot(x, y, ctime) 								//rekisteröi klikkauksen kordinaatit ja ajan
-        var was_hit = checkTargetHit(shot) 									// tsekkaa osuiko targettiin
+        var was_hit = checkTargetHit(shot)     						// tsekkaa osuiko targettiin
         console.log("was_hit: " + was_hit) 									//printtaa konsoliin "was_hit: " ja true tai false
 
 		if (was_hit){
+            shot.hit = true;
 			correct_shots.push(shot)
-			}
+        } else {
+            shot.hit = false;
+        }
 
 
 		var k = correct_shots.length-1
@@ -146,7 +209,7 @@ function videoEnded(ev) {
 	temp_videoshots.push(line)
 
     sessionStorage.setItem("videoshots_" + (clipset_pos+1), temp_videoshots)    //tekee sessionstorageen shotslistan nimeltä "videoshots_0"  jonka value on ekan videon shotit, sitten videoshots_1.....
-
+        
 	var video = document.getElementById("videoplayer")
     video.src = "" 
     clipset_pos += 1
@@ -161,7 +224,23 @@ function videoEnded(ev) {
 
 	sessionStorage.setItem("Points", points);
 
+    saveShots();
 }
+
+function saveShots() {
+    var gameshots_str = localStorage.getItem("gameshots");
+    var gameshots = null;
+    if (gameshots_str == null) {
+        gameshots = {};
+    } else {
+        gameshots = JSON.parse(gameshots_str);
+    }
+    
+    var player_id = sessionStorage.getItem("player_id");
+    gameshots[player_id] = shots;  
+    localStorage.setItem("gameshots", JSON.stringify(gameshots));
+}
+
 
 function submitData() {
     var req = XMLHttpRequest()
@@ -184,9 +263,8 @@ function submitData() {
 
 }
 
-function tallennaNimi(nimi) {
-	sessionStorage.setItem("kayttaja", nimi); 
-
+function setPlayer(player_id) {
+	sessionStorage.setItem("player_id", player_id); 
 }
 
 function showPoints() {  
@@ -227,15 +305,31 @@ function dataUlos() {
     };
 };
 
+function client2Rel(x, y) {
+    var vplayer = document.getElementById("videoplayer");
+    //console.log(x + " " + y + " " + vplayer.offsetLeft +" " + vplayer.offsetTop + " " + vplayer.offsetWidth + " " + vplayer.offsetHeight)
+    var relx = (x - vplayer.offsetLeft) / vplayer.offsetWidth
+    var rely = (y - vplayer.offsetTop) / vplayer.offsetHeight
+    return [relx, rely]
+}   
+
+function rel2Video(relx, rely) {
+    var vplayer = document.getElementById("videoplayer");
+    var x = relx * vplayer.offsetWidth + vplayer.offsetLeft
+    var y = rely * vplayer.offsetHeight + vplayer.offsetTop
+    return [x, y]
+}   
+
+
 function video2rel(hpposX,hpposY){
     var vplayer = document.getElementById("videoplayer");
-    var width=vplayer.offsetWidth;
-    var height=vplayer.offsetHeight;
+    var width= vplayer.offsetWidth;
+    var height = vplayer.offsetHeight;
     var relativeY = hpposY/height;
     var relativeX = hpposX/width;
     
     //return "Relative height " +relativeH +" and relative width " +relativeW;
-    return [relativeX,relativeY];
+    return [relativeX, relativeY];
 }
 
 function rel2video(hprelX,hprelY){ 
@@ -246,5 +340,5 @@ function rel2video(hprelX,hprelY){
     var absoluteX = hprelX*width;
     
     //return "Absolute height " + absoluteH +" and absolute width " + absoluteW;
-    return absoluteX,absoluteY;
+    return [absoluteX, absoluteY];
 }
