@@ -164,8 +164,11 @@ function videoClicked(ev) {
       
         hp.style.display = "block"; 										// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
         hp.style.position = "absolute" 										// displayataan absoluuttisesti x:n ja y:n mukaan 
-        hp.style.left = x + "px"
-        hp.style.top = y  + "px"
+        
+        var centering = [0.5 * hp.offsetWidth, 
+                         0.5 * hp.offsetHeight];
+        hp.style.left = (x - centering[0]) + "px";
+        hp.style.top =  (y - centering[1]) + "px";
         
         var shot = registerShot(x, y, ctime) 								//rekisteröi klikkauksen kordinaatit ja ajan
         var was_hit = checkTargetHit(shot)     						// tsekkaa osuiko targettiin
