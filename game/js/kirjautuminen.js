@@ -1,10 +1,11 @@
 $(function(){
 	//ohjeiden näyttö ja piilotus
-	if (sessionStorage.getItem("isFirst") != "false") {
-			var b = document.getElementById("alkuohje")
-			 b.style.display = "block";
-			sessionStorage.setItem("isFirst", false);	
-    } 
+    // This does not work on peli.html for example. Remove? EL 14.8. 
+	//if (sessionStorage.getItem("isFirst") != "false") {
+	//		var b = document.getElementById("alkuohje");
+	//		b.style.display = "block";
+	//		sessionStorage.setItem("isFirst", false);	
+    //} 
     
 	$("#alkuohje").click(function(){
 		$("#alkuohje").hide("slow");
