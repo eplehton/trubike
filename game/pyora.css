@@ -13,7 +13,7 @@ body {
 
 [class*='col-'] {
 	float: left;
-	padding-right: 30px; /* column-space */
+	padding-right: 20px; /* column-space */
 }
 
 .grid {
@@ -167,24 +167,6 @@ body {
 	margin-left: 8.33%
 }
 		
-/*#alkuohje {
-	font-size:110%;
-	border-radius:10px;
-    padding-top: 20px;
-	background:#0292C0;
-    opacity: 0.85;
-	z-index:10;
-	width:500px;
-	height:400px;
-	position:absolute;
-    margin-top: 150px;
-	margin-left: :auto;
-    margin-right: auto;
-    align-content: center;
-	text-align:center;	
-    cursor: pointer;
-	} */
-		
 #alkuohje h1{
     font-weight: 100;
 }
@@ -193,7 +175,6 @@ alkuohje p {
  }
 .background{
     position:absolute;
-    z-index: 0;
     background-image:url('tausta.jpg');
     background-size: cover;
     width: 100%;
@@ -207,8 +188,7 @@ alkuohje p {
  	height:400px%;
 	width:400px;
 	border-radius:10px;
-	background:#0292C0;
-    opacity: 0.9;
+	background:rgba(2, 146, 192, 1);
     cursor: pointer;
 	position:absolute;
 	z-index: 10;
@@ -223,39 +203,40 @@ alkuohje p {
 }
 .level{
     position: relative;
-    z-index: 4;
+    float: none;
     height: 300px;
     min-width: 200px;
     background: #FAFAF9;
+    clear: both;
     
     -webkit-box-shadow: 4px 4px 5px 0px rgba(50, 50, 50, 0.69);
     -moz-box-shadow:    4px 4px 5px 0px rgba(50, 50, 50, 0.69);
     box-shadow:         4px 4px 5px 0px rgba(50, 50, 50, 0.69);
-    
-    margin-right: 20px;
-    
+        
     color: #D1CBBA;
     align-content: center;
 }
 .level-picture{
+    overflow: auto;
+    float: left;
     z-index: 2;
-    position: relative;
 }
 .circle{
+    overflow: auto;
     height: 80px;
     width: 80px;
-    margin: -45px 60px;
+    margin: 60px;
+    
     background: url(img/Road.jpg);
     background-size: cover;
     border-radius: 40px;
-    z-index: 3;
-    position: absolute;
+
 }
 .level h3{
     color: #456F75;
     font-family: Helvetica;
     font-weight: 100;
-    margin-top: 50px;
+    margin-top: 120px;
     text-align: center;
 }
 
@@ -275,7 +256,7 @@ alkuohje p {
     right: 20px;
     height:50px;
 	width:200px;
-	background-color:#0292C0;
+	background-color:rgba(2, 146, 192, 1);
 	border-radius:3px;
 	z-index:4;
     position: absolute;
@@ -290,21 +271,22 @@ alkuohje p {
 */
 
 #kirjautumiskentta{
-	font-family:serif;
-	font-size:20px;
- 	height:100%;
-	width:100%;
-    text-align: center;
-	border-radius:10px;
-	background:#0292C0;
-    #opacity: 0.8;
-	padding-top: 15px;
-	padding-bottom: 15px;
+	font-family:Helvetica neue;
+	font-size:24px;
+ 	
+    
+    height:300px;
+	width:33%;
+    min-width: 350px;
+    
+	background: rgba(2, 146, 192, 1);    
 	position: fixed;
     z-index: 10;
-	top:0%;
-	#right:30%;
-    display: none; /*EL 12.8. */
+	top: 150px;
+    padding: 0px ;
+}
+#kirjautumisruutu{
+    margin: 5px auto;
 }
 	
 #kayttaja {	
@@ -344,7 +326,7 @@ alkuohje p {
 /*Valikko-----------------------------------------------------------------------------------------------------------------------------------*/
 header{
     background-color: #0292C0;
-    opacity: 0.8;
+    opacity: 0.9;
     align-content: center;
 }
 
@@ -379,8 +361,9 @@ header nav ul li:active {
 }
  
 /*Color Classes*/
-.blue{background:#0292C0;
-opacity: 0.85;}
+.blue{
+    background:rgba(2, 146, 192, 1);
+}
 
 /*Fontit*/
   
@@ -409,7 +392,7 @@ opacity: 0.85;}
 /*Napit*/
 .btn {
 	width: 18%;
-	background: #0090bf;
+	background: rgba(2, 146, 192, 1);
 	border: 1px solid #1e728c;
 	color: #fff;
 	cursor: pointer;
@@ -426,12 +409,10 @@ opacity: 0.85;}
 	text-align: center;
 	text-decoration: none;
 	
-	/* Fancy box shadows */
 	-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
 	   -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
 	        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
 	
-	/* CSS3 transitions */
 	-webkit-transition: background-color 0.15s ease-in-out;
 	   -moz-transition: background-color 0.15s ease-in-out;
 	     -o-transition: background-color 0.15s ease-in-out;
