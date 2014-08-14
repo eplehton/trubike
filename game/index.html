@@ -22,11 +22,11 @@
 	
 	
 			$(document).ready(function(){	
-				var player_id = sessionStorage.getItem("player_id");
+				
+                var player_id = sessionStorage.getItem("player_id");
 				if (player_id == null) {
 					$("kirjautumiskentta").show();
-				} 
-
+				}
 			
 				$("#submit_login").click(function(e) {
                     console.log("rairairai0");

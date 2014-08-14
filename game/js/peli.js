@@ -306,6 +306,8 @@ function dataUlos() {
 };
 
 function client2Rel(x, y) {
+    /* Client coordinatest to the relative. Useful for converting mouse click positions to rel coords.
+    */
     var vplayer = document.getElementById("videoplayer");
     //console.log(x + " " + y + " " + vplayer.offsetLeft +" " + vplayer.offsetTop + " " + vplayer.offsetWidth + " " + vplayer.offsetHeight)
     var relx = (x - vplayer.offsetLeft) / vplayer.offsetWidth
@@ -313,7 +315,7 @@ function client2Rel(x, y) {
     return [relx, rely]
 }   
 
-function rel2Video(relx, rely) {
+function rel2Client(relx, rely) {
     var vplayer = document.getElementById("videoplayer");
     var x = relx * vplayer.offsetWidth + vplayer.offsetLeft
     var y = rely * vplayer.offsetHeight + vplayer.offsetTop
@@ -321,7 +323,7 @@ function rel2Video(relx, rely) {
 }   
 
 
-function video2rel(hpposX,hpposY){
+function video2Rel(hpposX,hpposY){
     var vplayer = document.getElementById("videoplayer");
     var width= vplayer.offsetWidth;
     var height = vplayer.offsetHeight;
@@ -332,7 +334,7 @@ function video2rel(hpposX,hpposY){
     return [relativeX, relativeY];
 }
 
-function rel2video(hprelX,hprelY){ 
+function rel2Video(hprelX,hprelY){ 
     var vplayer = document.getElementById("videoplayer");
     var width=vplayer.offsetWidth;
     var height=vplayer.offsetHeight;

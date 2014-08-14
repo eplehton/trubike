@@ -31,7 +31,7 @@
         height: 2em;
         border-radius: 50%;
         background-color: red;
-        opacity: 50%;
+        opacity: 0.5;
         z-index: 5;
         display: none;
         position: absolute;
@@ -193,12 +193,17 @@
                 var delta_t = trg.t.map(function(x) { return x - ctime });
                 var last_neg = findLastNegIndex(delta_t);
 
-                //if (last_neg != null) {
-                var videoCoords = rel2Video(trg.x[last_neg], trg.y[last_neg]);
-                
-                anno_target_icons[i].style.left = videoCoords[0];
-                anno_target_icons[i].style.top = videoCoords[1];
                 anno_target_icons[i].style.display = "block";
+                
+                
+                var videoCoords = rel2Client(trg.x[last_neg], trg.y[last_neg]);
+                var centering = [anno_target_icons[i].offsetWidth / 2.0, 
+                                 anno_target_icons[i].offsetHeight / 2.0];
+                
+                console.log(videoCoords);
+                console.log(centering);
+                anno_target_icons[i].style.left = videoCoords[0] - centering[0];
+                anno_target_icons[i].style.top = videoCoords[1] - centering[1];
                 
                 // If it is the current, use another color
                 if (current_anno_target != null && trg.id == current_anno_target.id) {
@@ -358,13 +363,13 @@
             //console.log("rairairai" + event.which + " " + "2".charCodeAt(0))
             switch (event.which) {
                 case "a".charCodeAt(0):
-                    seekVideo(-2, true);
+                    seekVideo(-1, true);
                     break;
                 case "s".charCodeAt(0):
                     playPauseVideo()
                     break;
                 case  "d".charCodeAt(0):
-                    seekVideo(2, true);
+                    seekVideo(1, true);
                     break;
                 case "e".charCodeAt(0):
                     endTarget()
@@ -395,18 +400,17 @@
 <body>
 
 <div>
-<input id="videosrc" type="file"/>
-<button onclick="loadVideo(event)">Load</button>
-<button onclick="playVideo(1.0)">Play</button>
-<button onclick="playVideo(0.5)">Play 0.5 speed</button>
-<button onclick="playVideo(0.25)">Play 0.25 speed</button>
-<button onclick="pauseVideo()">Pause</button>
+<input id="videosrc" type="file" onchange="loadVideo(event)"/>
+<!-- <button onclick="loadVideo(event)">Load</button> -->
+<button onclick="playPauseVideo()">Play/Pause (s)</button>
+<button onclick="playVideo(1.0)">Play 1/1 (1)</button>
+<button onclick="playVideo(0.5)">Play 1/2 (2)</button>
 
 <button onclick="seekVideo(-10, true)">-10</button>
-<button onclick="seekVideo(-1, true)">-1</button>
-<button onclick="seekVideo(1, true)">1</button>
+<button onclick="seekVideo(-1, true)">-1 (a)</button>
+<button onclick="seekVideo(1, true)">1 (d)</button>
 <button onclick="seekVideo(10, true)">10</button>
-<button onclick="endTarget()">End target</button>
+<button onclick="endTarget()">End target (e)</button>
 </div>
 
 
@@ -419,7 +423,6 @@
 </video>
 
 <div class="target_icon" id="target_icon_tmpl">
-X
 </div>
 
 
