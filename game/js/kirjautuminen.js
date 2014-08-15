@@ -1,4 +1,8 @@
-$(function(){
+// Koko sivu on turha, kaikki mitä tarvitaan on jo index.html -sivulla. Poistetaanko (taas)?   - Heidi, 15.8
+
+
+
+/* $(function(){
 	//ohjeiden näyttö ja piilotus
     // This does not work on peli.html for example. Remove? EL 14.8. 
 	//if (sessionStorage.getItem("isFirst") != "false") {
@@ -31,7 +35,7 @@ $(function(){
     $("#kirjautumisruutu").on('submit', function(e) {
         if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
             return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
-        } else {
+/*        } else {
             tallennaNimi(($("#kayttaja").val()));
         };
     });
@@ -42,4 +46,4 @@ $(function(){
             $("#kirjautuminen").html(kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
         };
     });
-});
+}); */
