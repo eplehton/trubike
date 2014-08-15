@@ -11,6 +11,14 @@
     <script type="text/javascript" src="js/kirjautuminen.js"></script>
     <script language="javascript" type="text/javascript">
         $(document).ready(function(){	
+        
+            // load clipsets to var clipsets with ajax call from a separate file
+            loadClipsets();
+            // FIXME: due to asynchronous nature of this operation, it would be more correct to wait until the
+            // call completes, before proceding. no we just hope everything is ready before the user clicks to 
+            // start the video
+            
+            
             $("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
                 var instr = document.getElementById("instruction")
                 instr.style.display = "none"; 
@@ -25,6 +33,8 @@
                 elem.style.display = "none"; 			
                 startVideo();		
             });
+            
+            
         });
     </script>
 

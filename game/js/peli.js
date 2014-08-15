@@ -81,16 +81,18 @@ function getSourceTargets(all_targets, src) {
     return src_trgs;
 }
 
-var clipset_pos = 0;
+var clipset_num = 0; // which set
+var clipset_pos = 0; // position within a set
+var clipsets; // loaded in on ready
 
-var clipset =  [ ["1", "../clips/jalankulkijat.mp4"],
+/*var clipset =  [ ["1", "../clips/jalankulkijat.mp4"],
                  ["2", "../clips/potkulautailija.mp4"] , 
                  ["3", "../clips/isoroba.mp4"], 
                  ["4", "../clips/jalankulkija_ja_suojatie.mp4" ] , 
                  ["5", "../clips/jalankulkijat2.mp4"], 
                  ["6", "../clips/vastaantulijat.mp4"], 
                  ["7", "../clips/ratikka.mp4"]];
-
+*/
 var correct_hit_interval = 2.5;
    
 function checkTargetHit(shot){
@@ -116,8 +118,15 @@ function checkTargetHit(shot){
     return false;
 };
 
+function loadClipsets() {
+   
+    $.getJSON('clipsets.json', function(data) {
+        clipsets = data;
+    });
+}
+
 function registerShot(x, y, t) {
-    var src = clipset[clipset_pos][1];
+    var src = clipsets[clipset_num][clipset_pos][1];
     var relCoords = client2Rel(x, y);
 
     console.log("x=" + x + " y=" + y + " time=" + t + " src=" + src);
@@ -133,7 +142,7 @@ function startVideo() {
    var vplayer = document.getElementById("videoplayer");
    var width=vplayer.offsetWidth;
    var height=vplayer.offsetHeight;
-   vplayer.src = clipset[clipset_pos][1];
+   vplayer.src = clipsets[clipset_num][clipset_pos];
    vplayer.play();
    correct_shots = [];  //tyhjentää correct_shots -listan ettei edellisten klippien datat vaikuta seuraavaan
    shots = [];				// tyhjentää shotslistan seuraavaa videota varten
@@ -217,7 +226,7 @@ function videoEnded(ev) {
     video.src = "" 
     clipset_pos += 1
     
-    if (clipset_pos < clipset.length) {
+    if (clipset_pos < clipsets.length) {
 		$("#klipinloppu").show();
     } else {
 		$("#tasonloppu").show();
@@ -240,6 +249,10 @@ function saveShots() {
     }
     
     var player_id = sessionStorage.getItem("player_id");
+    if (player_id == null) {
+        alert("player_id is null, set to anonymous");
+        player_id = "anonymous";
+    }
     gameshots[player_id] = shots;  
     localStorage.setItem("gameshots", JSON.stringify(gameshots));
 }
