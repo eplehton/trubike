@@ -323,8 +323,40 @@ alkuohje p {
     z-index: 2;
     display: none;
     position: absolute;
-    
 }
+
+#missed_target {
+    width: 6em;
+    height: 6em;
+    border-radius: 50%;
+    border: 1ex solid #f00;
+    background-color: transparent;
+    z-index: 2;
+    display: none;
+    position: absolute;
+}
+
+
+p.missed_target_notification {
+    position: relative;
+    width: 20em;
+    height: 10ex;
+    text-align: center;
+    background-color: #fff;
+    border: 0.5ex solid #000;
+}
+
+p.missed_target_notification:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 1em;
+    top: 9.5ex;
+    border: 25px solid;
+    border-color: #000 transparent transparent #000;
+}
+
 
 /*Valikko-----------------------------------------------------------------------------------------------------------------------------------*/
 header{

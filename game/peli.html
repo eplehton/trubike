@@ -34,6 +34,24 @@
                 startVideo();		
             });
             
+            // set check for missed targets
+            var vplayer = document.getElementById("videoplayer");
+            var check_missed_targets_interval_id = null;
+            
+            vplayer.addEventListener("playing", function() {
+                if (check_missed_targets_interval_id == null) { // do not make duplicates
+                    var all_targets = loadLocalTargets(); // this should not be done everytime, cache       
+                    var trgs = getSourceTargets(all_targets, vplayer.src);
+                    check_missed_targets_interval_id = setInterval( function(){ checkMissedTargets(trgs) },
+                                                                             check_missed_target_interval_size); 
+                    }
+            });
+        
+            vplayer.addEventListener("pause", function() {
+                clearInterval(check_missed_targets_interval_id);
+                check_missed_targets_interval_id = null;
+            });                
+            
         });
     </script>
 
@@ -53,27 +71,28 @@
 
     <div class="ohjeruutu hidden" id="klipinloppu">
         <p> Hienoa! Selvisit ensimmäisestä klipistä. Sait näin ja näin monta pistettä! Jatka klikkaamalla tätä ruutua </p>
-        </div>
+    </div>
 
-        <a href="index.html">
-            <div class="ohjeruutu hidden" id="tasonloppu">
-                <p> Hienoa! Selvisit ensimmäisestä tasosta. Sait näin ja näin monta pistettä! Jatka seuraavalle tasolle klikkaamalla tätä ruutua. </p>
-            </div>
-        </a>
-        
-        <div>
-            <video id="videoplayer" onclick=videoClicked(event)
-                muted
-                onended=videoEnded(event)
-                src="">
-            </video> 
-        
-        
-            <div id="hitpoint_tmpl" class="hitpoint">
-            X
-            </div>
+    <a href="index.html">
+        <div class="ohjeruutu hidden" id="tasonloppu">
+            <p> Hienoa! Selvisit ensimmäisestä tasosta. Sait näin ja näin monta pistettä! Jatka seuraavalle tasolle klikkaamalla tätä ruutua. </p>
         </div>
-	   
-    <audio id="targethitplayer" src="media/targethit.mp3">           </audio>
+    </a>
+
+    <div>
+        <video id="videoplayer" onclick=videoClicked(event)
+            muted
+            onended=videoEnded(event)
+            src="">
+        </video> 
+    
+    
+        <div id="hitpoint_tmpl" class="hitpoint"></div>
+        <div id="missed_target" onclick="acknowledgeMissedTarget()"></div>
+    </div>
+   
+    <audio id="targethitplayer" src="media/targethit.mp3"></audio>
+    
+    
 </body>
 </html>

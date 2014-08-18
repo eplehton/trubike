@@ -22,6 +22,7 @@ var points = 0;
 var shots = [];
 var correct_shots = [];
 
+var check_missed_target_interval_size = 200;
 /* var targets = [[[801,259, 3.789], [615, 259, 9.877]],  
 [[434, 292, 2.224], [506, 284, 6.623], [778, 272, 12.407999], [380, 337, 14.664], [490, 302, 17.351], [582, 300, 19.487],[385, 283, 21.015], [630, 298, 21.968], [671, 264, 23.345], [819, 271, 26.103999], [435, 297, 29.072], [487, 296, 29.967], [854, 302, 33.64], [871, 275, 35.255999] ] , 
 [[517, 246, 6.983], [759, 246, 8.502999], [385, 261, 10.289]], 
@@ -120,9 +121,36 @@ function checkTargetHit(shot){
     return false;
 };
 
-function handleMissedTarget(trg) {
-    alert("Missed target!");
+function acknowledgeMissedTarget() {
+    var missed = document.getElementById("missed_target");
+    missed.style.display = "none";
+    
+    var vplayer = document.getElementById("videoplayer");
+    vplayer.play();
+}
+
+function handleMissedTarget(missed_trg) {
 	pauseVideo();
+        
+    var lastx = missed_trg.x.length-1;
+    var relx = missed_trg.x[lastx];
+    var rely = missed_trg.y[lastx];
+    
+    var clientCoords = rel2Client(relx, rely);
+    var x = clientCoords[0];
+    var y = clientCoords[1];
+    
+    var missed = document.getElementById("missed_target");
+    
+    missed.style.display = "block"; 								
+    missed.style.position = "absolute";
+    
+    var centering = [0.5 * missed.offsetWidth, 
+                     0.5 * missed.offsetHeight];
+    missed.style.left = (x - centering[0]) + "px";
+    missed.style.top =  (y - centering[1]) + "px";
+
+    
 }
 
 
@@ -146,45 +174,42 @@ function registerShot(x, y, t) {
     return shot;
 }
 
-function startVideo() {
-   var vplayer = document.getElementById("videoplayer");
-   var width=vplayer.offsetWidth;
-   var height=vplayer.offsetHeight;
-   vplayer.src = clipsets[clipset_num][clipset_pos];
-   vplayer.play();
-   correct_shots = [];  //tyhjentää correct_shots -listan ettei edellisten klippien datat vaikuta seuraavaan
-   shots = [];				// tyhjentää shotslistan seuraavaa videota varten
-   //console.log(height, width);
-   
-   setTargetMissChecks();
+function startVideo() { 
+    /* called in the beginning of the test */
+    /* playing event (peli.html) is should be used to handle stuff which is related to 
+    start of the playing, and this is called when a trial begins */
+    var vplayer = document.getElementById("videoplayer");
+    var width=vplayer.offsetWidth;
+    var height=vplayer.offsetHeight;
+    vplayer.src = clipsets[clipset_num][clipset_pos];
+    vplayer.play();
+    correct_shots = [];  //tyhjentää correct_shots -listan ettei edellisten klippien datat vaikuta seuraavaan
+    shots = [];				// tyhjentää shotslistan seuraavaa videota varten
+    //console.log(height, width);
+
 
 };
 
-function setTargetMissChecks() {
-    /*  
-        Set timeouts to check after end_t of each target that the target has been hitted.
-        This function should be run once at the start of the video. 
-    */
+function checkMissedTargets(targets) {
     var vplayer = document.getElementById("videoplayer");
-   
-    var all_targets = loadLocalTargets(); // this should not be done everytime, cache
-    var trgs = getSourceTargets(all_targets, vplayer.src);
+    var ctime = vplayer.currentTime;
     
-    for (var tx=0; tx<trgs.length; tx++) {
-        var current_trg = trgs[tx];
-        var delay = current_trg.end_t+0.5;
-        console.log("delay " + delay);
-        setTimeout(function() { 
-                   for (var sx=shots.length-1; sx >= 0; sx--) {
-                       if (shots[sx].target_end_t == current_trg.end_t) {
-                            console.log("rairairaiirai");
-                            return; // hit, do nothing
-                       }
-                   }
-                   // none of the shots has the the same target_end_t as the current target, it's miss
-                   handleMissedTarget(current_trg);
-                   }, delay);
-        
+    for (var tx=0; tx<targets.length; tx++) {
+        var current_trg = targets[tx];
+        // check if the target end was passed during the last interval without a shot
+        if ((current_trg.end_t < ctime) & 
+            (Math.abs(current_trg.end_t - ctime) < (check_missed_target_interval_size/1000))) {
+            var hitted = false;
+            for (var sx=shots.length-1; sx >= 0; sx--) {
+                if (shots[sx].target_end_t == current_trg.end_t) {
+                    hitted = true;
+                    break;
+                }
+            }
+            if (! hitted) {
+                handleMissedTarget(current_trg);
+            }
+        }
     }
 }
 
@@ -197,6 +222,8 @@ function stopVideo() {
    var vplayer = document.getElementById("videoplayer");
    vplayer.stop();
 };
+
+
 
 function videoClicked(ev) {
     
