@@ -1,8 +1,10 @@
-function Shot(x, y, t, src) {
+function Shot(x, y, t, target_end_t, src) {
     this.t = t;
     this.x = x;
     this.y = y;
+    this.target_end_t = target_end_t;
     this.src = src;
+    this.date = new Date().toLocaleString();
     this.hit = null;
 }
 
@@ -118,6 +120,12 @@ function checkTargetHit(shot){
     return false;
 };
 
+function handleMissedTarget(trg) {
+    alert("Missed target!");
+	pauseVideo();
+}
+
+
 function loadClipsets() {
    
     $.getJSON('clipsets.json', function(data) {
@@ -146,8 +154,44 @@ function startVideo() {
    vplayer.play();
    correct_shots = [];  //tyhjentää correct_shots -listan ettei edellisten klippien datat vaikuta seuraavaan
    shots = [];				// tyhjentää shotslistan seuraavaa videota varten
-   console.log(height, width);
+   //console.log(height, width);
+   
+   setTargetMissChecks();
+
 };
+
+function setTargetMissChecks() {
+    /*  
+        Set timeouts to check after end_t of each target that the target has been hitted.
+        This function should be run once at the start of the video. 
+    */
+    var vplayer = document.getElementById("videoplayer");
+   
+    var all_targets = loadLocalTargets(); // this should not be done everytime, cache
+    var trgs = getSourceTargets(all_targets, vplayer.src);
+    
+    for (var tx=0; tx<trgs.length; tx++) {
+        var current_trg = trgs[tx];
+        var delay = current_trg.end_t+0.5;
+        console.log("delay " + delay);
+        setTimeout(function() { 
+                   for (var sx=shots.length-1; sx >= 0; sx--) {
+                       if (shots[sx].target_end_t == current_trg.end_t) {
+                            console.log("rairairaiirai");
+                            return; // hit, do nothing
+                       }
+                   }
+                   // none of the shots has the the same target_end_t as the current target, it's miss
+                   handleMissedTarget(current_trg);
+                   }, delay);
+        
+    }
+}
+
+function pauseVideo() {
+   var vplayer = document.getElementById("videoplayer");
+   vplayer.pause();
+}
 
 function stopVideo() {
    var vplayer = document.getElementById("videoplayer");
@@ -226,7 +270,7 @@ function videoEnded(ev) {
     video.src = "" 
     clipset_pos += 1
     
-    if (clipset_pos < clipsets.length) {
+    if (clipset_pos < clipsets[clipset_num].length) {
 		$("#klipinloppu").show();
     } else {
 		$("#tasonloppu").show();
@@ -253,7 +297,7 @@ function saveShots() {
         alert("player_id is null, set to anonymous");
         player_id = "anonymous";
     }
-    gameshots[player_id] = shots;  
+    gameshots[player_id].push(shots);  
     localStorage.setItem("gameshots", JSON.stringify(gameshots));
 }
 
@@ -282,6 +326,8 @@ function submitData() {
 function setPlayer(player_id) {
 	sessionStorage.setItem("player_id", player_id); 
 }
+
+
 
 function showPoints() {  
 	var current_points2 = document.getElementById("pisteruutu")
