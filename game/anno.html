@@ -83,6 +83,8 @@
             current_anno_target = null;
         }
         anno_targets.splice(trg_ind, 1);
+        saveAnnoTargets();
+        updateTargetList();
     }
     
     function findFirstPosIndex(arr) {
@@ -115,8 +117,8 @@
     
     
     function loadVideo() {
-       var vplayer = document.getElementById("videoplayer")
-       var videosrc = document.getElementById("videosrc")
+       var vplayer = document.getElementById("videoplayer");
+       var videosrc = document.getElementById("videosrc");
        
        var src = "../clips/" + videosrc.value // hard coded so far
 
@@ -289,9 +291,8 @@
     function endTarget() {
         var vplayer = document.getElementById("videoplayer");
         current_anno_target.end_t = vplayer.currentTime;
-        updateTargetList()
-        saveTarget(current_anno_target)
-        
+        updateTargetList();
+        saveAnnoTargets(current_anno_target)        
     }
     
     function pauseVideo() {
@@ -317,7 +318,11 @@
     }
 
 
-    function saveTarget(trg) {
+    function saveAnnoTargets() {
+        /*  
+            Sets the currently open anno targets to the right place
+            to the all_targets, and then the all_targets is jsoned to the localStorage.
+        */
         var src = document.getElementById("videoplayer").src;
         var clipname = src.split("/").pop();
 
@@ -327,7 +332,7 @@
             all_targets[clipname] = [];
         }
         //console.log(typeof targets);
-        all_targets[clipname].push(trg);
+        all_targets[clipname] = anno_targets;
         
         saveLocalTargets(all_targets);
     }
