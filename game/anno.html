@@ -249,7 +249,7 @@
                     var y = trg.y[i].toPrecision(3);
                     var end_t = trg.end_t.toPrecision(3);
                     var line = "".concat("<tr><td>",
-                                            '<button onclick="seekVideo('+t+')">'+t+'</button>',
+                                            '<button onclick="seekVideo('+t+', false)">'+t+'</button>',
                                             "</td><td>",
                                             x,
                                             "</td><td>",
@@ -265,7 +265,7 @@
                     html +='<tr><td>End: Infinity</td><td colspan="3"></td></tr>'
                 } else {
                     html += '<tr><td>';
-                    html += '<button onclick="seekVideo('+end_t+')">End: '+end_t+'</button>';
+                    html += '<button onclick="seekVideo('+end_t+', false)">End: '+end_t+'</button>';
                     html += '</td><td colspan="2"></td>';
                     html += '<td>';
                     html +='<button onclick="delTargetEnd(anno_targets['+ j +']); updateTargetList();">X</button>';
@@ -325,7 +325,7 @@
         saveLocalTargets(all_targets);
     }
     
-    function seekVideo(time, relative=false) {
+    function seekVideo(time, relative) {
        var vplayer = document.getElementById("videoplayer")
        if (relative) { // time is relative to the currentTime
             vplayer.currentTime = vplayer.currentTime + time;
