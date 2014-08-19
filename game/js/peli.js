@@ -74,6 +74,7 @@ function getSourceTargets(all_targets, src) {
     // The file name of the clip is parsed, and used as the key to pick the right targets, regardless of
     // the path of the clip.
     // If the clipname is not present, an empty array is returned for convenience. 
+    console.log('src ' + src);
     var clipname = src.split("/").pop();
     var src_trgs = all_targets[clipname];
     //console.log(src +" - "+ clipname + " - " + src_trgs);
@@ -99,8 +100,10 @@ var clipsets; // loaded in on ready
 var correct_hit_interval = 2.5;
    
 function checkTargetHit(shot){
-    // version 2 using anno targets
-
+    /*
+        Return target if hitted, otherwise null.
+    */
+    
     var all_targets = loadLocalTargets(); // this should not be done everytime, cache
     var trgs = getSourceTargets(all_targets, shot.src);
 
@@ -112,13 +115,15 @@ function checkTargetHit(shot){
         var loc = findInsertIndex(trg.t, shot.t);
         if ((loc > 0) && (shot.t < trg.end_t)) {
             loc = loc - 1; // set the right index to the target to be compared 
+            console.log("shot: "+ shot.x + ","+ shot.y +" trg: "+ trg.x[loc] +","+ trg.y[loc]);
+            
             var d2 = Math.sqrt(Math.pow(shot.x - trg.x[loc], 2) + Math.pow(shot.y - trg.y[loc], 2));
             if (d2 < hit_radius){
-                return true;
+                return trg;
             };
 		};
 	};
-    return false;
+    return null;
 };
 
 function acknowledgeMissedTarget() {
@@ -162,14 +167,14 @@ function loadClipsets() {
 }
 
 function registerShot(x, y, t) {
-    var src = clipsets[clipset_num][clipset_pos][1];
+    var src = clipsets[clipset_num][clipset_pos];
     var relCoords = client2Rel(x, y);
 
-    console.log("x=" + x + " y=" + y + " time=" + t + " src=" + src);
-    console.log("Suhteellinen sijainti: " + relCoords);
-
+    //console.log("x=" + x + " y=" + y + " time=" + t + " src=" + src);
+    //console.log("Suhteellinen sijainti: " + relCoords);
+    //console.log("shot src is set to " + src);
     
-    var shot = new Shot(relCoords[0], relCoords[0], t, src);
+    var shot = new Shot(relCoords[0], relCoords[1], t, null, src);
     shots.push(shot);
     return shot;
 }
@@ -250,12 +255,14 @@ function videoClicked(ev) {
         hp.style.left = (x - centering[0]) + "px";
         hp.style.top =  (y - centering[1]) + "px";
         
-        var shot = registerShot(x, y, ctime) 								//rekisteröi klikkauksen kordinaatit ja ajan
-        var was_hit = checkTargetHit(shot)     						// tsekkaa osuiko targettiin
-        console.log("was_hit: " + was_hit) 									//printtaa konsoliin "was_hit: " ja true tai false
-
-		if (was_hit){
+        var shot = registerShot(x, y, ctime);
+        //rekisteröi klikkauksen kordinaatit ja ajan
+        var hitted_target = checkTargetHit(shot)     						// tsekkaa osuiko targettiin
+         									//printtaa konsoliin "was_hit: " ja true tai false
+        console.log("hitted_target: " + hitted_target);
+		if (hitted_target != null){
             shot.hit = true;
+            shot.target_end_t = hitted_target.end_t;
 			correct_shots.push(shot)
         } else {
             shot.hit = false;
@@ -263,7 +270,7 @@ function videoClicked(ev) {
 
 
 		var k = correct_shots.length-1
-        if (was_hit) {
+        if (hitted_target != null) {
 			if (k == 0){
 				points += 1;
 			} 

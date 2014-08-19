@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>Annoport</title>
+    <style>
+     textarea {
+        width: 100%;
+        height: 30ex;
+     }
+    </style>
+    <script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/peli.js"></script>
+
+    <script type="text/javascript">
+    
+        $(document).ready(function(){	
+            var targets_str = localStorage.getItem("targets");
+            document.getElementById('targets_input').innerHTML = targets_str;
+            
+            $(targets_save).click(function(){
+                var tin = document.getElementById('targets_input');
+                console.log(tin.textContent);
+                localStorage.setItem("targets", tin.textContent);
+            });
+        });
+    </script>
+</head>
+<body>
+
+<h1>Annoport</h1>
+<p>Use the textarea below to import or export the targets in the localStorage.</p>
+<p>
+<textarea id="targets_input"></textarea>
+</p>
+
+<p>
+<input id="targets_save" type="button" value="Save"/>
+</p>
+
+</body>
+</html>

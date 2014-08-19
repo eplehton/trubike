@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>Annoport</title>
+    <style>
+     textarea {
+        width: 100%;
+        height: 30ex;
+     }
+    </style>
+    <script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/peli.js"></script>
+
+    <script type="text/javascript">
+    
+        $(document).ready(function(){	
+            var gameshots_str = localStorage.getItem("gameshots");
+            document.getElementById('shots_input').innerHTML = gameshots_str;
+            
+            $(targets_save).click(function(){
+                var sin = document.getElementById('shots_input');
+                console.log(sin.textContent);
+                localStorage.setItem("gameshots", sin.textContent);
+            });
+        });
+    </script>
+</head>
+<body>
+
+<h1>Shotport</h1>
+<p>Use the textarea below to edit or export the shots in the localStorage.</p>
+<p>
+<textarea id="shots_input"></textarea>
+</p>
+
+<p>
+<input id="shots_save" type="button" value="Save"/>
+</p>
+
+</body>
+</html>
