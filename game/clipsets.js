@@ -1,4 +1,4 @@
-﻿[ ["../clips/jalankulkijat.mp4",
+﻿var clipsets = [ ["../clips/jalankulkijat.mp4",
    "../clips/potkulautailija.mp4",
    "../clips/isoroba.mp4",
    "../clips/jalankulkija_ja_suojatie.mp4",

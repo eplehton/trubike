@@ -156,7 +156,7 @@ function handleMissedTarget(missed_trg) {
 
 function loadClipsets() {
    
-    $.getJSON('clipsets.json', function(data) {
+    $.getJSON('clipsets.js', function(data) {
         clipsets = data;
     });
 }
