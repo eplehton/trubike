@@ -119,7 +119,14 @@
        var videosrc = document.getElementById("videosrc")
        
        var src = "../clips/" + videosrc.value // hard coded so far
-       //console.log(src)
+
+		
+		var n = src.indexOf('fakepath');
+		if (n != -1){
+			u = src.substring(n-3, n+9);
+			src = src.replace(u, "");
+		}
+		
        vplayer.src = src
        
        // load video specific targets
