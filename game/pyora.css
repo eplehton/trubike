@@ -185,14 +185,16 @@ alkuohje p {
 .ohjeruutu {
 	text-align:center;
 	font-size:20px;
- 	height:400px%;
-	width:400px;
+ 	height:40%;
+	width:50%;
 	border-radius:10px;
 	background:rgba(2, 146, 192, 1);
     cursor: pointer;
 	position:absolute;
 	z-index: 10;
     padding: 20px 20px 20px 20px;
+	right: 25%;
+	top:30%;
 	}
 .hidden {
 	display:none;}		
