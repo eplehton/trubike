@@ -42,7 +42,6 @@
     </style>
     <script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/peli.js"></script>
-
     <script type="text/javascript">
     
     var anno_targets = null;
@@ -84,7 +83,9 @@
         }
         anno_targets.splice(trg_ind, 1);
         saveAnnoTargets();
+        
         updateTargetList();
+        updateClipList();
     }
     
     function findFirstPosIndex(arr) {
@@ -115,13 +116,22 @@
 
     var update_target_icon_interval_id = null;
     
+    function updateClipList() {
+        var clip_selector = document.getElementById("annotated_clips");
+        var all_targets = loadLocalTargets();
+        
+        var html = "";
+        for (var cname in all_targets) {
+            html += '<option value="'+ cname +'">'+ cname +'</option>';
+        }
+        console.log(html);
+        clip_selector.innerHTML = html;
+    }
     
-    function loadVideo() {
-       var vplayer = document.getElementById("videoplayer");
-       var videosrc = document.getElementById("videosrc");
-       
-       var src = "../clips/" + videosrc.value // hard coded so far
-
+    function loadVideo(filename) {
+        var vplayer = document.getElementById("videoplayer");
+ 
+        var src = "../clips/" + filename;
 		
 		var n = src.indexOf('fakepath');
 		if (n != -1){
@@ -129,7 +139,7 @@
 			src = src.replace(u, "");
 		}
 		
-       vplayer.src = src
+       vplayer.src = src;
        
        // load video specific targets
        var all_targets = loadLocalTargets();
@@ -291,8 +301,12 @@
     function endTarget() {
         var vplayer = document.getElementById("videoplayer");
         current_anno_target.end_t = vplayer.currentTime;
-        updateTargetList();
-        saveAnnoTargets(current_anno_target)        
+        
+
+        saveAnnoTargets(current_anno_target);
+
+        updateTargetList();        
+        updateClipList();
     }
     
     function pauseVideo() {
@@ -368,6 +382,24 @@
 
         vplayer.addEventListener("canplay", function() { updateTargetList() });
  
+        var videosrc = document.getElementById("videosrc");
+        videosrc.addEventListener("change", function() {
+            loadVideo(videosrc.value);   
+            
+            updateTargetList();
+            updateClipList();
+        });
+        
+
+        var aclips = document.getElementById("annotated_clips");
+        aclips.addEventListener("change", function() {
+            //console.log(aclips.value);
+            loadVideo(aclips.value);  
+            //updateTargetList();
+            //updateClipList();
+        });
+
+        
         // Keypresses
         $(document).keypress(function(event){	
             //console.log("rairairai" + event.which + " " + "2".charCodeAt(0))
@@ -410,7 +442,12 @@
 <body>
 
 <div>
-<input id="videosrc" type="file" onchange="loadVideo(event)"/>
+<input id="videosrc" type="file"/>
+
+<select id="annotated_clips" name="annotated_clips">
+    <!-- option value="double chocolate">Double Chocolate</option> -->
+</select>
+
 <!-- <button onclick="loadVideo(event)">Load</button> -->
 <button onclick="playPauseVideo()">Play/Pause (s)</button>
 <button onclick="playVideo(1.0)">Play 1/1 (1)</button>
