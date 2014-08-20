@@ -4,40 +4,24 @@
 	<meta charset="UTF-8">
 	<link type="text/css" rel="stylesheet" href="pyora.css" />
 	<title> Pelaa </title>
-    <script language="javascript" type="text/javascript"></script>
-	<script type="text/javascript" src="js/peli.js"></script>
+	<script language="javascript" type="text/javascript"></script>
 	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="js/PopUp.js"></script>
+	<script type="text/javascript" src="js/peli.js"></script>
     <script language="javascript" type="text/javascript">
 
-    
-	/*		$("ohje").click(function(){
-				$(".ohjeruutu").show("fast");
-			});
-		
-			$(".ohjeruutu").click(function(){
-				$(".ohjeruutu").hide("slow");
-			}); */
 	
 	
-			$(document).ready(function(){	
+ 			$(document).ready(function(){	
 				
                 var player_id = sessionStorage.getItem("player_id");
 				if (player_id == null) {
-					$("kirjautumiskentta").show();
+					var b = document.getElementById("kirjautumiskentta")
+					b.style.display = "block";
 				}
+			});    
+
 			
-				$("#submit_login").click(function(e) {
-                    console.log("rairairai0");
-					if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
-						return false;				/*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
-					} else {
-					    console.log("rairairai");
-						setPlayer(($("#kayttaja").val()));
-						var b = document.getElementById("kirjautumiskentta")
-						b.style.display = "none";
-					};
-				});
-			});
 
     </script>
 
@@ -108,9 +92,7 @@
             </div>
     </div>
     
-<script language="javascript" type="text/javascript"></script>
-<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="js/PopUp.js"></script>
+
 
 
 <!---<div class="grid grid-pad">   -->
