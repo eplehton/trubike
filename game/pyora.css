@@ -6,7 +6,7 @@
 
 body {
 	margin: 0px;
-    font-family:Helvetica;
+    font-family:Helvetica neue, Helvetica, sans-serif;
     color: #fff;
     font-weight: 100;
 }
@@ -299,27 +299,18 @@ body {
     margin-top: 20px;
 	text-align:center;
 	font-size:20px;
-<<<<<<< HEAD
  	height:40%;
 	width:50%;
 	border-radius:10px;
-=======
- 	height:400px%;
-	width:400px;
->>>>>>> origin/master
 	background:rgba(2, 146, 192, 1);
     cursor: pointer;
 	position:absolute;
 	z-index: 10;
     padding: 20px 20px 20px 20px;
-<<<<<<< HEAD
 	right: 25%;
 	top:30%;
 	}
-=======
-}
 
->>>>>>> origin/master
 .hidden {
 	display:none;}		
 
@@ -352,7 +343,7 @@ body {
 
 .level h3{
     color: #456F75;
-    font-family: Helvetica;
+    font-family: Helvetica neue, Helvetica, sans-serif;
     font-weight: 100;
     margin-top: 10px;
     text-align: center;
@@ -369,7 +360,7 @@ body {
     text-decoration: none;
     text-align: center;
 	text-decoration: none;
-    font-family: Helvetica neue;
+    font-family: Helvetica neue, Helvetica, sans-serif;
     font-weight: 200;
 }
 .start h4{
@@ -381,7 +372,7 @@ body {
 */
 
 #kirjautumiskentta{
-	font-family:Helvetica neue;
+	font-family:Helvetica neue, Helvetica, sans-serif;
 	font-size:24px;
  	
     
@@ -487,7 +478,7 @@ nav ul li{
 }
 nav ul li{
     text-decoration: none;
-    font-family: Helvetica Neue;
+    font-family: Helvetica neue, Helvetica, sans-serif;
     font-size: 40px;  
     text-align: center;
     display: block;
@@ -543,7 +534,7 @@ header nav ul li:active {
 	
 	/* IE7 inline-block fix */
 	zoom: 1;
-	*display: inline;
+	display: inline;
 	
 	margin: 0;
 	outline: none;
