@@ -1,5 +1,4 @@
 $(function(){
-    $('#alkuohje').hide();
     $('.ohjeruutu').hide();
     $('#kirjautumiskentta').hide();
     
@@ -23,13 +22,6 @@ $(function(){
     });
     
     
-    $("#kirjautuminen").text(function( index ) {
-		var kayttaja = sessionStorage.getItem("kayttaja")
-		if (kayttaja != null) {
-			$("#kirjautuminen").html(kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä
-			};
-	showPointsBanner();
-    });
 
     $("#kirjautumisruutu").on('submit', function(e) {
         if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
@@ -39,11 +31,6 @@ $(function(){
         };
     });
     
-    $("#kirjautuminen").text(function( index ) {
-        var kayttaja = sessionStorage.getItem("kayttaja")
-        if (kayttaja != null) {
-            $("#kirjautuminen").html(kayttaja);  //korvaa Kirjaudu -linkin käyttäjän nimellä ja puhelinlogolla
-        };
-    });
+
 
 });
