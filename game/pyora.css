@@ -373,21 +373,28 @@ body {
 
 #kirjautumiskentta{
 	font-family:Helvetica neue, Helvetica, sans-serif;
-	font-size:24px;
+	font-size:200%;
  	
-    
-    height:300px;
-	width:33%;
-    min-width: 350px;
+    height:100%;
+	width:100%;
+    /*min-width: 350px; */
     
 	background: rgba(2, 146, 192, 1);    
-	position: fixed;
+	position: absolute; 
     z-index: 10;
-	top: 150px;
-    padding: 0px ;
+	/*top: 150px; */
+    padding: -30px ;
 }
+
+#kirjautumiskentta p{
+	padding-left: 25%;
+	padding-top:6%;
+	}
+
 #kirjautumisruutu{
-    margin: 5px auto;
+    margin: 1% auto; 
+	padding-left: 30%;
+	padding-top:7%;
 }
 	
 #kayttaja {	
@@ -396,6 +403,7 @@ body {
 	height: 30px;
 	width:300px;
 	font-size: 16px;
+
 }
 	
 	
