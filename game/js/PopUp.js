@@ -14,6 +14,7 @@
         });
     });
 	
+	
     
 /* 	$(document).ready(function(){	
 				
@@ -36,6 +37,15 @@
 			b.style.display = "none";
 		};
 	});
+	
+	
+	
+	$("#kirjauduulos").click(function(e) {
+		sessionStorage.removeItem("player_id");
+		document.location.reload(); 
+	});
+	
+
 
 	
 });
