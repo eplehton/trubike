@@ -25,6 +25,9 @@
         float: left;
     }
     
+    #videocontrols {
+        clear: both;
+    }
 
     .target_icon {
         width: 2em;
@@ -158,7 +161,7 @@
         current_anno_target = anno_targets[trg_ind];
     }
 
-    function videoClicked(ev) {
+    function shotClicked(ev) {
         
         var vplayer = document.getElementById("videoplayer");
         var ctime = vplayer.currentTime;
@@ -258,6 +261,8 @@
                 html += 'Current target: ' + j + '<button onclick=delAnnoTarget('+ j +'); updateTargetList();">X</button>';
                 html += '</p>';
                 
+                html +='<input id="target_desc" type="text" />';
+                
                 html += "<table>";
             
                 // Show points
@@ -296,6 +301,15 @@
         
         var targetlist = document.getElementById("targetlist");
         targetlist.innerHTML = html;
+    }
+    
+    function updateVideoPosition() {
+        var vplayer = document.getElementById("videoplayer");
+        var vpos = document.getElementById("videoposition");
+        
+        var posval = vplayer.currentTime.toPrecision(3);
+        console.log('rai' + posval);
+        vpos.value = posval;
     }
     
     function endTarget() {
@@ -368,17 +382,24 @@
         
         vplayer.addEventListener("playing", function() {
             if (update_target_icon_interval_id == null) { // do not make duplicates
-                update_target_icon_interval_id = setInterval( function(){ updateTargetIcon() }, 200); 
+                update_target_icon_interval_id = setInterval( function(){ 
+                    updateTargetIcon();
+                    updateVideoPosition();
+                }, 200); 
             }
         });
         
         vplayer.addEventListener("pause", function() {
             clearInterval(update_target_icon_interval_id);
             update_target_icon_interval_id = null;
+            updateVideoPosition();
         });
                 
                 
-        vplayer.addEventListener("seeked", function() { updateTargetIcon() });
+        vplayer.addEventListener("seeked", function() { 
+            updateTargetIcon();
+            updateVideoPosition();
+        });
 
         vplayer.addEventListener("canplay", function() { updateTargetList() });
  
@@ -389,7 +410,13 @@
             updateTargetList();
             updateClipList();
         });
-        
+
+        var vpos = document.getElementById("videoposition");
+        vpos.addEventListener("change", function() {
+            var newpos = parseFloat(vpos.value);
+            seekVideo(newpos, false);
+        });
+
 
         var aclips = document.getElementById("annotated_clips");
         aclips.addEventListener("change", function() {
@@ -405,28 +432,25 @@
             //console.log("rairairai" + event.which + " " + "2".charCodeAt(0))
             switch (event.which) {
                 case "a".charCodeAt(0):
-                    seekVideo(-1, true);
+                    seekVideo(-0.5, true);
                     break;
                 case "s".charCodeAt(0):
                     playPauseVideo()
                     break;
                 case  "d".charCodeAt(0):
-                    seekVideo(1, true);
+                    seekVideo(0.5, true);
                     break;
                 case "e".charCodeAt(0):
                     endTarget()
                     break;
-                case "1".charCodeAt(0): 
-                    playVideo(1.0);
+                case "z".charCodeAt(0): 
+                    playVideo(1);
                     break;
-                case "2".charCodeAt(0): 
-                    playVideo(0.5);
+                case "x".charCodeAt(0): 
+                    playVideo(1/2);
                     break;
-                case "3".charCodeAt(0):
-                    playVideo(0.33);
-                    break;
-                case "4".charCodeAt(0):
-                    playVideo(0.25);
+                case "c".charCodeAt(0):
+                    playVideo(1/4);
                     break;
             }   
         });
@@ -442,42 +466,41 @@
 <body>
 
 <div>
-<input id="videosrc" type="file"/>
+    <input id="videosrc" type="file"/>
 
-<select id="annotated_clips" name="annotated_clips">
-    <!-- option value="double chocolate">Double Chocolate</option> -->
-</select>
-
-<!-- <button onclick="loadVideo(event)">Load</button> -->
-<button onclick="playPauseVideo()">Play/Pause (s)</button>
-<button onclick="playVideo(1.0)">Play 1/1 (1)</button>
-<button onclick="playVideo(0.5)">Play 1/2 (2)</button>
-
-<button onclick="seekVideo(-10, true)">-10</button>
-<button onclick="seekVideo(-1, true)">-1 (a)</button>
-<button onclick="seekVideo(1, true)">1 (d)</button>
-<button onclick="seekVideo(10, true)">10</button>
-<button onclick="endTarget()">End target (e)</button>
+    <select id="annotated_clips" name="annotated_clips">
+    </select>
 </div>
 
 
+<div>
+    <video id="videoplayer"
+           onclick="shotClicked(event)"    
+           src="">
+    </video>
+
+    <div class="target_icon" id="target_icon_tmpl" onclick="shotClicked(event)">
+    </div>
 
 
-
-<video id="videoplayer"
-       onclick="videoClicked(event)"    
-       src="">
-</video>
-
-<div class="target_icon" id="target_icon_tmpl">
+    <div id="targetlist">
+    rai
+    </div>
 </div>
 
 
-<div id="targetlist">
-rai
-</div>
+<div id="videocontrols">
+    <!-- <button onclick="loadVideo(event)">Load</button> -->
+    <button onclick="playPauseVideo()">|&#9658; (s)</button>
+    <button onclick="playVideo(1.0)">&#9658; 1/1 (1)</button>
+    <button onclick="playVideo(0.5)">&#9658; 1/2 (2)</button>
 
-
+    <button onclick="seekVideo(-10, true)">-10s</button>
+    <button onclick="seekVideo(-0.5, true)">-500ms (a)</button>
+    <button onclick="seekVideo(0.5, true)">500ms (d)</button>
+    <button onclick="seekVideo(10, true)">10s</button>
+    <button onclick="endTarget()">End target (e)</button>
+    <input id="videoposition" type="text" />
 </div>
 
 

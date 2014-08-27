@@ -186,7 +186,7 @@ function startVideo() {
     var vplayer = document.getElementById("videoplayer");
     var width=vplayer.offsetWidth;
     var height=vplayer.offsetHeight;
-    vplayer.src = clipsets[clipset_num][clipset_pos];
+    vplayer.src = clippath + clipsets[clipset_num][clipset_pos];
     vplayer.play();
     correct_shots = [];  //tyhjentää correct_shots -listan ettei edellisten klippien datat vaikuta seuraavaan
     shots = [];				// tyhjentää shotslistan seuraavaa videota varten

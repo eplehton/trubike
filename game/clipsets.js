@@ -1,8 +1,24 @@
-﻿var clipsets = [ ["../clips/jalankulkijat.mp4",
-   "../clips/potkulautailija.mp4",
-   "../clips/isoroba.mp4",
-   "../clips/jalankulkija_ja_suojatie.mp4",
-   "../clips/jalankulkijat2.mp4",
-   "../clips/vastaantulijat.mp4",
-   "../clips/ratikka.mp4"]
-]
+﻿var clippath = "../clips/";
+
+var clipsets = [ ['autot.X-risteys_tasa-arvoinen.mp4',
+'autot_jalankulkijat_pyöräilijä.mp4',
+'autot_ja_jalankulkijat_X-risteys.mp4',
+'bussipysäkit.mp4',
+'edestä_vas.kääntyvä_auto.mp4',
+'isoroba.mp4',
+'jalankulkijat.mp4',
+'jalankulkijat.Yhdistetty.Samaan_suuntaan.Paikallaan_ja_oikealta.mp4',
+'jalankulkijat2.mp4',
+'jalankulkijat_suojatie.mp4',
+'jalankulkijat_suojatie2.mp4',
+'jalankulkija_ja_suojatie.mp4',
+'jalankulkija_porttikongi.mp4',
+'jalankulkijoita_ja_pyöräilijä.mp4',
+'potkulautailija.mp4',
+'PT.vas.Edestä_oik.kääntyvät_autot.mp4',
+'PT.vas.Vas.kääntyvät_autot(I)_ja_oikealta_suoraan_auto.mp4',
+'pyöräilijät.mp4',
+'pyöräilijä_porttikongi.mp4',
+'pyöräilijä_tienyli.mp4',
+'ratikka.mp4',
+'vastaantulijat.mp4'] ]
