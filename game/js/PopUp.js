@@ -28,17 +28,15 @@
 				 
 			
 	$("#submit_login").click(function(e) {  /*tekee sen että ei voi kirjautua tyhjällä käyttäjänimikentällä */
-        console.log("rairairai0");
-		if (($("#kayttaja").val() == "") || ($("#salasana").val() == "")) {
+		if ($("#kayttaja").val() == "") {
 			return false;				
 		} else {
-			console.log("rairairai");
 			setPlayer(($("#kayttaja").val()));
 			var b = document.getElementById("kirjautumiskentta")
 			b.style.display = "none";
 		};
 	});
+
 	
-
-
 });
+	
