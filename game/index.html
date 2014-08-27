@@ -21,8 +21,15 @@
 				}
 			});    
 			
-
-
+			$(document).ready(function(){	
+				var name = sessionStorage.getItem("player_id");
+				if (name == null){
+					$("#kirjautuneena").html("");
+					}
+				else{
+				$("#kirjautuneena").html("Pelaaja: " + name );
+				}
+			});  
 			
 
     </script>
@@ -31,11 +38,15 @@
 <body>
     <div class="background">
     </div>
+	
+	
+	
     <header>
         <div class="grid grip-pad">
         <nav>
             <ul>
-                <li class="col-1-3">Pisteet</li>
+				<!--<li class="col-1-2">Pisteet</li>  -->
+				<li id="kirjautuneena" class="col-1-3"> Ei ketään</li>
                 <li id="ohje" class="col-1-3">Ohje</li>
                 <li id="kirjauduulos" class="col-1-3">Kirjaudu ulos</li>
             </ul>

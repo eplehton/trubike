@@ -33,8 +33,9 @@
 			return false;				
 		} else {
 			setPlayer(($("#kayttaja").val()));
-			var b = document.getElementById("kirjautumiskentta")
+			var b = document.getElementById("kirjautumiskentta");
 			b.style.display = "none";
+			
 		};
 	});
 	
