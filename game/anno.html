@@ -49,6 +49,9 @@
     
     var anno_targets = null;
     var anno_target_icons = []; // icon elements to display each target
+    var current_anno_target = null;
+    var update_target_icon_interval = 100;
+    var update_target_icon_interval_id = null;
     
     addTargetPoint = function(trg, x, y, t) {
         var loc = findInsertIndex(trg.t, t);
@@ -115,9 +118,6 @@
     
     
     
-    var current_anno_target = null;
-
-    var update_target_icon_interval_id = null;
     
     function updateClipList() {
         var clip_selector = document.getElementById("annotated_clips");
@@ -194,7 +194,7 @@
         var target_icon_tmpl = document.getElementById("target_icon_tmpl");
         var ctime = vplayer.currentTime;
    
-        var src_trgs = anno_targets; // getSourceTargets(vplayer.src, targets);
+        var src_trgs = anno_targets; // from memory, not from localStorage now... getSourceTargets(vplayer.src, targets);
         
 
         
@@ -209,31 +209,41 @@
                 document.body.appendChild(anno_target_icons[i]);
             }
             var trg = src_trgs[i];
+
+            var ticon = anno_target_icons[i];
             
             if ((trg.t[0] <= ctime ) && (ctime < trg.end_t)) {
-
                 var delta_t = trg.t.map(function(x) { return x - ctime });
                 var last_neg = findLastNegIndex(delta_t);
 
-                anno_target_icons[i].style.display = "block";
+		//console.log(trg);
+		//console.log(vplayer.offsetWidth + " " +trg.rel_width);
+		
+		var ticon_width = vplayer.offsetWidth * trg.rel_width;
+		var ticon_height = vplayer.offsetWidth * trg.rel_width;
                 
-                
+		console.log(ticon_width + " - " + ticon_height);
+		
                 var videoCoords = rel2Client(trg.x[last_neg], trg.y[last_neg]);
-                var centering = [anno_target_icons[i].offsetWidth / 2.0, 
-                                 anno_target_icons[i].offsetHeight / 2.0];
+                var centering = [ticon_width / 2.0, 
+                                 ticon_height / 2.0];
                 
-                anno_target_icons[i].style.left = videoCoords[0] - centering[0];
-                anno_target_icons[i].style.top = videoCoords[1] - centering[1];
-                
+                ticon.style.left = videoCoords[0] - centering[0];
+                ticon.style.top = videoCoords[1] - centering[1];
+		ticon.style.width = ticon_width + "px";
+		ticon.style.height = ticon_height + "px";
+
                 // If it is the current, use another color
                 if (current_anno_target != null && trg.id == current_anno_target.id) {
-                    anno_target_icons[i].style.background = "red";
+                    ticon.style.background = "red";
                 } else {
-                    anno_target_icons[i].style.background = "green";
+                    ticon.style.background = "green";
                 }
-                //}
+
+		ticon.style.display = "block";
+
             } else { // make it hide if not currently visible
-                anno_target_icons[i].style.display = "none";
+                ticon.style.display = "none";
             }
         }
         
@@ -258,10 +268,10 @@
                 var trg = current_anno_target;
                
                 html += '<p>';
-                html += 'Current target: ' + j + '<button onclick=delAnnoTarget('+ j +'); updateTargetList();">X</button>';
+                html += 'Current target: ' + j + '<button onclick="delAnnoTarget('+ j +'); updateTargetList();">X</button>';
                 html += '</p>';
                 
-                html +='<input id="target_desc" type="text" />';
+                html +='Rel width: <input id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="scaleCurrentAnnoTarget();"/><br />';
                 
                 html += "<table>";
             
@@ -317,7 +327,7 @@
         current_anno_target.end_t = vplayer.currentTime;
         
 
-        saveAnnoTargets(current_anno_target);
+        saveAnnoTargets();
 
         updateTargetList();        
         updateClipList();
@@ -365,8 +375,16 @@
         saveLocalTargets(all_targets);
     }
     
+    function scaleCurrentAnnoTarget() {
+        var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
+	current_anno_target.rel_width = target_rel_width;
+	//console.log("target_rel_width: " + current_anno_target.rel_width);
+	
+	saveAnnoTargets();
+    }
+    
     function seekVideo(time, relative) {
-       var vplayer = document.getElementById("videoplayer")
+       var vplayer = document.getElementById("videoplayer");
        if (relative) { // time is relative to the currentTime
             vplayer.currentTime = vplayer.currentTime + time;
        } else {
@@ -385,7 +403,7 @@
                 update_target_icon_interval_id = setInterval( function(){ 
                     updateTargetIcon();
                     updateVideoPosition();
-                }, 200); 
+                }, update_target_icon_interval); 
             }
         });
         
@@ -475,7 +493,7 @@
 
 <div>
     <video id="videoplayer"
-           onclick="shotClicked(event)"    
+           onclick="shotClicked(event)"		   
            src="">
     </video>
 

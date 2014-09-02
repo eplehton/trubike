@@ -13,6 +13,7 @@ function Target(){
     this.x = [];
     this.y = [];
     this.t = [];
+    this.rel_width = 0.1;
     this.end_t = Infinity;
 }
 
@@ -20,7 +21,7 @@ function Target(){
 var points = 0;
 
 var shots = [];
-var correct_shots = [];
+var game_points = new Map(); // for calculating points during a game
 
 var check_missed_target_interval_size = 200;
 /* var targets = [[[801,259, 3.789], [615, 259, 9.877]],  
@@ -106,22 +107,22 @@ function checkTargetHit(shot){
     
     var all_targets = loadLocalTargets(); // this should not be done everytime, cache
     var trgs = getSourceTargets(all_targets, shot.src);
-
 	var hit_radius = 0.1;
     
 	for (var i=0; i< trgs.length; i++) {
 		var trg = trgs[i]; 
-        
-        var loc = findInsertIndex(trg.t, shot.t);
-        if ((loc > 0) && (shot.t < trg.end_t)) {
-            loc = loc - 1; // set the right index to the target to be compared 
-            console.log("shot: "+ shot.x + ","+ shot.y +" trg: "+ trg.x[loc] +","+ trg.y[loc]);
             
-            var d2 = Math.sqrt(Math.pow(shot.x - trg.x[loc], 2) + Math.pow(shot.y - trg.y[loc], 2));
-            if (d2 < hit_radius){
-                return trg;
-            };
-		};
+		var loc = findInsertIndex(trg.t, shot.t);
+	    if ((loc > 0) && (shot.t < trg.end_t)) {
+			loc = loc - 1; // set the right index to the target to be compared 
+			console.log("shot: "+ shot.x + ","+ shot.y +" trg: "+ trg.x[loc] +","+ trg.y[loc]);
+				
+			var d2 = Math.sqrt(Math.pow(shot.x - trg.x[loc], 2) + Math.pow(shot.y - trg.y[loc], 2));
+				
+			if (d2 < (0.5*trg.rel_width)) {
+				return trg;
+			};
+	    };
 	};
     return null;
 };
@@ -135,6 +136,11 @@ function acknowledgeMissedTarget() {
 }
 
 function handleMissedTarget(missed_trg) {
+	var missed = document.getElementById("missed_target");
+    var vplayer = document.getElementById("videoplayer");
+	var missplayer = document.getElementById("missplayer");
+	
+	
 	pauseVideo();
         
     var lastx = missed_trg.x.length-1;
@@ -144,18 +150,25 @@ function handleMissedTarget(missed_trg) {
     var clientCoords = rel2Client(relx, rely);
     var x = clientCoords[0];
     var y = clientCoords[1];
+	
     
-    var missed = document.getElementById("missed_target");
-    
-    missed.style.display = "block"; 								
-    missed.style.position = "absolute";
-    
-    var centering = [0.5 * missed.offsetWidth, 
-                     0.5 * missed.offsetHeight];
+	var missed_width = vplayer.offsetWidth * missed_trg.rel_width;
+    var missed_height = vplayer.offsetWidth * missed_trg.rel_width;
+        
+    var centering = [0.5 * missed_width, 
+                     0.5 * missed_height];
     missed.style.left = (x - centering[0]) + "px";
     missed.style.top =  (y - centering[1]) + "px";
 
-    
+    missed.style.width = missed_width + "px";
+    missed.style.height = missed_height + "px";
+
+    missed.style.display = "block"; 								
+    missed.style.position = "absolute";
+
+
+    missplayer.play(); 
+
 }
 
 
@@ -188,7 +201,7 @@ function startVideo() {
     var height=vplayer.offsetHeight;
     vplayer.src = clippath + clipsets[clipset_num][clipset_pos];
     vplayer.play();
-    correct_shots = [];  //tyhjentää correct_shots -listan ettei edellisten klippien datat vaikuta seuraavaan
+    // correct_shots = [];  
     shots = [];				// tyhjentää shotslistan seuraavaa videota varten
     //console.log(height, width);
 
@@ -257,28 +270,25 @@ function videoClicked(ev) {
         
         var shot = registerShot(x, y, ctime);
         //rekisteröi klikkauksen kordinaatit ja ajan
-        var hitted_target = checkTargetHit(shot)     						// tsekkaa osuiko targettiin
+        var hitted_target = checkTargetHit(shot);     						// tsekkaa osuiko targettiin
          									//printtaa konsoliin "was_hit: " ja true tai false
         console.log("hitted_target: " + hitted_target);
 		if (hitted_target != null){
             shot.hit = true;
             shot.target_end_t = hitted_target.end_t;
-			correct_shots.push(shot)
+			game_points.set("" + hitted_target.end_t,  1);
         } else {
             shot.hit = false;
         }
+		
+		
 
 
-		var k = correct_shots.length-1
         if (hitted_target != null) {
-			if (k == 0){
-				points += 1;
-			} 
- 			else if (k >= 1){
-				if (((correct_shots[k].t) - (correct_shots[k-1].t)) > correct_hit_interval ){
-					points += 1;
-				}
-			} 
+
+			var n = game_points.size;
+			points = n;
+			
 			showPoints()
             hp.style.background = "green"
             thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
@@ -331,6 +341,11 @@ function saveShots() {
         alert("player_id is null, set to anonymous");
         player_id = "anonymous";
     }
+	
+	if (! gameshots.hasOwnProperty(player_id) )  {
+		gameshots[player_id] = [];
+	}
+	
     gameshots[player_id].push(shots);  
     localStorage.setItem("gameshots", JSON.stringify(gameshots));
 }

@@ -18,8 +18,8 @@
             
             $(targets_save).click(function(){
                 var tin = document.getElementById('targets_input');
-                console.log(tin.textContent);
-                localStorage.setItem("targets", tin.textContent);
+                //console.log("targets_input content: " + tin.value);
+                localStorage.setItem("targets", tin.value);
             });
         });
     </script>
@@ -33,7 +33,7 @@
 </p>
 
 <p>
-<input id="targets_save" type="button" value="Save"/>
+<button id="targets_save">Save</button>
 </p>
 
 </body>

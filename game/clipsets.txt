@@ -1,0 +1,29 @@
+
+ajolinjalle:
+
+'PT.vas.Edesta_oik.kaantyvat_autot.mp4',
+'autot_ja_jalankulkijat_X-risteys.mp4',
+'autot_jalankulkijat_pyorailija.mp4',
+'edesta_vas.kaantyva_auto.mp4',
+'jalankulkijat_suojatie.mp4',
+'jalankulkijat2.mp4'
+'jalankulkijat_suojatie.mp4',
+'jalankulkijat_suojatie2.mp4',
+'jalankulkijoita_ja_pyorailija.mp4',     // auto mahdollinen
+'potkulautailija.mp4'
+'PT.vas.Edesta_oik.kaantyvat_autot.mp4',
+'pyorailijat.mp4',
+'pyorailija_tienyli.mp4', // kavelija mahdollinen
+
+okkluusiot
+
+'jalankulkija_porttikongi.mp4',
+'pyorailija_porttikongi.mp4',
+
+
+voisi tulla ajolinjalle jos käyttäytyvät odottamattomasti
+
+'jalankulkijat.mp4'
+'jalankulkijat.Yhdistetty.Samaan_suuntaan.Paikallaan_ja_oikealta.mp4',
+'vastaantulijat.mp4',
+

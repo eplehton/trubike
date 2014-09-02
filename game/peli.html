@@ -65,7 +65,12 @@
     </div>
 
     <div class="ohjeruutu" id="instruction">
-        <p> Etsi liikenteestä vaaroja ja klikkaa niitä, niin saat pisteitä. Mitä suurempi vaaratilanne, sitä enemmän pisteitä saat. Klikkaa tätä ruutua aloittaaksesi pelin. </p>
+        <p>Pyöräillessä on hyvä varmistua siitä, ettei kukaan tule yllättäen eteen. Kun pystyy ennakoimaan,
+     		ei joudu kolariin tai tekemään äkkijarrutusta. 
+		   Etsi liikenteestä autoja tai muita tiellä kulkijoita, jotka ovat tulossa eteesi ja klikkaa niitä. 
+		   Hyvistä havainnoista saat pisteitä.</p> 
+		   
+		   <p>Klikkaa tätä ruutua aloittaaksesi pelin. </p>
     </div>
 
     <div class="ohjeruutu hidden" id="klipinloppu">
@@ -78,11 +83,12 @@
         </div>
     </a>
 
-    <div>
-        <video id="videoplayer" onclick=videoClicked(event)
-            muted
-            onended=videoEnded(event)
-            src="">
+    <div style="text-align: center; vertical-align: middle;" >
+        <video id="videoplayer" 
+		    onclick="videoClicked(event)"
+            onended="videoEnded(event)"
+            src=""
+			muted>
         </video> 
     
     
@@ -91,6 +97,8 @@
     </div>
    
     <audio id="targethitplayer" src="media/targethit.mp3"></audio>
+    <audio id="missplayer" src="media/188039__antumdeluge__bicycle-horn.wav"></audio>
+
     
     
 </body>
