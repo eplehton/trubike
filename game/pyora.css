@@ -374,16 +374,14 @@ body {
 #kirjautumiskentta{
 	font-family:Helvetica neue, Helvetica, sans-serif;
 	font-size:200%;
- 	
-    height:100%;
-	width:100%;
-    /*min-width: 350px; */
+ 	    
+	background: rgba(2, 146, 192, 0.9);    
+	position:absolute; 
+    top: 0px;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
     
-	background: rgba(2, 146, 192, 1);    
-	position: absolute; 
-    z-index: 10;
-	/*top: 150px; */
-
 	display: none;
 }
 
@@ -476,6 +474,7 @@ header{
     background-color: #0292C0;
     opacity: 0.9;
     align-content: center;
+    z-index: 1;
 }
 
 nav ul {
