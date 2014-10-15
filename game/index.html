@@ -12,25 +12,29 @@
 
 	
 	
- 			$(document).ready(function(){	
-				
-                var player_id = sessionStorage.getItem("player_id");
-				if (player_id == null) {
-					var b = document.getElementById("kirjautumiskentta")
-					b.style.display = "block";
-				}
-			});    
+		$(document).ready(function(){	
 			
-			$(document).ready(function(){	
-				var name = sessionStorage.getItem("player_id");
-				if (name == null){
-					$("#kirjautuneena").html("");
-					}
-				else{
-				$("#kirjautuneena").html("Pelaaja: " + name );
+			var player_id = sessionStorage.getItem("player_id");
+			if (player_id == null) {
+				var b = document.getElementById("kirjautumiskentta")
+				b.style.display = "block";
+			}
+		});    
+		
+		$(document).ready(function(){	
+			var name = sessionStorage.getItem("player_id");
+			if (name == null){
+				$("#kirjautuneena").html("");
 				}
-			});  
-			
+			else{
+			$("#kirjautuneena").html("Pelaaja: " + name );
+			}
+		});  
+
+		function startClipset(set_num) {
+			sessionStorage.setItem("clipset_num", set_num);
+			document.location.href = "peli.html";
+		}
 
     </script>
 
@@ -67,30 +71,28 @@
                 <div class="level-picture">
                     <img src="img/Road.jpg">
                 </div>
-                <h3>Vaarat</h3>
-                <a href="peli.html">
-                <div class="start">
-                    <h4>PELAA</h4>     
-                </div>
-            </a>
+                <h3>Taso 1</h3>
+					<div class="start">
+						<h4 onclick='startClipset(0)'>PELAA</h4>     
+					</div>
             </div>
+			
     </div>
-<!-- 
+
      <div class="col-1-6 mobile-col-1-3">
-            <div class="level">
+            			<div class="level">
                 <div class="level-picture">
                     <img src="img/Road.jpg">
-            </div>
-                <h3></h3>
-                <a href="peli.html">
-                    <div class="start">
-                        <h4></h4>    
-                    </div>
-            </a>
+                </div>
+                <h3>Taso 2</h3>
+					<div class="start">
+						<h4 onclick='startClipset(1)'>PELAA</h4>     
+					</div>
             </div>
             
     </div>
-    
+
+<!-- 
     <div class="col-1-6 mobile-col-1-3">
             <div class="level">
             <div class="level-picture">

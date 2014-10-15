@@ -438,9 +438,16 @@ body {
     position: absolute;
 }
 
+#hitted_target {
+    border-radius: 50%;
+    border: 1ex solid green;
+    background-color: transparent;
+    z-index: 2;
+    display: none;
+    position: absolute;
+}
+
 #missed_target {
-    width: 6em;
-    height: 6em;
     border-radius: 50%;
     border: 1ex solid #f00;
     background-color: transparent;

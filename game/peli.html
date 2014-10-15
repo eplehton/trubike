@@ -8,16 +8,21 @@
 	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="clipsets.js"></script>
     <script type="text/javascript" src="js/peli.js"></script>
-    <script type="text/javascript" src="js/kirjautuminen.js"></script>
+    <!-- <script type="text/javascript" src="js/kirjautuminen.js"></script> -->
     <script language="javascript" type="text/javascript">
         $(document).ready(function(){	
         
             // load clipsets to var clipsets with ajax call from a separate file
+			// does not work without a server => imported as .js-file
             //loadClipsets();
-            // FIXME: due to asynchronous nature of this operation, it would be more correct to wait until the
-            // call completes, before proceding. no we just hope everything is ready before the user clicks to 
-            // start the video
-            
+			
+			var cns = sessionStorage.getItem("clipset_num");
+			if (cns == null) {
+				clipset_num = 0;
+			} else  {
+                clipset_num = parseInt(cns);
+			}
+			
             
             $("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
                 var instr = document.getElementById("instruction")
@@ -50,8 +55,36 @@
             vplayer.addEventListener("pause", function() {
                 clearInterval(check_missed_targets_interval_id);
                 check_missed_targets_interval_id = null;
-            });                
-            
+            });
+			
+			
+			 // Keypresses
+			$(document).keypress(function(event){
+				switch (event.which) {
+					case "a".charCodeAt(0):
+						clipset_pos -= 1;
+						startVideo()
+						break;
+					case "z".charCodeAt(0):
+						clipset_pos += 1;
+						startVideo()
+						break;
+					case 'f'.charCodeAt(0):
+						 var fv = sessionStorage.getItem("feedback_version");
+						 var f = "";
+						 if (fv == 'nohighlight') {
+						    f = "highlight";
+					    } else {
+							f = "nohighlight";
+						}
+						sessionStorage.setItem("feedback_version", f);
+						alert("Feedback set to " + f);
+						break;
+				}
+			});
+			
+			
+				
         });
     </script>
 
@@ -93,6 +126,7 @@
     
     
         <div id="hitpoint_tmpl" class="hitpoint"></div>
+		<div id="hitted_target"></div>
         <div id="missed_target" onclick="acknowledgeMissedTarget()"></div>
     </div>
    

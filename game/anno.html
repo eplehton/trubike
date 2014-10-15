@@ -52,13 +52,24 @@
     var current_anno_target = null;
     var update_target_icon_interval = 100;
     var update_target_icon_interval_id = null;
-    
+    var gui_append_mode;
+	
     addTargetPoint = function(trg, x, y, t) {
         var loc = findInsertIndex(trg.t, t);
         trg.t.splice(loc, 0, t);
         trg.x.splice(loc, 0, x);
         trg.y.splice(loc, 0, y);
+		 
+		 
+		//if (loc == trg.t.length) {
+		//	appending_target_points_flag = True;
+		//} else {
+		//	appending_target_points_flag = False;
+		//}
+		
+		trg.end_t = trg.t[trg.t.length-1]; // 2014-10-04
     }
+	
     delTargetEnd = function(trg) {
         console.log("delTargetEnd")
         trg.end_t = Infinity;
@@ -69,16 +80,9 @@
         trg.x.splice(loc, 1);
         trg.y.splice(loc, 1);
         trg.t.splice(loc, 1);
+		
+		trg.end_t = trg.t[trg.t.length-1]; // 2014-10-04
     }
-
-    /*Target.prototype.toString = function() {
-        var s = "" + this.id
-        s += ';' + this.t.map( function(x) { return x.toPrecision(3); }).join();
-        s += ';' + this.x.map( function(x) { return x.toPrecision(3); }).join();
-        s += ';' + this.y.map( function(x) { return x.toPrecision(3); }).join();
-        s += ';' + this.end_t.toPrecision(3);
-        return s
-    }*/
 
 
     
@@ -88,8 +92,14 @@
             current_anno_target = null;
         }
         anno_targets.splice(trg_ind, 1);
-        saveAnnoTargets();
+		
+		// let's hide also the element representing it because it can be visible
+        anno_target_icons[trg_ind].style.display = "none";
+		anno_target_icons.splice(trg_ind, 1);
+		
+		saveAnnoTargets();
         
+		updateTargetIcon();
         updateTargetList();
         updateClipList();
     }
@@ -178,9 +188,6 @@
                  
             }
             addTargetPoint(current_anno_target, x, y, ctime)
-            
-            //console.log(current_anno_target)
-            
             updateTargetList()
         }
         
@@ -202,45 +209,46 @@
         
         for (var i=0; i < src_trgs.length; i++) {
             
-            // copy a new target icon if not present
+            // copy a new target icon if not enought icons
             if (! anno_target_icons.hasOwnProperty(i)) {
                 anno_target_icons[i] = target_icon_tmpl.cloneNode(true);
-                anno_target_icons[i].id = "target_icon_" + Math.round(src_trgs[i].id); 		
+                anno_target_icons[i].id = "target_icon_" + i; 		
                 document.body.appendChild(anno_target_icons[i]);
             }
+			
             var trg = src_trgs[i];
 
             var ticon = anno_target_icons[i];
             
-            if ((trg.t[0] <= ctime ) && (ctime < trg.end_t)) {
+            if ((trg.t[0] <= ctime ) && (ctime <= trg.end_t) ) {
                 var delta_t = trg.t.map(function(x) { return x - ctime });
                 var last_neg = findLastNegIndex(delta_t);
 
-		//console.log(trg);
-		//console.log(vplayer.offsetWidth + " " +trg.rel_width);
-		
-		var ticon_width = vplayer.offsetWidth * trg.rel_width;
-		var ticon_height = vplayer.offsetWidth * trg.rel_width;
-                
-		console.log(ticon_width + " - " + ticon_height);
-		
-                var videoCoords = rel2Client(trg.x[last_neg], trg.y[last_neg]);
+				//console.log(trg);
+				//console.log(vplayer.offsetWidth + " " +trg.rel_width);
+				
+				var ticon_width = vplayer.offsetWidth * trg.rel_width;
+				var ticon_height = vplayer.offsetWidth * trg.rel_width;
+						
+				console.log(ticon_width + " - " + ticon_height);
+				
+				var videoCoords = rel2Client(trg.x[last_neg], trg.y[last_neg]);
                 var centering = [ticon_width / 2.0, 
                                  ticon_height / 2.0];
                 
                 ticon.style.left = videoCoords[0] - centering[0];
                 ticon.style.top = videoCoords[1] - centering[1];
-		ticon.style.width = ticon_width + "px";
-		ticon.style.height = ticon_height + "px";
+				ticon.style.width = ticon_width + "px";
+				ticon.style.height = ticon_height + "px";
 
                 // If it is the current, use another color
                 if (current_anno_target != null && trg.id == current_anno_target.id) {
                     ticon.style.background = "red";
                 } else {
-                    ticon.style.background = "green";
+                    ticon.style.background = "blue";
                 }
 
-		ticon.style.display = "block";
+				ticon.style.display = "block";
 
             } else { // make it hide if not currently visible
                 ticon.style.display = "none";
@@ -271,8 +279,9 @@
                 html += 'Current target: ' + j + '<button onclick="delAnnoTarget('+ j +'); updateTargetList();">X</button>';
                 html += '</p>';
                 
-                html +='Rel width: <input id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="scaleCurrentAnnoTarget();"/><br />';
-                
+                html +='Circle width: <input size="5" id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="scaleCurrentAnnoTarget();"/><br />'
+				
+				html += "<p>List of target points:</p>"
                 html += "<table>";
             
                 // Show points
@@ -281,9 +290,9 @@
                     var t = trg.t[i].toPrecision(3);
                     var x =  trg.x[i].toPrecision(3);
                     var y = trg.y[i].toPrecision(3);
-                    var end_t = trg.end_t.toPrecision(3);
+                    //var end_t = trg.end_t.toPrecision(3);
                     var line = "".concat("<tr><td>",
-                                            '<button onclick="seekVideo('+t+', false)">'+t+'</button>',
+                                            (i+1) +'. <button onclick="seekVideo('+t+', false)">'+t+'</button>',
                                             "</td><td>",
                                             x,
                                             "</td><td>",
@@ -295,16 +304,18 @@
                 }
                     
                 // Show end
-                if (end_t == Infinity) {
-                    html +='<tr><td>End: Infinity</td><td colspan="3"></td></tr>'
+                /* if ((end_t == undefined) ) {
+                    html += ""
+						//'<tr><td>End: Infinity</td><td colspan="3"></td></tr>'
                 } else {
                     html += '<tr><td>';
-                    html += '<button onclick="seekVideo('+end_t+', false)">End: '+end_t+'</button>';
-                    html += '</td><td colspan="2"></td>';
+                    html += 'E <button onclick="seekVideo('+end_t+', false)">'+end_t+'</button>';
+                    html += '</td><td colspan="2"><button onclick="endTarget()">End target (e)</button></td>';
                     html += '<td>';
                     html +='<button onclick="delTargetEnd(anno_targets['+ j +']); updateTargetList();">X</button>';
                     html +='</td></tr>';
                 }
+				*/
                 html += "</table>"
             }
         }
@@ -377,10 +388,10 @@
     
     function scaleCurrentAnnoTarget() {
         var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
-	current_anno_target.rel_width = target_rel_width;
-	//console.log("target_rel_width: " + current_anno_target.rel_width);
+		current_anno_target.rel_width = target_rel_width;
+		//console.log("target_rel_width: " + current_anno_target.rel_width);
 	
-	saveAnnoTargets();
+		saveAnnoTargets();
     }
     
     function seekVideo(time, relative) {
@@ -411,6 +422,11 @@
             clearInterval(update_target_icon_interval_id);
             update_target_icon_interval_id = null;
             updateVideoPosition();
+			
+			// save the anno targets when video pauses
+			// we want to avoid saving during the video presentation/clicking, because it
+			// saving may take some time and create conflicts
+			saveAnnoTargets();
         });
                 
                 
@@ -472,6 +488,11 @@
                     break;
             }   
         });
+		
+		window.onbeforeunload = function(e) {
+			console.log("beforeunload: saving anno targets");
+			saveAnnoTargets(); // save possible changes if user is reloading the page while video is still playing...
+		};
        
         
     });
@@ -509,16 +530,23 @@
 
 <div id="videocontrols">
     <!-- <button onclick="loadVideo(event)">Load</button> -->
-    <button onclick="playPauseVideo()">|&#9658; (s)</button>
-    <button onclick="playVideo(1.0)">&#9658; 1/1 (1)</button>
-    <button onclick="playVideo(0.5)">&#9658; 1/2 (2)</button>
-
+    
+	Video position: <input id="videoposition" type="text" />
+	<br />
+	
+    <button onclick="playPauseVideo()">Play/Pause (s)</button>
+	<button onclick="playVideo(1.0)">&#9658; 1/1 (z)</button>
+    <button onclick="playVideo(0.5)">&#9658; 1/2 (x)</button>
+	<button onclick="playVideo(0.5)">&#9658; 1/4 (c)</button>
+	
+	
+	<br />
     <button onclick="seekVideo(-10, true)">-10s</button>
     <button onclick="seekVideo(-0.5, true)">-500ms (a)</button>
     <button onclick="seekVideo(0.5, true)">500ms (d)</button>
     <button onclick="seekVideo(10, true)">10s</button>
-    <button onclick="endTarget()">End target (e)</button>
-    <input id="videoposition" type="text" />
+    
+    
 </div>
 
 
