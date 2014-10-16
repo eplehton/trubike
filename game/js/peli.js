@@ -370,7 +370,7 @@ function videoEnded(ev) {
 	var line = ""
   	for (var i=0; i<shots.length; i++) {
 		line = line + " "+ shots[i].x + "; " + shots[i].y + "; " + shots[i].t + "; " + shots[i].src + " \n"
-		} 
+	} 
 	temp_videoshots.push(line)
 
     sessionStorage.setItem("videoshots_" + (clipset_pos+1), temp_videoshots)    //tekee sessionstorageen shotslistan nimeltä "videoshots_0"  jonka value on ekan videon shotit, sitten videoshots_1.....
@@ -389,18 +389,28 @@ function videoEnded(ev) {
 
 	sessionStorage.setItem("Points", points);
 
-    saveShots();
+    saveStats();
 	alert(clipsets[clipset_num][clipset_pos]);
 }
 
-function saveShots() {
-    var gameshots_str = localStorage.getItem("gameshots");
-    var gameshots = null;
-    if (gameshots_str == null) {
-        gameshots = {};
+function saveStats() {
+    var shots_stats_str = localStorage.getItem("shots_stats");
+    var shots_stats = null;
+    if (shots_stats_str == null) {
+        shots_stats = {};
     } else {
-        gameshots = JSON.parse(gameshots_str);
+        shots_stats = JSON.parse(shots_stats_str);
     }
+
+
+    var hitmiss_stats_str = localStorage.getItem("hitmiss_stats");
+    var hitmiss_stats = null;
+    if (hitmiss_stats_str == null) {
+        hitmiss_stats = {};
+    } else {
+        hitmiss_stats = JSON.parse(hitmiss_stats_str);
+    }
+
     
     var player_id = sessionStorage.getItem("player_id");
     if (player_id == null) {
@@ -408,12 +418,19 @@ function saveShots() {
         player_id = "anonymous";
     }
 	
-	if (! gameshots.hasOwnProperty(player_id) )  {
-		gameshots[player_id] = [];
+	if (! shots_stats.hasOwnProperty(player_id) )  {
+		shots_stats[player_id] = [];
 	}
 	
-    gameshots[player_id].push(shots);
-    localStorage.setItem("gameshots", JSON.stringify(gameshots));
+	if (! hitmiss_stats.hasOwnProperty(player_id) )  {
+		hitmiss_stats[player_id] = [];
+	}
+	
+    shots_stats[player_id].push(shots);
+	hitmiss_stats[player_id].push(hitmiss);
+	
+    localStorage.setItem("shot_stats", JSON.stringify(shot_stats));
+	localStorage.setItem("hitmiss_stats", JSON.stringify(hitmiss_stats));
 }
 
 
