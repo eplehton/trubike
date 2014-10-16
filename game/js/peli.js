@@ -55,6 +55,21 @@ function findInsertIndex(arr, val) {
 
 
 
+function hideElementAfter(elem_id, timeout) {
+	/*
+		This function sets style.display = "none" to an element with an id elem_id after a timeout (ms).
+		
+		The point of using this function instead of directly setTimeout, is that the function 
+		within the setTimeout gets evaluated with a correct elem_id. 
+		This would be a problem in a loop where many elements are shown and set to hide with a direct timeout. 
+	    In such a situation, the variable in the function definition inside the setTimetout would
+		refer to the wrond elem_id (because it practically would always be referring to the last element of the loop when the 
+		timeout would be executed).
+		But number arguments to functions are always passed by value.  
+	*/
+	setTimeout( function(){ document.getElementById(elem_id).style.display = "none"}, timeout); 	
+}
+		
 // Targets loading saving functions
 
 
@@ -110,6 +125,7 @@ function checkTargetHit(shot){
 	    
 	var hit_target = []; // which targets are hitted
 	var hit_loc = []; // the index location within each target
+	var first_hit = []; // the first hit to the target or not
 	
 	for (var i=0; i< trgs.length; i++) {
 		var trg = trgs[i]; 
@@ -132,11 +148,14 @@ function checkTargetHit(shot){
 												shot_t: shot.t,
 												location: loc,
 												ack_realt: -1});
+					first_hit.push(true);
+				} else {
+					first_hit.push(false);
 				}
 			};
 	    };
 	};
-	return {target: hit_target, location: hit_loc};
+	return {target: hit_target, location: hit_loc, first_hit: first_hit};
 };
 
 function acknowledgeMissedTarget() {
@@ -308,10 +327,39 @@ function videoClicked(ev) {
 			game_points.set("" + hit.target[h].end_t,  1) //{target: hit_target, location: hit_loc};);
 			points += 1; //game_points.size;
 		
-			// highlight the target
+			// show points
+			
+			if (hit.first_hit[h]) {
+				var point_tmpl = document.getElementById("point_tmpl"); 		
+				var pnt = point_tmpl.cloneNode(true);										
+				var pnt_id = "point_" + Date.now(); 
+				pnt.id = pnt_id;
+
+				hideElementAfter(pnt_id, 250)
+				
+				document.body.appendChild(pnt);  										
+				
+				
+				pnt.style.display = "block";					
+				pnt.style.position = "absolute";
+			
+				
+				var client_coords = rel2Client(hit.target[h].x[hit.location[h]], 
+											   hit.target[h].y[hit.location[h]]);
+				var hitted_x = client_coords[0];
+				var hitted_y = client_coords[1];
+				var centering = [0.5 * pnt.offsetWidth, 
+								 0.5 * pnt.offsetHeight];
+				//  - centering[0] - centering[1]
+				pnt.style.left = (hitted_x) + "px";
+				pnt.style.top =  (hitted_y - 100) + "px";
+				console.log("point coords: " + hitted_x + " - " + hitted_y);	
+			}
+
+
 			/*
 			var client_coords = rel2Client(hit.target.x[hit.location], 
-										   hit.target.x[hit.location]);
+										   hit.target.y[hit.location]);
 			var hitted_x = client_coords[0];
 			var hitted_y = client_coords[1];
 			var hitted_width = vplayer.offsetWidth * hit.target.rel_width;
@@ -339,10 +387,6 @@ function videoClicked(ev) {
         hp.style.display = "block"; 										// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
         hp.style.position = "absolute" 										// displayataan absoluuttisesti x:n ja y:n mukaan 
         
-        var centering = [0.5 * hp.offsetWidth, 
-                         0.5 * hp.offsetHeight];
-        hp.style.left = (x - centering[0]) + "px";
-        hp.style.top =  (y - centering[1]) + "px";
 
 		
 		// show the hit point as green and play hit audio
@@ -351,11 +395,23 @@ function videoClicked(ev) {
 			hp.style.background = "green"; 
 			hp.style.width = "8em";
 			hp.style.height = "8em";
+
+			var centering = [0.5 * hp.offsetWidth, 
+							 0.5 * hp.offsetHeight];
+			hp.style.left = (x - centering[0]) + "px";
+			hp.style.top =  (y - centering[1]) + "px";
 			
 			// update points and play the audio
 			showPoints()
 			thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
 			thplayer.play()  								//soittaa audioplayerista äänen että osuttiin oikeaan
+		} else  {
+			
+			var centering = [0.5 * hp.offsetWidth, 
+							 0.5 * hp.offsetHeight];
+			hp.style.left = (x - centering[0]) + "px";
+			hp.style.top =  (y - centering[1]) + "px";
+			
 		}
  
 		
@@ -429,7 +485,7 @@ function saveStats() {
     shots_stats[player_id].push(shots);
 	hitmiss_stats[player_id].push(hitmiss);
 	
-    localStorage.setItem("shot_stats", JSON.stringify(shot_stats));
+    localStorage.setItem("shot_stats", JSON.stringify(shots_stats));
 	localStorage.setItem("hitmiss_stats", JSON.stringify(hitmiss_stats));
 }
 

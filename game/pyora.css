@@ -475,6 +475,22 @@ p.missed_target_notification:before {
     border-color: #000 transparent transparent #000;
 }
 
+/* for points which will hover over a hitted target */
+div.point {
+	/*background-color: transparent; */
+    background-color: transparent;
+	z-index: 2;
+    display: none;
+    position: absolute;
+	width: 5em;
+	height: 5em;
+}
+
+p.point {
+	color: white;
+	text-align: center;
+	font-size: 2em;
+}
 
 /*Valikko-----------------------------------------------------------------------------------------------------------------------------------*/
 header{
