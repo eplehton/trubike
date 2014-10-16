@@ -6,7 +6,7 @@ function Shot(x, y, t, src, video_started_t) {
     this.target_end_t = null;
 	this.target_loc = null;
     this.src = src;
-    this.date = Date.now();
+    this.realt = Date.now();
     this.hit = false;
 }
 
@@ -23,7 +23,7 @@ function Target(){
 var points = 0;
 
 var shots = [];
-var target_hits = [];
+var hitmiss = new Map();
 
 var game_points = new Map(); // for calculating points during a game
 
@@ -100,7 +100,9 @@ function getSourceTargets(all_targets, src) {
 
 function checkTargetHit(shot){
     /*
-        Return target if hitted, otherwise null.
+	Check if a shot hitted any targets.
+	Keeps track of hitted targets.
+	Return info if hitted, otherwise empty
     */
     
     var all_targets = loadLocalTargets(); // this should not be done everytime, cache
@@ -122,6 +124,15 @@ function checkTargetHit(shot){
 			if (d2 < (0.5*trg.rel_width)) {
 				hit_target.push(trg);
 				hit_loc.push(loc);
+				
+				if (! hitmiss.has(trg.end_t)) { // mark the FIRST shot as hitted
+					hitmiss.set(trg.end_t, {hitmiss_realt: shot.realt,
+												target_end_t: trg.end_t,
+												hit: true,
+												shot_t: shot.t,
+												location: loc,
+												ack_realt: -1});
+				}
 			};
 	    };
 	};
@@ -132,24 +143,31 @@ function acknowledgeMissedTarget() {
     var missed = document.getElementById("missed_target");
     missed.style.display = "none";
     
-	
-	//var rep = game_points("" + missed.trubike.missed_end_t)
-	//rep.acknowledge_t = Data.now()
+	// register the acknowledgement time 
+	var missed_end_t = missed._trubike_missed_end_t;
+	var mt = hitmiss.get(missed_end_t)
+	mt.ack_realt = Date.now(); 
 	
     var vplayer = document.getElementById("videoplayer");
     vplayer.play();
 }
 
 function handleMissedTarget(missed_trg) {
-	var missed = document.getElementById("missed_target");
+    var missed = document.getElementById("missed_target");
     var vplayer = document.getElementById("videoplayer");
-	var missplayer = document.getElementById("missplayer");
+    var missplayer = document.getElementById("missplayer");
 	
-	pauseVideo();
+    pauseVideo();
         
-	// register it
-	//game_points("" + missed.end_t,  {target: hit_target, location: hit_loc});	
 
+	hitmiss.set(missed_trg.end_t, {hitmiss_realt: Date.now(),
+									hit: false,
+									target_end_t: missed_trg.end_t,
+									shot_t: -1,
+									location: -1,
+									ack_realt: -1});
+	
+	
     var lastx = missed_trg.x.length-1;
     var relx = missed_trg.x[lastx];
     var rely = missed_trg.y[lastx];
@@ -159,7 +177,7 @@ function handleMissedTarget(missed_trg) {
     var y = clientCoords[1];
 	
     
-	var missed_width = vplayer.offsetWidth * missed_trg.rel_width;
+    var missed_width = vplayer.offsetWidth * missed_trg.rel_width;
     var missed_height = vplayer.offsetWidth * missed_trg.rel_width;
         
     var centering = [0.5 * missed_width, 
@@ -171,16 +189,16 @@ function handleMissedTarget(missed_trg) {
     missed.style.height = missed_height + "px";
 
 
-	var feedback_version = sessionStorage.getItem("feedback_version");
-	if (feedback_version == "nohighlight") {
-	    missed.style.opacity = 0.0;
-	} else {
+    var feedback_version = sessionStorage.getItem("feedback_version");
+    if (feedback_version == "nohighlight") {
+		missed.style.opacity = 0.0;
+    } else {
 		missed.style.opacity = 1.0;
-	}
+    }
 	
     missed.style.position = "absolute";
-	missed.style.display = "block"; 
-	//missed.trubike.missed_end_t = missed.end_t;	
+    missed.style.display = "block"; 
+    missed._trubike_missed_end_t = missed_trg.end_t;	
 
     missplayer.play(); 
 
@@ -219,9 +237,11 @@ function startVideo() {
     vplayer.src = clippath + clipsets[clipset_num][clipset_pos];
     vplayer.play();
     // correct_shots = [];  
-    shots = [];				// tyhjentää shotslistan
 	
-	video_started_t = Date.now(); // this is used to group shots per clip presentation
+    shots = [];				// tyhjentää shotslistan
+    hitmiss = new Map();
+	
+    video_started_t = Date.now(); // this is used to group shots per clip presentation
 
 };
 
@@ -231,9 +251,8 @@ function checkMissedTargets(targets) {
     
     for (var tx=0; tx<targets.length; tx++) {
         var current_trg = targets[tx];
-        // check if the target end was passed during the last interval without a shot
-        if ((current_trg.end_t < ctime) & 
-            (Math.abs(current_trg.end_t - ctime) < (check_missed_target_interval_size/1000))) {
+        // check if the target end is passed and the target has not been hit yet
+        if ((current_trg.end_t < ctime) & (! hitmiss.has(current_trg.end_t))) {
             var hitted = false;
             for (var sx=shots.length-1; sx >= 0; sx--) {
                 if (shots[sx].target_end_t == current_trg.end_t) {
@@ -272,30 +291,11 @@ function videoClicked(ev) {
         var x = ev.clientX;
         var y = ev.clientY;
         
-        // gui update
-        var hp_tmpl = document.getElementById("hitpoint_tmpl"); 				//etsii hitpoint_tmpl nimisen divin html-tiedostosta
-        var hp = hp_tmpl.cloneNode();										//kloonaa sen
-        hp.id = "hitpoint_" + Math.round(ctime*1000); 						 // antaa kloonille (hp) id:n "hitpoint_" ja ajan millisekunteina
-        setTimeout( function(){ hp.style.display = "none"}, 250); 			 // setTimeout kutsuu anonyymin funktion: eli (piilottaa hp:n, 250 ms kuluttua)
-        document.body.appendChild(hp);  										//dokumenttiin lisätään uusi klooni hp
-      
-		
-		
-        hp.style.display = "block"; 										// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
-        hp.style.position = "absolute" 										// displayataan absoluuttisesti x:n ja y:n mukaan 
         
-        var centering = [0.5 * hp.offsetWidth, 
-                         0.5 * hp.offsetHeight];
-        hp.style.left = (x - centering[0]) + "px";
-        hp.style.top =  (y - centering[1]) + "px";
-        
-
-		
 		// register the shot
         var shot = registerShot(x, y, ctime);
         
-        var hit = checkTargetHit(shot);  						// tsekkaa osuiko targettiin
-         									//printtaa konsoliin "was_hit: " ja true tai false
+        var hit = checkTargetHit(shot); // check if any targets has been hit
         console.log("hitted_target: " + hit);
 		    
 		for (var h=0; h<hit.target.length; h++) {	
@@ -307,17 +307,9 @@ function videoClicked(ev) {
 			// for updating the points
 			game_points.set("" + hit.target[h].end_t,  1) //{target: hit_target, location: hit_loc};);
 			points += 1; //game_points.size;
-			
-			// show the hit point as green and highlight the target 
-			hp.style.background = "green"; 
-			hp.style.width = "8em";
-			hp.style.height = "8em";
-			     var centering = [0.5 * hp.offsetWidth, 
-                         0.5 * hp.offsetHeight];
-			hp.style.left = (x - centering[0]) + "px";
-			hp.style.top =  (y - centering[1]) + "px";
-			
-			/* 
+		
+			// highlight the target
+			/*
 			var client_coords = rel2Client(hit.target.x[hit.location], 
 										   hit.target.x[hit.location]);
 			var hitted_x = client_coords[0];
@@ -335,11 +327,37 @@ function videoClicked(ev) {
 			hitted.style.position = "absolute";
 			setTimeout( function(){ hitted.style.display = "none"}, 250); // hide it soon
 			 */
+		}	
+
+		// shot feedback
+		var hp_tmpl = document.getElementById("hitpoint_tmpl"); 				//etsii hitpoint_tmpl nimisen divin html-tiedostosta
+        var hp = hp_tmpl.cloneNode();										//kloonaa sen
+        hp.id = "hitpoint_" + Math.round(ctime*1000); 						 // antaa kloonille (hp) id:n "hitpoint_" ja ajan millisekunteina
+        setTimeout( function(){ hp.style.display = "none"}, 250); 			 // setTimeout kutsuu anonyymin funktion: eli (piilottaa hp:n, 250 ms kuluttua)
+        document.body.appendChild(hp);  										//dokumenttiin lisätään uusi klooni hp
+		
+        hp.style.display = "block"; 										// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
+        hp.style.position = "absolute" 										// displayataan absoluuttisesti x:n ja y:n mukaan 
+        
+        var centering = [0.5 * hp.offsetWidth, 
+                         0.5 * hp.offsetHeight];
+        hp.style.left = (x - centering[0]) + "px";
+        hp.style.top =  (y - centering[1]) + "px";
+
+		
+		// show the hit point as green and play hit audio
+		if (hit.target.length > 0) {
+
+			hp.style.background = "green"; 
+			hp.style.width = "8em";
+			hp.style.height = "8em";
+			
 			// update points and play the audio
 			showPoints()
-            thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
-            thplayer.play()  								//soittaa audioplayerista äänen että osuttiin oikeaan
-        } 
+			thplayer.currentTime = 0.0 										//asettaa audioplayerin nollaan.
+			thplayer.play()  								//soittaa audioplayerista äänen että osuttiin oikeaan
+		}
+ 
 		
         
     }
