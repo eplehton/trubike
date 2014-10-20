@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="test.css" />
+	<title> Peli </title>
+	
+	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="js/test.js"></script>
+    
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){	
+            
+            $("#ready_banner").click(function(){
+                var rb = document.getElementById("ready_banner")
+                rb.style.display = "none"; 
+                startVideo(); 
+            }); 
+            
+            
+            document.getElementById("ready_banner").style.display = "block";
+        });
+    </script>
+
+</head>
+
+<body>
+      <div class="banner" id="ready_banner">
+		   <p>Klikkaa! </p>
+    </div>
+
+    <div class="banner" id="query_banner">
+
+    </div>
+
+    <div class="target" id="target_template"></div>
+    
+  
+    <div style="text-align: center; vertical-align: middle;" >
+        <video id="videoplayer" 
+		    onclick="videoClicked(event)"
+            onended="videoEnded(event)"
+            src="../clips/isoroba.mp4"
+			muted>
+        </video> 
+    
+   
+    </div>
+   
+    
+    
+</body>
+</html>
