@@ -13,21 +13,30 @@
     <script type="text/javascript">
     
         $(document).ready(function(){	
-            var gameshots_str = localStorage.getItem("gameshots");
+            var gameshots_str = localStorage.getItem("shots_stats");
             document.getElementById('shots_input').innerHTML = gameshots_str;
             
-            $(targets_save).click(function(){
+            $(shots_save).click(function(){
                 var sin = document.getElementById('shots_input');
                 console.log(sin.textContent);
-                localStorage.setItem("gameshots", sin.textContent);
+                localStorage.setItem("shots_stats", sin.textContent);
             });
+			
+			var gameshots_str = localStorage.getItem("hitmiss_stats");
+            document.getElementById('hitmiss_input').innerHTML = gameshots_str;
+            
+            $(hitmiss_save).click(function(){
+                var sin = document.getElementById('hitmiss_input');
+                console.log(sin.textContent);
+                localStorage.setItem("hitmiss_stats", sin.textContent);
+            });
+
         });
     </script>
 </head>
 <body>
 
 <h1>Shotport</h1>
-<p>Use the textarea below to edit or export the shots in the localStorage.</p>
 <p>
 <textarea id="shots_input"></textarea>
 </p>
@@ -35,6 +44,14 @@
 <p>
 <input id="shots_save" type="button" value="Save"/>
 </p>
+
+<textarea id="hitmiss_input"></textarea>
+</p>
+
+<p>
+<input id="hitmiss_save" type="button" value="Save"/>
+</p>
+
 
 </body>
 </html>

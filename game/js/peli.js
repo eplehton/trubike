@@ -446,7 +446,7 @@ function videoEnded(ev) {
 	sessionStorage.setItem("Points", points);
 
     saveStats();
-	alert(clipsets[clipset_num][clipset_pos]);
+	alert(clipsets[clipset_num][clipset_pos].substring(0, 3));
 }
 
 function saveStats() {
