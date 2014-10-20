@@ -482,8 +482,15 @@ function saveStats() {
 		hitmiss_stats[player_id] = [];
 	}
 	
-    shots_stats[player_id].push(shots);
-	hitmiss_stats[player_id].push(hitmiss);
+    shots_stats[player_id].push(shots); // concat would be nicer
+	
+    // convert Maps to something easier to json, actually, just the the values...
+    var hitmiss_lst = []; 
+    for (v of hitmiss.values()) { // we don't need the keys, because the key is included in the value object
+        hitmiss_lst.push(v);
+    }
+    
+    hitmiss_stats[player_id].push(hitmiss_lst);  // concat would be nicer
 	
     localStorage.setItem("shot_stats", JSON.stringify(shots_stats));
 	localStorage.setItem("hitmiss_stats", JSON.stringify(hitmiss_stats));
