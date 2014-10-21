@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="tutorial.css" />
+	<title>Ohje</title>
+	
+	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script language="javascript" type="text/javascript">
+    
+    var hand = document.getElementById("hand");
+    
+    function scriptLesson1(delay, action) {
+        
+        function clickPd1() {
+            hand.style.left = 300;
+            hand.style.top = 200;
+            hand.style.display = "block";
+            
+        }
+        function clickPd2() {
+            hand.style.left = 800;
+            hand.style.top = 600;
+            hand.style.display = "block";
+            action_num += 1;
+        }
+        
+        if(typeof(delay)==='undefined') delay = 1500;
+        if(typeof(action)==='undefined') {
+            action = clickPd1;
+        } else {
+            action();
+        }
+        
+        setTimeout(delay, action);
+    }
+    
+    
+    function showLesson(lesson_num) {
+        
+        var current_lesson = document.getElementById("lesson" + (lesson_num - 1));
+        var next_lesson = document.getElementById("lesson" + lesson_num);
+        if (current_lesson != null) {
+            current_lesson.style.display = "none";
+        }
+        next_lesson.style.display = "block";
+    }
+    
+    
+    
+    $(document).ready(function(){	
+        showLesson(1);
+    });
+    </script>
+
+</head>
+
+<body>    
+    <div class="lesson" id="lesson1">
+        <p>
+          Muista aina, liikenteessä...    
+        </p>
+        <video id="videoplayer1" src="" muted></video>
+        <audio id="audioplayer1" src=""></audio>
+        
+        <div class="forward" onclick="showLesson(2);">Ok!</div>
+    </div>
+
+    <div class="lesson" id="lesson2">
+        <p>
+            monta vaaraa ompi eessä!    
+        </p>
+        <video id="videoplayer2" src="" muted></video>
+        <audio id="audioplayer2" src=""></audio>  
+        
+        <div class="forward" onclick="showLesson(3);">Ok!</div>
+    </div>
+    
+    <div class="lesson" id="lesson3">
+        <p>
+            Vauhti huima, jarrut rikki, 
+        </p>
+        <video id="videoplayer3" src="" muted></video>
+        <audio id="audioplayer3" src=""></audio>
+        
+        <div class="forward" onclick="showLesson(4);">Ok!</div>
+    </div>
+    
+    <div class="lesson" id="lesson4">
+        <p>
+            siinä ompi konsti verraton!    
+        </p>
+        <video id="videoplayer4" src="" muted></video>
+        <audio id="audioplayer4" src=""></audio>      
+    </div>
+        
+    
+</body>
+</html>
