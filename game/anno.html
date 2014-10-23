@@ -128,7 +128,6 @@
     
     
     
-    
     function updateClipList() {
         var clip_selector = document.getElementById("annotated_clips");
         var all_targets = loadLocalTargets();
@@ -248,6 +247,10 @@
                     ticon.style.background = "blue";
                 }
 
+				if (trg.target_type == 'occlusion') {
+					ticon.style.borderRadius = "0%";
+				}
+
 				ticon.style.display = "block";
 
             } else { // make it hide if not currently visible
@@ -279,7 +282,20 @@
                 html += 'Current target: ' + j + '<button onclick="delAnnoTarget('+ j +'); updateTargetList();">X</button>';
                 html += '</p>';
                 
-                html +='Circle width: <input size="5" id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="scaleCurrentAnnoTarget();"/><br />'
+                html +='Circle width: <input size="5" id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="updateCurrentAnnoTarget();"/><br />'
+				
+				var select_ru = "";
+				var select_occ = "";
+				if (current_anno_target.target_type == 'occlusion') {
+					select_occ = ' selected';
+				} else {
+					select_ru = ' selected';
+				}
+				
+				html +='<select id="target_type" onchange="updateCurrentAnnoTarget();">';
+				html +='<option value="roaduser"' + select_ru  +'>TK</option>';
+				html +='<option value="occlusion"'+ select_occ +'>NE</option>';
+				html +='</select>';
 				
 				html += "<p>List of target points:</p>"
                 html += "<table>";
@@ -386,14 +402,29 @@
         saveLocalTargets(all_targets);
     }
     
-    function scaleCurrentAnnoTarget() {
+    /*function scaleCurrentAnnoTarget() {
         var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
 		current_anno_target.rel_width = target_rel_width;
 		//console.log("target_rel_width: " + current_anno_target.rel_width);
 	
 		saveAnnoTargets();
-    }
+    }*/
     
+	function updateCurrentAnnoTarget() {
+		console.log("updateCurrentAnnoTarget called");
+	 
+		var target_type = document.getElementById("target_type").value;
+		current_anno_target.target_type = target_type;
+		
+		
+		var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
+		current_anno_target.rel_width = target_rel_width;
+		
+		
+		saveAnnoTargets();
+	}
+
+	
     function seekVideo(time, relative) {
        var vplayer = document.getElementById("videoplayer");
        if (relative) { // time is relative to the currentTime
