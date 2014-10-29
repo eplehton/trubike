@@ -11,10 +11,26 @@
 }
 
 .target {
-    border-radius: 2ex;
+	border-style: solid;
+    border-width: 2ex;
+	border-color: black;
     background-color: transparent;
     display: none;
     position: absolute;
     z-index: 5;
     
+}
+
+.query_box  {
+	display: none;
+	position: absolute;
+	z-index: 5;
+	background-color: yellow;
+}
+
+.query_box_item {
+	border-style: solid;
+	border-width: 1ex;
+	border-color: black;
+	background-color: green;
 }

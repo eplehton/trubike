@@ -9,10 +9,47 @@
     <script language="javascript" type="text/javascript" src="js/test.js"></script>
     
     <script language="javascript" type="text/javascript">
-        $(document).ready(function(){	
+        
+		function startVideo() {
+			var vplayer = document.getElementById("videoplayer");
+			vplayer.play();
+			
+			setTimeout(function() { showQuery(1); }, 4000);
+		}
+		
+
+		function showQuery(query_id) {
+			var query_box_id = 1;
+			
+			var vplayer = document.getElementById("videoplayer");
+		
+			var qbanner = document.getElementById("query_banner");
+			var qbt = document.getElementById("query_box_template");
+		
+			qbanner.style.display = "block";
+			vplayer.pause();
+			
+	
+
+			var qbox = qbt.cloneNode(true);
+			qbox.id = query_box_id;
+
+
+			var pedestrian = qbox.getElementsByClassName("pedestrian").item(0);
+			var bicycle = qbox.getElementsByClassName("bicycle").item(0);
+			var car = qbox.getElementsByClassName("car").item(0);
+			var nothing = qbox.getElementsByClassName("nothing").item(0);
+			
+			
+						
+			qbanner.appendChild(qbox);  
+			qbox.style.display = "block";
+		}
+		
+		$(document).ready(function(){	
             
             $("#ready_banner").click(function(){
-                var rb = document.getElementById("ready_banner")
+                var rb = document.getElementById("ready_banner");
                 rb.style.display = "none"; 
                 startVideo(); 
             }); 
@@ -35,12 +72,17 @@
 
     <div class="target" id="target_template"></div>
     
-  
+	<div class="query_box" id="query_box_template"> 
+		<div class="query_box_item pedestrian">Jk</div>
+		<div class="query_box_item bicycle">Pp</div>
+		<div class="query_box_item car">auto</div>
+		<div class="query_box_item nothing">ei mitään</div>
+	</div>
+
+
     <div style="text-align: center; vertical-align: middle;" >
         <video id="videoplayer" 
-		    onclick="videoClicked(event)"
-            onended="videoEnded(event)"
-            src="../clips/isoroba.mp4"
+            src="../clips/157_isoroba.mp4"
 			muted>
         </video> 
     

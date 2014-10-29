@@ -104,6 +104,22 @@
         updateClipList();
     }
     
+    
+    function createTarget() {
+        current_anno_target = new Target()
+        anno_targets.push(current_anno_target);
+    }
+    
+    function selectTarget(trg_ind) {
+        console.log("selectTarget: " + trg_ind)
+        current_anno_target = anno_targets[trg_ind];
+    }
+
+
+
+
+
+
     function findFirstPosIndex(arr) {
         for (var i=0; i<arr.length; i++) {
             if (arr[i] > 0) { 
@@ -125,9 +141,8 @@
         }
         return lni;
     }
-    
-    
-    
+
+
     function updateClipList() {
         var clip_selector = document.getElementById("annotated_clips");
         var all_targets = loadLocalTargets();
@@ -160,15 +175,6 @@
        //setInterval( function(){ updateTargetList() }, 200)
     }
 
-    function createTarget() {
-        current_anno_target = new Target()
-        anno_targets.push(current_anno_target);
-    }
-    
-    function selectTarget(trg_ind) {
-        console.log("selectTarget: " + trg_ind)
-        current_anno_target = anno_targets[trg_ind];
-    }
 
     function shotClicked(ev) {
         
@@ -231,7 +237,7 @@
 						
 				console.log(ticon_width + " - " + ticon_height);
 				
-				var videoCoords = rel2Client(trg.x[last_neg], trg.y[last_neg]);
+				var videoCoords = rel2Client(vplayer, trg.x[last_neg], trg.y[last_neg]);
                 var centering = [ticon_width / 2.0, 
                                  ticon_height / 2.0];
                 
@@ -249,6 +255,8 @@
 
 				if (trg.target_type == 'occlusion') {
 					ticon.style.borderRadius = "0%";
+				} else {
+					ticon.style.borderRadius = "50%";
 				}
 
 				ticon.style.display = "block";
@@ -349,7 +357,7 @@
         vpos.value = posval;
     }
     
-    function endTarget() {
+    function endTarget() { // obsolate
         var vplayer = document.getElementById("videoplayer");
         current_anno_target.end_t = vplayer.currentTime;
         

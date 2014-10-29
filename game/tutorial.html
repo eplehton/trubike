@@ -6,9 +6,41 @@
 	<title>Ohje</title>
 	
 	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	 <script type="text/javascript" src="js/peli.js"></script>
 	<script language="javascript" type="text/javascript">
 
+	function updateHandPosition(hand, trg, videoplayer) {
+		/*
+			Moves the element 'hand' according to the annotated target 'trg' over the video element 'videoplayer'. 
+		*/
+		var loc = findInsertIndex(trg.t, videoplayer.currentTime);
 		
+		if ((0 < loc) & (loc < trg.t.length)) {
+			
+			var hand_width = hand.offsetWidth;
+			var hand_height = hand.offsetHeight;
+			
+			console.log(trg.t);
+			
+			var videoCoords = rel2Client(videoplayer, trg.x[loc], trg.y[loc]);
+			var centering = [hand_width / 2.0, 
+							 hand_height / 2.0];
+			
+			console.log(videoCoords, centering);
+			
+			hand.style.left = (videoCoords[0] - centering[0]) + "px";
+			hand.style.top = (videoCoords[1] - centering[1]) + "px";
+			
+			hand.style.display = "block";
+			
+			console.log(hand.style.left);
+			
+		} else {
+			hand.style.display = "none";
+		}
+		
+	}
+	
 
 	
 	function scriptLesson1(action, delay) {
@@ -19,34 +51,31 @@
 		var inst = document.getElementById("instruction1");
 		
 		
+		var all_targets = loadLocalTargets();
+		var tutor_targets = getSourceTargets(all_targets, "154_leikattu.mp4");
+		
+		var hand_target = tutor_targets[0];
+		var update_hand_interval_id = null;
+		
 		function readInstruction() {
 			inst.style.display = "block";
 			aplayer.play();
-			setTimeout(clickPd1, 7000);
+			setTimeout(startVideo, 7000);
 		}
 		
-        function clickPd1() {
+        function startVideo() {
 			inst.style.display = "none";
 			
-            hand.style.left = "100px";
-            hand.style.top = "100px";
-            hand.style.display = "block";
-			
+			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer1); }, 200);
 			
 			vplayer.play();
 			
-			action = clickPd2;
-			
-			console.log("hui1");
-			setTimeout(clickPd2, 3000);
+			setTimeout(stopVideo, 10000);
         }
 
-		function clickPd2() {
-            hand.style.left = "100px";
-            hand.style.top = "800px";
-            hand.style.display = "block";
-			
-			console.log("hai2");
+		function stopVideo() {
+            
+			clearInterval(update_hand_interval_id);
         }
 		
 		readInstruction();

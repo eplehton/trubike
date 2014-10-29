@@ -95,7 +95,7 @@ function saveLocalTargets(all_targets) {
 function getSourceTargets(all_targets, src) {
     
     // Helper function to get an array of targets for the specific video
-    // The file name of the clip is parsed, and used as the key to pick the right targets, regardless of
+    // The file name of the clip is parsed, and is used as the key to pick the right targets, regardless of
     // the path of the clip.
     // If the clipname is not present, an empty array is returned for convenience. 
     console.log('src ' + src);
@@ -191,10 +191,9 @@ function handleMissedTarget(missed_trg) {
     var relx = missed_trg.x[lastx];
     var rely = missed_trg.y[lastx];
     
-    var clientCoords = rel2Client(relx, rely);
+    var clientCoords = rel2Client(vplayer, relx, rely);
     var x = clientCoords[0];
     var y = clientCoords[1];
-	
     
     var missed_width = vplayer.offsetWidth * missed_trg.rel_width;
     var missed_height = vplayer.offsetWidth * missed_trg.rel_width;
@@ -214,6 +213,11 @@ function handleMissedTarget(missed_trg) {
     } else {
 		missed.style.opacity = 1.0;
     }
+	
+	// occlusions
+	if (missed_trg.target_type == 'occlusion')  {
+		missed.style.borderRadius = "0%";
+	}
 	
     missed.style.position = "absolute";
     missed.style.display = "block"; 
@@ -344,7 +348,8 @@ function videoClicked(ev) {
 				pnt.style.position = "absolute";
 			
 				
-				var client_coords = rel2Client(hit.target[h].x[hit.location[h]], 
+				var client_coords = rel2Client(vplayer, 
+											   hit.target[h].x[hit.location[h]], 
 											   hit.target[h].y[hit.location[h]]);
 				var hitted_x = client_coords[0];
 				var hitted_y = client_coords[1];
@@ -572,10 +577,9 @@ function client2Rel(x, y) {
     return [relx, rely]
 }   
 
-function rel2Client(relx, rely) {
-    var vplayer = document.getElementById("videoplayer");
-    var x = relx * vplayer.offsetWidth + vplayer.offsetLeft
-    var y = rely * vplayer.offsetHeight + vplayer.offsetTop
+function rel2Client(videoplayer, relx, rely) {
+    var x = relx * videoplayer.offsetWidth + videoplayer.offsetLeft
+    var y = rely * videoplayer.offsetHeight + videoplayer.offsetTop
     return [x, y]
 }   
 
