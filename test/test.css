@@ -25,7 +25,25 @@
 	display: none;
 	position: absolute;
 	z-index: 5;
-	background-color: yellow;
+	background-color: transparent;
+}
+
+.query_box_target {
+	font-size: 100px;
+	font-family: sans;
+	vertical-align: middle;
+	
+	width: 300px;
+	height: 300px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: black;
+    
+}
+
+.query_box_buttons {
+	text-align: center;
+	margin: auto;	
 }
 
 .query_box_item {
@@ -33,4 +51,6 @@
 	border-width: 1ex;
 	border-color: black;
 	background-color: green;
+	display: inline-block;
+
 }
