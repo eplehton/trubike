@@ -1,18 +1,25 @@
 
 var test_pos = -1;
-var test_videos = ['../clips/157_isoroba.mp4', 
+var test_clips = ['../clips/157_isoroba.mp4', 
                     '../clips/157_isoroba.mp4'];
 var test_stop_times = [2000, 3200];
 
-var targets = [ [["pedestrian", 100, 300],
+var test_queries = [ [["pedestrian", 100, 300],
                  ["car", 370, 400]],
                 [["pedestrian", 100, 300],  
                  ["car", 370, 400]]]
 
 
+var test_queries = [ 	{clip : '../clips/157_isoroba.mp4',
+						 stop_time : 2000,
+						 queries : [["pedestrian", 100, 300]]},
+						{clip : '../clips/157_isoroba.mp4',
+						 stop_time : 3000,
+						 queries : [["nothing", 500, 300],
+								    ["car", 300, 700]]} ];
 
 
-var test_answers = []
+var test_answers = [];
 
 
 function proceedIfAllAnswered(query_banner) {
@@ -31,7 +38,7 @@ function proceedIfAllAnswered(query_banner) {
 		}
 	}
 	
-	console.log(all_answered);
+	console.log('all_answered' + all_answered);
 		
 	if (all_answered) {
 		query_banner.style.display = "none";
@@ -40,8 +47,10 @@ function proceedIfAllAnswered(query_banner) {
 	}
 }
 	
-function registerAnswer(query_id, answer, query_started_realt) {
-	var query_box_id = "query_box_" + query_id;
+function registerAnswer(query_id, box_id, answer, query_started_realt) {
+	var query_box_id = "query_box_" + query_id + '_' + box_id;
+	console.log(query_box_id);
+	
 	var qbox = document.getElementById(query_box_id);
 	qbox.style.display = "none";
 	
@@ -56,23 +65,29 @@ function registerAnswer(query_id, answer, query_started_realt) {
 				   answer : answer};
 				   
 	test_answers.push(answer);
-				   
+	
 }
+
 
 function startNextClip() {
 	
 	test_pos += 1;
 	
-	var vplayer = document.getElementById("videoplayer");
-	vplayer.src = test_videos[test_pos];
-	vplayer.play();
+	if (test_pos < test_queries.length) {
 	
-	setTimeout(function() { showQuery(1); }, test_stop_times[test_pos]);
+		var vplayer = document.getElementById("videoplayer");
+		vplayer.src = test_queries[test_pos].clip;
+		vplayer.play();
+		
+		setTimeout(function() { showQuery(test_pos); }, test_stop_times[test_pos]);
+	} else {
+		alert("Ready!");
+	}
 }
 
 
 function showQuery(query_id) {
-	var query_box_id = "query_box_" + query_id;
+	
 	
 	var vplayer = document.getElementById("videoplayer");
 
@@ -83,30 +98,38 @@ function showQuery(query_id) {
 	vplayer.pause();
 	
 
+	var queries = test_queries[query_id].queries;
+	console.log("queries", queries);
+	
+	for (var box_id=0; box_id<queries.length; box_id++) {
+		var query_box_id = "query_box_" + query_id + '_' + box_id;
 
-	var qbox = qbt.cloneNode(true);
-	qbox.id = query_box_id;
+		var qbox = qbt.cloneNode(true);
+		qbox.id = query_box_id;
 
 
-	var pedestrian = qbox.getElementsByClassName("pedestrian").item(0);
-	var bicycle = qbox.getElementsByClassName("bicycle").item(0);
-	var car = qbox.getElementsByClassName("car").item(0);
-	var nothing = qbox.getElementsByClassName("nothing").item(0);
-	
-	var query_started_rt = Date.now();
-	
-	pedestrian.addEventListener("click", function() { registerAnswer(query_id, "pedestrian", query_started_rt); }, false);
-	bicycle.addEventListener("click", function() { registerAnswer(query_id, "bicycle", query_started_rt); }, false);
-	car.addEventListener("click", function() { registerAnswer(query_id, "car", query_started_rt); }, false);
-	nothing.addEventListener("click", function() { registerAnswer(query_id, "nothing", query_started_rt); }, false);
-	
-	
-	qbox.addEventListener("click", function() { proceedIfAllAnswered(qbanner); }, false);
-	
-	
-	qbox.style.top = "200px";
-	qbox.style.left = "300px";
-	
-	qbanner.appendChild(qbox);  
-	qbox.style.display = "block";
+		var pedestrian = qbox.getElementsByClassName("pedestrian").item(0);
+		var bicycle = qbox.getElementsByClassName("bicycle").item(0);
+		var car = qbox.getElementsByClassName("car").item(0);
+		var nothing = qbox.getElementsByClassName("nothing").item(0);
+		
+		var query_started_rt = Date.now();
+		
+		function makeCallback(q_id, b_id, ans, qs_rt) {
+			return function() { registerAnswer(q_id, b_id, ans, qs_rt); } 
+		}
+		
+		pedestrian.addEventListener("click", makeCallback(query_id, box_id, "pedestrian", query_started_rt), false);
+		bicycle.addEventListener("click", makeCallback(query_id, box_id, "bicycle", query_started_rt), false);
+		car.addEventListener("click", makeCallback(query_id, box_id, "car", query_started_rt), false);
+		nothing.addEventListener("click", makeCallback(query_id, box_id, "nothing", query_started_rt), false);
+		
+		qbox.addEventListener("click", function() { proceedIfAllAnswered(qbanner); }, false);
+		
+		qbox.style.top = queries[box_id][1] + "px"; 
+		qbox.style.left = queries[box_id][2] + "px";
+		
+		qbanner.appendChild(qbox);  
+		qbox.style.display = "block";
+	}
 }
