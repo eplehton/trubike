@@ -1,5 +1,6 @@
 <html>
 <head>
+	<meta charset="UTF-8">
     <title>Videoclip annotator</title>
 
     <style>
@@ -72,7 +73,12 @@
 		//	appending_target_points_flag = False;
 		//}
 		
-		trg.end_t = trg.t[trg.t.length-1]; // 2014-10-04
+		// trg.end_t = trg.t[trg.t.length-1]; // 2014-10-04
+		
+		// added a point, so likely we are adding more and want to display the latest on the screen
+		// this of course depends on the feature that all the anno targets will be ended when the video is seeked
+		trg.end_t = Infinity;
+		
     }
 	
     delTargetEnd = function(trg) {
@@ -98,15 +104,15 @@
         }
         anno_targets.splice(trg_ind, 1);
 		
-		// let's hide also the element representing it because it can be visible
-        anno_target_icons[trg_ind].style.display = "none";
-		anno_target_icons.splice(trg_ind, 1);
+		//// let's hide also the element representing it because it can be visible
+        //anno_target_icons[trg_ind].style.display = "none";
+		//anno_target_icons.splice(trg_ind, 1);
 		
 		saveAnnoTargets();
         
 		updateTargetIcon();
         updateTargetList();
-        updateClipList();
+        //updateClipList();
     }
     
     
@@ -117,15 +123,11 @@
     
     function selectTarget(trg_ind) {
         console.log("selectTarget: " + trg_ind)
-        current_anno_target = anno_targets[trg_ind];
+		current_anno_target = anno_targets[trg_ind];
+		
     }
 
-
-
-
-
-
-    function findFirstPosIndex(arr) {
+    /*function findFirstPosIndex(arr) {
         for (var i=0; i<arr.length; i++) {
             if (arr[i] > 0) { 
                 return i;
@@ -133,7 +135,7 @@
         }
         return null;
     }
-    
+    */
     function findLastNegIndex(arr) {
         //console.log("arr: " + arr)
         var lni = null;
@@ -146,9 +148,9 @@
         }
         return lni;
     }
+	
 
-
-    function updateClipList() {
+    /* function updateClipList() {
         var clip_selector = document.getElementById("annotated_clips");
         var all_targets = loadLocalTargets();
         
@@ -158,7 +160,7 @@
         }
         console.log(html);
         clip_selector.innerHTML = html;
-    }
+    }*/
     
     function loadVideo(filename) {
         var vplayer = document.getElementById("videoplayer");
@@ -218,22 +220,37 @@
         
         //console.log('src_trgs: ' + src_trgs)
         
+	
+		
+		
         for (var i=0; i < src_trgs.length; i++) {
-            
+    
             // copy a new target icon if not enought icons
-            if (! anno_target_icons.hasOwnProperty(i)) {
+            if (! (i < anno_target_icons.length) ) {
                 anno_target_icons[i] = target_icon_tmpl.cloneNode(true);
                 anno_target_icons[i].id = "target_icon_" + i; 		
-                document.body.appendChild(anno_target_icons[i]);
+                document.getElementById("videobox").appendChild(anno_target_icons[i]);
             }
 			
             var trg = src_trgs[i];
 
             var ticon = anno_target_icons[i];
             
-            if ((trg.t[0] <= ctime ) && (ctime <= trg.end_t) ) {
-                var delta_t = trg.t.map(function(x) { return x - ctime });
-                var last_neg = findLastNegIndex(delta_t);
+			var loc = findInsertIndex(trg.t, ctime);
+			
+			var do_display = 'no';
+			if (0 < loc & loc < trg.t.length) {
+				do_display = 'normal';
+			} else if (current_anno_target != null && trg.id == current_anno_target.id && trg.t.length == loc) { 
+				// last pos of current anno target is display afterwards
+				do_display = 'ghost';
+				loc = loc - 1;
+			}
+			
+            if (do_display != 'no') { 
+				//(trg.t[0] <= ctime ) && (ctime <= trg.end_t) ) {
+                //var delta_t = trg.t.map(function(x) { return x - ctime });
+                //var last_neg = findLastNegIndex(delta_t);
 
 				//console.log(trg);
 				//console.log(vplayer.offsetWidth + " " +trg.rel_width);
@@ -243,7 +260,7 @@
 						
 				console.log(ticon_width + " - " + ticon_height);
 				
-				var videoCoords = rel2Client(vplayer, trg.x[last_neg], trg.y[last_neg]);
+				var videoCoords = rel2Client(vplayer, trg.x[loc], trg.y[loc]);
                 var centering = [ticon_width / 2.0, 
                                  ticon_height / 2.0];
                 
@@ -265,6 +282,13 @@
 					ticon.style.borderRadius = "50%";
 				}
 
+				if (do_display == 'ghost') {
+					ticon.style.opacity = 0.2;
+				} else {
+					ticon.style.opacity = 0.5;
+				}
+				
+				
 				ticon.style.display = "block";
 
             } else { // make it hide if not currently visible
@@ -272,6 +296,13 @@
             }
         }
         
+		// clear spurious anno target icons
+		for (var i=src_trgs.length; i<anno_target_icons.length; i++) {
+			console.log(src_trgs.length, anno_target_icons.length, i, anno_target_icons[i].id);
+			document.getElementById("videobox").removeChild(anno_target_icons[i]);
+		}
+		anno_target_icons = anno_target_icons.splice(0, src_trgs.length);
+		
     }
 
 
@@ -300,15 +331,47 @@
 				
 				var select_ru = "";
 				var select_occ = "";
-				if (current_anno_target.target_type == 'occlusion') {
-					select_occ = ' selected';
-				} else {
-					select_ru = ' selected';
+				
+				
+				function isSelected() {
+					switch (current_anno_target.target_type) {
+						case 'occlusion':
+							return 'selected';
+							break;
+						case 'road_user':
+							return 'selected';
+							break;
+						case 'nothing':
+							return 'selected';
+							break;
+						case 'other':
+							return 'selected';
+							break;
+						case 'pedestrian':
+							return 'selected';
+							break;
+						case 'car':
+							return 'selected';
+							break;
+						case 'bicycle':
+							return 'selected';
+							break;
+						default:
+							return '';
+					}
 				}
 				
+				
 				html +='<select id="target_type" onchange="updateCurrentAnnoTarget();">';
-				html +='<option value="roaduser"' + select_ru  +'>TK</option>';
-				html +='<option value="occlusion"'+ select_occ +'>NE</option>';
+				html +='<option value="roaduser" '+ isSelected() + ' >TK</option>';
+				html +='<option value="occlusion" '+ isSelected() + ' >NE</option>';
+
+			    html +='<option value="nothing" '+ isSelected() + ' >Tyhjä</option>';
+				html +='<option value="other" '+ isSelected() + ' >Muu</option>';
+				html +='<option value="pedestrian" '+ isSelected() + ' >-- Jk</option>';
+				html +='<option value="bicycle" '+ isSelected() + ' >-- Pp</option>';
+				html +='<option value="car" '+ isSelected() + ' >-- Au</option>';
+				
 				html +='</select>';
 				
 				html += "<p>List of target points:</p>"
@@ -371,7 +434,7 @@
         saveAnnoTargets();
 
         updateTargetList();        
-        updateClipList();
+        //updateClipList();
     }
     
     function pauseVideo() {
@@ -402,6 +465,8 @@
             Sets the currently open anno targets to the right place
             to the all_targets, and then the all_targets is jsoned to the localStorage.
         */
+		
+		
         var src = document.getElementById("videoplayer").src;
         var clipname = src.split("/").pop();
 
@@ -418,14 +483,14 @@
     
     /*function scaleCurrentAnnoTarget() {
         var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
-		current_anno_target.rel_width = target_rel_width;
+		current_anno_ctarget.rel_width = target_rel_width;
 		//console.log("target_rel_width: " + current_anno_target.rel_width);
-	
+	zs
 		saveAnnoTargets();
     }*/
     
 	function updateCurrentAnnoTarget() {
-		console.log("updateCurrentAnnoTarget called");
+		console.log("updateCurrentAnnoTarget called");ss
 	 
 		var target_type = document.getElementById("target_type").value;
 		current_anno_target.target_type = target_type;
@@ -434,6 +499,7 @@
 		var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
 		current_anno_target.rel_width = target_rel_width;
 		
+		//current_anno_target.end_t = current_anno_target.t[current_anno_target.t.length-1]; // must get rid of end_t!! 2014-11-05
 		
 		saveAnnoTargets();
 	}
@@ -486,8 +552,9 @@
         videosrc.addEventListener("change", function() {
             loadVideo(videosrc.value);   
             
+			
             updateTargetList();
-            updateClipList();
+            updateTargetIcon();
         });
 
         var vpos = document.getElementById("videoposition");
@@ -568,10 +635,6 @@
 			   onclick="shotClicked(event)"		   
 			   src="">
 		</video>
-
-		<div class="target_icon" id="target_icon_tmpl" onclick="shotClicked(event)">
-		</div>
-
 		
 		<div id="videocontrols">    
 			Video position: <input id="videoposition" type="text" />
@@ -593,10 +656,11 @@
 		</div>
 	</div>
 	
-
-
 </div>
 
+
+<div class="target_icon" id="target_icon_tmpl" onclick="shotClicked(event)">
+</div>
 
 
 
