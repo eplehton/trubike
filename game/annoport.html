@@ -12,24 +12,49 @@
 
     <script type="text/javascript">
     
-        $(document).ready(function(){	
-            var targets_str = localStorage.getItem("targets");
-            document.getElementById('targets_input').innerHTML = targets_str;
-            
+		function loadData() {
+			var localstorage_item = document.getElementById("localstorage_item").value;
+			
+            var targets_str = localStorage.getItem(localstorage_item);
+            document.getElementById('item_content').innerHTML = targets_str;
+			
+		}
+	
+		function saveData() {
+			var localstorage_item = document.getElementById("localstorage_item").value;
+			var content = document.getElementById('item_content').value;
+			localStorage.setItem(localstorage_item, content);
+		}
+	
+        $(document).ready(function() {
+			loadData();
+				
             $(targets_save).click(function(){
-                var tin = document.getElementById('targets_input');
-                //console.log("targets_input content: " + tin.value);
-                localStorage.setItem("targets", tin.value);
+                saveData();
             });
+			
+			$(localstorage_item).change(function() {
+				loadData();
+			});
+
         });
+		
+		
     </script>
 </head>
 <body>
 
 <h1>Annoport</h1>
+
+<select id="localstorage_item">
+	<option value="targets" selected>targets</option>
+	<option value="shot_stats">shot_stats</option>
+	<option value="hitmiss_stats">hitmiss_stats</option>
+</select>
+
 <p>Use the textarea below to import or export the targets in the localStorage.</p>
 <p>
-<textarea id="targets_input"></textarea>
+<textarea id="item_content"></textarea>
 </p>
 
 <p>

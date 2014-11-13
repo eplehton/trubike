@@ -65,34 +65,16 @@
         trg.t.splice(loc, 0, t);
         trg.x.splice(loc, 0, x);
         trg.y.splice(loc, 0, y);
-		 
-		 
-		//if (loc == trg.t.length) {
-		//	appending_target_points_flag = True;
-		//} else {
-		//	appending_target_points_flag = False;
-		//}
-		
-		// trg.end_t = trg.t[trg.t.length-1]; // 2014-10-04
-		
-		// added a point, so likely we are adding more and want to display the latest on the screen
-		// this of course depends on the feature that all the anno targets will be ended when the video is seeked
-		trg.end_t = Infinity;
 		
     }
 	
-    delTargetEnd = function(trg) {
-        console.log("delTargetEnd")
-        trg.end_t = Infinity;
-    }
+    
 
     delTargetPoint = function(trg, loc) {
         console.log("delTargetPoint")
         trg.x.splice(loc, 1);
         trg.y.splice(loc, 1);
         trg.t.splice(loc, 1);
-		
-		trg.end_t = trg.t[trg.t.length-1]; // 2014-10-04
     }
 
 
@@ -248,7 +230,6 @@
 			}
 			
             if (do_display != 'no') { 
-				//(trg.t[0] <= ctime ) && (ctime <= trg.end_t) ) {
                 //var delta_t = trg.t.map(function(x) { return x - ctime });
                 //var last_neg = findLastNegIndex(delta_t);
 
@@ -333,44 +314,25 @@
 				var select_occ = "";
 				
 				
-				function isSelected() {
-					switch (current_anno_target.target_type) {
-						case 'occlusion':
-							return 'selected';
-							break;
-						case 'road_user':
-							return 'selected';
-							break;
-						case 'nothing':
-							return 'selected';
-							break;
-						case 'other':
-							return 'selected';
-							break;
-						case 'pedestrian':
-							return 'selected';
-							break;
-						case 'car':
-							return 'selected';
-							break;
-						case 'bicycle':
-							return 'selected';
-							break;
-						default:
-							return '';
+				function isSelected(option) {
+					if (option === current_anno_target.target_type) {
+						return "selected";
+					} else {
+						return "";
 					}
 				}
 				
+				console.log("isSelected", isSelected());
 				
 				html +='<select id="target_type" onchange="updateCurrentAnnoTarget();">';
-				html +='<option value="roaduser" '+ isSelected() + ' >TK</option>';
-				html +='<option value="occlusion" '+ isSelected() + ' >NE</option>';
+				html +='<option value="roaduser" '+ isSelected("road_user") + ' >TK</option>';
+				html +='<option value="occlusion" '+ isSelected("occlusion") + ' >NE</option>';
 
-			    html +='<option value="nothing" '+ isSelected() + ' >Tyhjä</option>';
-				html +='<option value="other" '+ isSelected() + ' >Muu</option>';
-				html +='<option value="pedestrian" '+ isSelected() + ' >-- Jk</option>';
-				html +='<option value="bicycle" '+ isSelected() + ' >-- Pp</option>';
-				html +='<option value="car" '+ isSelected() + ' >-- Au</option>';
+			    html +='<option value="nothing" '+ isSelected("nothing") + ' >Tyhjä</option>';
+				html +='<option value="other" '+ isSelected("other") + ' >Muu</option>';
+				html +='<option value="pedestrian" '+ isSelected("pedestrian") + ' >-- Jk</option>';
+				html +='<option value="bicycle" '+ isSelected("bicycle") + ' >-- Pp</option>';
+				html +='<option value="car" '+ isSelected("car") + ' >-- Au</option>';
 				
 				html +='</select>';
 				
@@ -383,8 +345,8 @@
                     var t = trg.t[i].toPrecision(3);
                     var x =  trg.x[i].toPrecision(3);
                     var y = trg.y[i].toPrecision(3);
-                    //var end_t = trg.end_t.toPrecision(3);
-                    var line = "".concat("<tr><td>",
+
+					var line = "".concat("<tr><td>",
                                             (i+1) +'. <button onclick="seekVideo('+t+', false)">'+t+'</button>',
                                             "</td><td>",
                                             x,
@@ -396,20 +358,7 @@
                     html += line;
                 }
                     
-                // Show end
-                /* if ((end_t == undefined) ) {
-                    html += ""
-						//'<tr><td>End: Infinity</td><td colspan="3"></td></tr>'
-                } else {
-                    html += '<tr><td>';
-                    html += 'E <button onclick="seekVideo('+end_t+', false)">'+end_t+'</button>';
-                    html += '</td><td colspan="2"><button onclick="endTarget()">End target (e)</button></td>';
-                    html += '<td>';
-                    html +='<button onclick="delTargetEnd(anno_targets['+ j +']); updateTargetList();">X</button>';
-                    html +='</td></tr>';
-                }
-				*/
-                html += "</table>"
+				html += "</table>"
             }
         }
         
@@ -426,16 +375,6 @@
         vpos.value = posval;
     }
     
-    function endTarget() { // obsolate
-        var vplayer = document.getElementById("videoplayer");
-        current_anno_target.end_t = vplayer.currentTime;
-        
-
-        saveAnnoTargets();
-
-        updateTargetList();        
-        //updateClipList();
-    }
     
     function pauseVideo() {
         var vplayer = document.getElementById("videoplayer");
@@ -490,7 +429,7 @@
     }*/
     
 	function updateCurrentAnnoTarget() {
-		console.log("updateCurrentAnnoTarget called");ss
+		console.log("updateCurrentAnnoTarget called");
 	 
 		var target_type = document.getElementById("target_type").value;
 		current_anno_target.target_type = target_type;
@@ -499,7 +438,6 @@
 		var target_rel_width = parseFloat(document.getElementById("target_rel_width").value);
 		current_anno_target.rel_width = target_rel_width;
 		
-		//current_anno_target.end_t = current_anno_target.t[current_anno_target.t.length-1]; // must get rid of end_t!! 2014-11-05
 		
 		saveAnnoTargets();
 	}
@@ -617,7 +555,7 @@
 <body>
 
 <div>
-	Path: <input id="clippath" type="text" size=20 value="../clips/" />
+	Path: <input id="clippath" type="text" size=20 value="../clips_test/" />
     File: <input id="videosrc" type="file"/>
 
     <!-- <select id="annotated_clips" name="annotated_clips">

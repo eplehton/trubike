@@ -16,7 +16,8 @@ function Target(){
     this.y = [];
     this.t = [];
     this.rel_width = 0.1;
-    this.end_t = Infinity;
+	this.target_type = null;
+	
 }
 
 
@@ -27,7 +28,7 @@ var hitmiss = new Map();
 
 var game_points = new Map(); // for calculating points during a game
 
-var check_missed_target_interval_size = 200; // how often targets are checked for misses (ms)
+var check_missed_target_interval_size = 50; // how often targets are checked for misses (ms)
 
 var clipsets; //included as a .js-file
 var clipset_num; // which set loaded from session storage in onready
@@ -70,7 +71,7 @@ function hideElementAfter(elem_id, timeout) {
 	setTimeout( function(){ document.getElementById(elem_id).style.display = "none"}, timeout); 	
 }
 		
-// Targets loading saving functions
+// Targets loading saving function
 
 
 function loadLocalTargets() {
@@ -131,7 +132,8 @@ function checkTargetHit(shot){
 		var trg = trgs[i]; 
             
 		var loc = findInsertIndex(trg.t, shot.t);
-	    if ((loc > 0) && (shot.t < trg.end_t)) {
+	    if ((loc > 0) && (loc < trg.t.length)) {
+
 			loc = loc - 1; // set the right index to the target to be compared 
 			console.log("shot: "+ shot.x + ","+ shot.y +" trg: "+ trg.x[loc] +","+ trg.y[loc]);
 				
@@ -141,9 +143,9 @@ function checkTargetHit(shot){
 				hit_target.push(trg);
 				hit_loc.push(loc);
 				
-				if (! hitmiss.has(trg.end_t)) { // mark the FIRST shot as hitted
-					hitmiss.set(trg.end_t, {hitmiss_realt: shot.realt,
-												target_end_t: trg.end_t,
+				if (! hitmiss.has(trg.t[trg.t.length-1])) { // mark the FIRST shot as hitted
+					hitmiss.set(trg.t[trg.t.length-1], {hitmiss_realt: shot.realt,
+												target_end_t: trg.t[trg.t.length-1],
 												hit: true,
 												shot_t: shot.t,
 												location: loc,
@@ -181,7 +183,7 @@ function handleMissedTarget(missed_trg) {
 
 	hitmiss.set(missed_trg.end_t, {hitmiss_realt: Date.now(),
 									hit: false,
-									target_end_t: missed_trg.end_t,
+									target_end_t: missed_trg.t.slice(-1).pop(),
 									shot_t: -1,
 									location: -1,
 									ack_realt: -1});
@@ -221,7 +223,7 @@ function handleMissedTarget(missed_trg) {
 	
     missed.style.position = "absolute";
     missed.style.display = "block"; 
-    missed._trubike_missed_end_t = missed_trg.end_t;	
+    missed._trubike_missed_end_t = missed_trg.t.slice(-1).pop();	
 
     missplayer.play(); 
 
@@ -275,10 +277,10 @@ function checkMissedTargets(targets) {
     for (var tx=0; tx<targets.length; tx++) {
         var current_trg = targets[tx];
         // check if the target end is passed and the target has not been hit yet
-        if ((current_trg.end_t < ctime) & (! hitmiss.has(current_trg.end_t))) {
+        if ((current_trg.t.slice(-1).pop() < ctime) & (! hitmiss.has(current_trg.t.slice(-1).pop()))) {
             var hitted = false;
             for (var sx=shots.length-1; sx >= 0; sx--) {
-                if (shots[sx].target_end_t == current_trg.end_t) {
+                if (shots[sx].target_end_t == current_trg.t.slice(-1).pop()) {
                     hitted = true;
                     break;
                 }
@@ -319,16 +321,16 @@ function videoClicked(ev) {
         var shot = registerShot(x, y, ctime);
         
         var hit = checkTargetHit(shot); // check if any targets has been hit
-        console.log("hitted_target: " + hit);
+        console.log("hitted target: " + hit);
 		    
 		for (var h=0; h<hit.target.length; h++) {	
 			shot.hit = true;
-            shot.target_end_t = hit.target[h].end_t;
+            shot.target_end_t = hit.target[h].t.slice(-1).pop();
 			shot.target_loc = hit.location[h];
 			
 			// keep track of hitted targets and points
 			// for updating the points
-			game_points.set("" + hit.target[h].end_t,  1) //{target: hit_target, location: hit_loc};);
+			game_points.set("" + hit.target[h].t.slice(-1).pop(),  1) //{target: hit_target, location: hit_loc};);
 			points += 1; //game_points.size;
 		
 			// show points
