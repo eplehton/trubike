@@ -66,6 +66,8 @@
         trg.x.splice(loc, 0, x);
         trg.y.splice(loc, 0, y);
 		
+		saveAnnoTargets();
+        
     }
 	
     
@@ -75,6 +77,9 @@
         trg.x.splice(loc, 1);
         trg.y.splice(loc, 1);
         trg.t.splice(loc, 1);
+		
+		saveAnnoTargets();
+        
     }
 
 
@@ -183,6 +188,7 @@
                  
             }
             addTargetPoint(current_anno_target, x, y, ctime)
+			
             updateTargetList()
         }
         
@@ -324,7 +330,7 @@
 				
 				console.log("isSelected", isSelected());
 				
-				html +='<select id="target_type" onchange="updateCurrentAnnoTarget();">';
+				html +='<select id="target_type" onchange="setCurrentAnnoTargetProperties();">';
 				html +='<option value="roaduser" '+ isSelected("road_user") + ' >TK</option>';
 				html +='<option value="occlusion" '+ isSelected("occlusion") + ' >NE</option>';
 
@@ -428,9 +434,8 @@
 		saveAnnoTargets();
     }*/
     
-	function updateCurrentAnnoTarget() {
-		console.log("updateCurrentAnnoTarget called");
-	 
+	function setCurrentAnnoTargetProperties() {
+		
 		var target_type = document.getElementById("target_type").value;
 		current_anno_target.target_type = target_type;
 		
@@ -524,9 +529,6 @@
                 case  "d".charCodeAt(0):
                     seekVideo(0.5, true);
                     break;
-                case "e".charCodeAt(0):
-                    endTarget()
-                    break;
                 case "z".charCodeAt(0): 
                     playVideo(1);
                     break;
@@ -539,10 +541,11 @@
             }   
         });
 		
-		window.onbeforeunload = function(e) {
-			console.log("beforeunload: saving anno targets");
-			saveAnnoTargets(); // save possible changes if user is reloading the page while video is still playing...
-		};
+		//// obsolate: now the changes are always saved when done
+		//window.onbeforeunload = function(e) {
+		//	console.log("beforeunload: saving anno targets");
+		//	saveAnnoTargets(); // save possible changes if user is reloading the page while video is still playing...
+		//};
        
         
     });
@@ -555,7 +558,7 @@
 <body>
 
 <div>
-	Path: <input id="clippath" type="text" size=20 value="../clips_test/" />
+	Path: <input id="clippath" type="text" size=20 value="../clips/" />
     File: <input id="videosrc" type="file"/>
 
     <!-- <select id="annotated_clips" name="annotated_clips">
