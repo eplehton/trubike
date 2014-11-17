@@ -43,7 +43,9 @@ function findInsertIndex(arr, val) {
         Assuming a sorted array arr, return the index where the val 
         should be inserted in order to keep the arr sorted.
         Helper function for keeping the targets sorted in time. 
-    */
+	*/
+	
+	
     var ipnt = arr.length;
     for (var i=0; i<arr.length; i++) {
         if (val < arr[i]) { 
@@ -78,7 +80,6 @@ function loadLocalTargets() {
     // Load targets from JSON data stored on localstorage, from item "targets"
     var targets = null;
     var targets_s = localStorage.getItem("targets");
-
 	
     try {
 		targets = JSON.parse(targets_s);

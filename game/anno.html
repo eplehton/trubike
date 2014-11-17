@@ -50,7 +50,8 @@
 
     </style>
     <script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="js/peli.js"></script>
+    <script language="javascript" type="text/javascript" src="js/FileSaver.js"></script>
+	<script type="text/javascript" src="js/peli.js"></script>
     <script type="text/javascript">
     
     var anno_targets = null;
@@ -91,15 +92,10 @@
         }
         anno_targets.splice(trg_ind, 1);
 		
-		//// let's hide also the element representing it because it can be visible
-        //anno_target_icons[trg_ind].style.display = "none";
-		//anno_target_icons.splice(trg_ind, 1);
-		
 		saveAnnoTargets();
         
 		updateTargetIcon();
         updateTargetList();
-        //updateClipList();
     }
     
     
@@ -171,6 +167,14 @@
     }
 
 
+	function saveAsFile() {
+	
+		var targets = localStorage.getItem("targets");
+		
+		var blob = new Blob([targets], {type : "text/plain;charset=utf-8"});
+		saveAs(blob, "trubike_targets.json");
+	}
+
     function shotClicked(ev) {
         
         var vplayer = document.getElementById("videoplayer");
@@ -203,13 +207,7 @@
         var ctime = vplayer.currentTime;
    
         var src_trgs = anno_targets; // from memory, not from localStorage now... getSourceTargets(vplayer.src, targets);
-        
-
-        
-        //console.log('src_trgs: ' + src_trgs)
-        
-	
-		
+        	
 		
         for (var i=0; i < src_trgs.length; i++) {
     
@@ -224,16 +222,24 @@
 
             var ticon = anno_target_icons[i];
             
-			var loc = findInsertIndex(trg.t, ctime);
+			// The problem: If you jump to the start time of a target, then the video player may actually get slightly smaller 
+			// value, because all the times are floating point numbers. Therefore, it is necessary to round them to precision of 10 ms.
+			
+			var loc = findInsertIndex(trg.t.map(function(x) { return Math.round(x*100);}), Math.round(100*ctime));
 			
 			var do_display = 'no';
+
 			if (0 < loc & loc < trg.t.length) {
 				do_display = 'normal';
+				loc = loc -1;
+				
 			} else if (current_anno_target != null && trg.id == current_anno_target.id && trg.t.length == loc) { 
-				// last pos of current anno target is display afterwards
+				// last pos of current anno target is displayed afterwards
 				do_display = 'ghost';
 				loc = loc - 1;
 			}
+			
+			console.log("updateTargetIcon", i, loc, do_display, trg.id, current_anno_target.id, trg.t.length);
 			
             if (do_display != 'no') { 
                 //var delta_t = trg.t.map(function(x) { return x - ctime });
@@ -306,6 +312,7 @@
         html += '<button onclick="createTarget(); updateTargetList();">+</button>'; 
 
         html += '</p>';
+		
         for (var j=0; j<src_trgs.length; j++) {        
             if (current_anno_target != null && current_anno_target.id == src_trgs[j].id) {
                 var trg = current_anno_target;
@@ -563,6 +570,8 @@
 
     <!-- <select id="annotated_clips" name="annotated_clips">
     </select> -->
+	
+	<button onclick="saveAsFile();">Save as...</button>
 </div>
 
 

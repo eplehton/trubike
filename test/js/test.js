@@ -315,7 +315,12 @@ function saveTestAnswers() {
 		local_answers = {};
 	}
 	
-	local_answers[player_id] = test_answers;
+	var local_answers = local_answers[player_id];
+	if (local_answers != null) {
+		local_answers = local_answers.concat(test_answers);
+	} else {
+		local_answers = test_answers;
+	}
 	
 	localStorage.setItem("trubike.test.answers", JSON.stringify(local_answers));
 }
