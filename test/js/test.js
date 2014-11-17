@@ -75,7 +75,7 @@ function  annoTargets2TestQuery(clipname, all_targets) {
 			alert("annoTargets2TestQuery receives anno targets with varying last t. Sorry, but it cannot understand what to do now.");
 		} else {
 			
-			query.items.push( [ct.target_type, ct.x[0], ct.y[0]] ); 
+			query.items.push( {target_id: ct.id, target_type: ct.target_type, x : ct.x[0], y : ct.y[0]} ); 
 		}
 		
 	}
@@ -137,7 +137,9 @@ function loadQueries() {
 
 function proceedIfAllAnswered() {
 	/*
+		USED with registerIdentity:
 		If the query banner do not have any visible query boxes == all answered, then proceed to the next test clip.
+	
 	*/
 	var parent = document.getElementById("screen");
 	
@@ -157,8 +159,6 @@ function proceedIfAllAnswered() {
 		
 	if (all_answered) {
 		
-		saveTestAnswers();
-		
 		clearQueries();
 		startNextClip();
 		console.log("rai");
@@ -171,7 +171,7 @@ function registerIdentity(query_id, box_id, answer, query_started_realt) {
 	*/
 	
 	
-	var player_id = localStorage.getItem("player_id");
+	var player_id = sessionStorage.getItem("player_id");
 	
 	var answer_latency = (Date.now() - query_started_realt) / 1000;
 	
@@ -187,33 +187,34 @@ function registerIdentity(query_id, box_id, answer, query_started_realt) {
 }
 
 
-function registerPresence(query_id, box_id, answer, query_started_realt) {
+function registerPresence(qitem, query_id, box_id, answer, query_started_realt) {
 	/* 
 		Registers if a query box is labeled as having something.
 	*/
+
+	console.log("registerPresence called");
 	
 	var query_box_id = "query_box_" + query_id + '_' + box_id;
-	var qbox = document.getElementById(query_box_id);
-	
-	var present = 'notpresent';
-	if (qbox.style.backgroundColor === query_box_present_color) {
-		answer = 'present';
-	} 
-	
-	
-	var player_id = localStorage.getItem("player_id");
+	console.log('query_box_id', query_box_id);
+		
+	var player_id = sessionStorage.getItem("player_id");
 	
 	var answer_latency = (Date.now() - query_started_realt) / 1000;
 	
 	var answer = { player_id : player_id,
 				   query_id : query_id,
+				   box_id : box_id,
 				   query_started_realt : query_started_realt,
 				   answer_latency : answer_latency,
-				   answer : answer};
+				   answer : answer,
+				   target_id :  qitem.target_id,
+		           target_type : qitem.targeT_type,
+				   target_x : qitem.x,
+		           target_y : qitem.y};
 				   
 	test_answers.push(answer);
+
 	
-	proceedIfAllAnswered();
 }
 
 
@@ -245,6 +246,9 @@ function showQuery(query_items) {
 	//qbanner.style.left = videoplayer.style.left;
 	
 	vplayer.pause();
+	
+	var query_started_realt = Date.now();
+	
 		
 	for (var box_id=0; box_id<query_items.length; box_id++) {
 		var query_box_id = "query_box_" + query_id + '_' + box_id;
@@ -253,6 +257,8 @@ function showQuery(query_items) {
 		qbox.id = query_box_id;
 
 
+		var qitem = query_items[box_id];
+		
 		var pedestrian = qbox.getElementsByClassName("pedestrian").item(0);
 		var bicycle = qbox.getElementsByClassName("bicycle").item(0);
 		var car = qbox.getElementsByClassName("car").item(0);
@@ -260,36 +266,35 @@ function showQuery(query_items) {
 		var nothing = qbox.getElementsByClassName("nothing").item(0);
 
 		
-		var query_started_rt = Date.now();
-		
-		function makeCallbackRA(q_id, b_id, ans, qs_rt) {
+		function makeCallbackRA(q_id, b_id, ans) {
 			return function() { 
 				var query_box_id = "query_box_" + query_id + '_' + box_id;				
 				var qbox = document.getElementById(query_box_id);
 				qbox.style.display = "none";
 				qbox.parentNode.removeChild(qbox);
 				
-				registerIdentity(q_id, b_id, ans, qs_rt); } 
+				registerIdentity(q_id, b_id, ans, query_started_realt); } 
 		}
 
-		function makeCallbackTB(q_id, b_id) {
-			return function() { toggleQueryBox(q_id, b_id); } 
+		function makeCallbackTB(qi, q_id, b_id) {
+			return function() { var status = toggleQueryBox(q_id, b_id); 
+							    registerPresence(qi, q_id, b_id, status, query_started_realt); } 
 		}
 		
-		pedestrian.addEventListener("click", makeCallbackRA(query_id, box_id, "pedestrian", query_started_rt), false);
-		bicycle.addEventListener("click", makeCallbackRA(query_id, box_id, "bicycle", query_started_rt), false);
-		car.addEventListener("click", makeCallbackRA(query_id, box_id, "car", query_started_rt), false);
-		nothing.addEventListener("click", makeCallbackRA(query_id, box_id, "nothing", query_started_rt), false);
-		occlusion.addEventListener("click", makeCallbackRA(query_id, box_id, "occlusion", query_started_rt), false);
+		pedestrian.addEventListener("click", makeCallbackRA(query_id, box_id, "pedestrian"), false);
+		bicycle.addEventListener("click", makeCallbackRA(query_id, box_id, "bicycle"), false);
+		car.addEventListener("click", makeCallbackRA(query_id, box_id, "car"), false);
+		nothing.addEventListener("click", makeCallbackRA(query_id, box_id, "nothing"), false);
+		occlusion.addEventListener("click", makeCallbackRA(query_id, box_id, "occlusion"), false);
 		
 		
 		
-		qbox.addEventListener("click", makeCallbackTB(query_id, box_id), false);
+		qbox.addEventListener("click", makeCallbackTB(qitem, query_id, box_id), false);
 
 		screen.appendChild(qbox);  
 		qbox.style.display = "block";
 		
-		var clientxy = rel2Client(vplayer, query_items[box_id][1], query_items[box_id][2]);
+		var clientxy = rel2Client(vplayer, qitem.x, qitem.y);
 		var centering =	[qbox.offsetWidth * 0.5, qbox.offsetHeight * 0.5];
 		
 		
@@ -305,16 +310,14 @@ function saveTestAnswers() {
 	var player_id = sessionStorage.getItem("player_id");
 	var local_answers_str = localStorage.getItem("trubike.test.answers");
 
-	var local_answers = null;
-	try {
-		local_answers = JSON.parse(local_answers_str);
-	} catch (e) {
+	var local_answers = JSON.parse(local_answers_str);
+	if (local_answers === null) {
 		local_answers = {};
 	}
 	
 	local_answers[player_id] = test_answers;
 	
-	localStorage.setItem("trubike.test.answers", JSON.stringify(local_answers);
+	localStorage.setItem("trubike.test.answers", JSON.stringify(local_answers));
 }
 	 
 
@@ -328,7 +331,11 @@ function startNextClip() {
 		test_queries = loadQueries();
 	}
 	
+	
+	saveTestAnswers();
 	clearQueries();
+	
+	
 	
 	console.log('test_queries', test_queries);
 	
@@ -357,10 +364,14 @@ function toggleQueryBox(query_id, box_id) {
 	var bgcolor = qbt.style.backgroundColor;
 	console.log(query_box_id, bgcolor);
 	
+	var status = null;
 	if (bgcolor != query_box_present_color) {
 		bgcolor = query_box_present_color;
+		status = 'present';
 	} else {
 		bgcolor = 'transparent';
+		status = 'notpresent';
 	}
 	qbt.style.backgroundColor = bgcolor;
+	return status;
 }
