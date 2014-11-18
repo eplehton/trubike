@@ -30,12 +30,15 @@ var game_points = new Map(); // for calculating points during a game
 
 var check_missed_target_interval_size = 50; // how often targets are checked for misses (ms)
 
-var clipsets; //included as a .js-file
+var clipsets;
 var clipset_num; // which set loaded from session storage in onready
 var clipset_pos = 0; // position within a set
 
+
 var correct_hit_interval = 2.5;
 var video_started_t; // used to group hits by clip presentation
+
+var cached_targets = null;
 
 
 function findInsertIndex(arr, val) {
@@ -94,6 +97,16 @@ function saveLocalTargets(all_targets) {
     localStorage.setItem("targets", JSON.stringify(all_targets))
 }
 
+//'trubike_targets-20141118.json'
+
+function loadTargetsFrom(json_file) { // not used because ajax calls with local files do not work always
+    
+    $.getJSON(json_file, function(data) {
+        cached_targets = data;
+    });
+	
+}
+
 function getSourceTargets(all_targets, src) {
     
     // Helper function to get an array of targets for the specific video
@@ -101,6 +114,7 @@ function getSourceTargets(all_targets, src) {
     // the path of the clip.
     // If the clipname is not present, an empty array is returned for convenience. 
     console.log('src ' + src);
+	console.log(all_targets);
     var clipname = src.split("/").pop();
     var src_trgs = all_targets[clipname];
     //console.log(src +" - "+ clipname + " - " + src_trgs);
@@ -111,7 +125,9 @@ function getSourceTargets(all_targets, src) {
     return src_trgs;
 }
 
-
+function getTargets() {
+	return cached_targets;
+}
 
 
 
@@ -122,7 +138,8 @@ function checkTargetHit(shot){
 	Return info if hitted, otherwise empty
     */
     
-    var all_targets = loadLocalTargets(); // this should not be done everytime, cache
+    var all_targets = getTargets();
+	
     var trgs = getSourceTargets(all_targets, shot.src);
 	    
 	var hit_target = []; // which targets are hitted
@@ -231,12 +248,7 @@ function handleMissedTarget(missed_trg) {
 }
 
 
-function loadClipsets() { // not used because ajax calls with local files do not work always
-   
-    $.getJSON('clipsets.js', function(data) {
-        clipsets = data;
-    });
-}
+
 
 function registerShot(x, y, t) {
     var src = clipsets[clipset_num][clipset_pos];

@@ -239,7 +239,7 @@
 				loc = loc - 1;
 			}
 			
-			console.log("updateTargetIcon", i, loc, do_display, trg.id, current_anno_target.id, trg.t.length);
+			//console.log("updateTargetIcon", i, loc, do_display, trg.id, current_anno_target.id, trg.t.length);
 			
             if (do_display != 'no') { 
                 //var delta_t = trg.t.map(function(x) { return x - ctime });
@@ -321,7 +321,7 @@
                 html += 'Current target: ' + j + '<button onclick="delAnnoTarget('+ j +'); updateTargetList();">X</button>';
                 html += '</p>';
                 
-                html +='Circle width: <input size="5" id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="updateCurrentAnnoTarget();"/><br />'
+                html +='Circle width: <input size="5" id="target_rel_width" type="text" value="'+ trg.rel_width +'" onchange="setCurrentAnnoTargetProperties();"/><br />'
 				
 				var select_ru = "";
 				var select_occ = "";
