@@ -42,7 +42,6 @@ var clipsets = [
 "138_sturenkatu2.mp4",
 "139_sturenkatu_talonkulma.NE.mp4",
 "140_suojatieneteen_pysahtynyt_kuormaauto.mp4",
-"141_suojatienylitys.mp4",
 "142_auto_tiella.mp4",
 "143_hameentie.mp4",
 "144_itapasila.mp4",
@@ -56,9 +55,7 @@ var clipsets = [
 "152_ovi.mp4",
 "153_pasila.mp4",
 "154_autot_jalankulkijat_pyorailija.mp4",
-"154_somerontie.mp4",
 "155_bussipysakit.mp4",
-"155_vastaantulija.mp4",
 "156_edesta_vas.kaantyva_auto.mp4",
 "157_isoroba.mp4",
 "158_jalankulkija_ja_suojatie.mp4",
@@ -78,7 +75,9 @@ var clipsets = [
 "172_ratikka.mp4",
 "173_vastaantulijat.mp4",
 "174_autot.X-risteys_tasa-arvoinen.mp4",
-"175_autot_ja_jalankulkijat_X-risteys.mp4"
+"175_autot_ja_jalankulkijat_X-risteys.mp4",
+"176_vastaantulija.mp4",
+"177_somerontie.mp4"
 ],
 [
 "101_arkadiankatu.mp4",

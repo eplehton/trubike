@@ -35,23 +35,24 @@ var clipsets = [[
 				"106t_Kaisaniemen_puisto.mp4",
 				"107t_karkikolmio2.mp4",
 				"108t_karkikolmio.mp4",
-				"114t_Rautatieasema.mp4",
-				"117t_suojatie.mp4",		
+				"114t_Rautatieasema.mp4"],
+									
+				["117t_suojatie.mp4",	
 				"118t_suojatie_ja_risteys.mp4",
 				"120t_jalankulkijalapset.mp4",
 				"121t_kaantyva_auto.mp4",
 				"122t_sturenkatu_bussikatos.NE.mp4",
 				"124t_alppila_jalankulkija_pyoratie.mp4",
 				"125t_hameentie2.mp4",
-				"129t_lansipasila.NE.mp4",
-				"136t_pasilanasema.mp4",
+				"129t_lansipasila.NE.mp4"],
+				
+				["136t_pasilanasema.mp4",
 				"137t_pyorailija_oikealta.mp4",
 				"138t_sturenkatu2.mp4",
 				"144t_itapasila.mp4",
 				"146t_itapasila3.mp4",
 				"149t_jalankulkija.mp4",
-				"150t_kaantyva_auto.mp4"
-]];
+				"150t_kaantyva_auto.mp4"]];
 									
 function  annoTargets2TestQuery(clipname, all_targets) {
 	var cur_trgs = all_targets[clipname];
@@ -116,17 +117,20 @@ function loadTargets() {
 
 function loadQueries() {
 	var all_targets = loadTargets();
-	var cliplist = clipsets[0];
+	
+	var testset_num = sessionStorage.getItem("testset_num");
+	if (testset_num == 'null') {
+		testset_num = 0;
+	}
+	
+	var cliplist = clipsets[testset_num];
 	console.log('cliplist', cliplist);
 	
 	var test_queries = [];
 	
 	for (var i=0; i<cliplist.length; i++) {
 		var clipname = cliplist[i];
-
-	
 		var query = annoTargets2TestQuery(clipname, all_targets);
-		console.log('query', query)
 		test_queries.push(query);
 	}
 	return test_queries;
@@ -380,3 +384,36 @@ function toggleQueryBox(query_id, box_id) {
 	qbt.style.backgroundColor = bgcolor;
 	return status;
 }
+
+
+function setupInteraction() {
+	
+	 // Keypresses
+	$(document).keypress(function(event){
+		switch (event.which) {
+			case "a".charCodeAt(0):
+				var cp = clipset_pos - 1;
+				videoEnded();
+				clipset_pos = cp;
+			
+				break;
+			case "z".charCodeAt(0):
+				var cp = clipset_pos + 1;
+				videoEnded();
+				clipset_pos = cp;
+			
+				break;
+			case 'c'.charCodeAt(0):
+				var qb = document.getElementById("query_banner");
+				
+				if (qb.style.display == "block") {	
+					qb.style.display = 'none';
+				} else {
+					qb.style.display = 'block';
+				}
+				break;
+		}
+	});
+	
+}
+	

@@ -429,7 +429,7 @@ body {
     width: 2em;
     height: 2em;
     border-radius: 50%;
-    background-color: red;
+    background-color: white;
     opacity: 0.5;
     z-index: 2;
     display: none;
@@ -620,3 +620,4 @@ header nav ul li:active {
 	z-index:4;
     position: absolute;
 }
+

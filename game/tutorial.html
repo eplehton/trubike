@@ -9,10 +9,16 @@
 	 <script type="text/javascript" src="js/peli.js"></script>
 	<script language="javascript" type="text/javascript">
 
+	// load targets with ajax call (and hope that it completes before the game begins...)
+	loadTargetsFrom('trubike_targets-20141118.json');
+
+
+
 	function updateHandPosition(hand, trg, videoplayer) {
 		/*
 			Moves the element 'hand' according to the annotated target 'trg' over the video element 'videoplayer'. 
 		*/
+		
 		var loc = findInsertIndex(trg.t, videoplayer.currentTime);
 		
 		if ((0 < loc) & (loc < trg.t.length)) {
@@ -48,10 +54,12 @@
 		var hand = document.getElementById("hand");
 		var vplayer = document.getElementById("videoplayer1");
 		var aplayer = document.getElementById("audioplayer1");
+		var thplayer = document.getElementById("targethitplayer");
+
 		var inst = document.getElementById("instruction1");
 		
 		
-		var all_targets = loadLocalTargets();
+		var all_targets = getTargets();
 		var tutor_targets = getSourceTargets(all_targets, "154_leikattu.mp4");
 		
 		var hand_target = tutor_targets[0];
@@ -67,11 +75,14 @@
 			inst.style.display = "none";
 			
 			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer1); }, 200);
-			
 			vplayer.play();
-			
-			setTimeout(stopVideo, 10000);
+			setTimeout(click, 8400);
         }
+
+		function click() {
+			thplayer.play();
+			setTimeout(stopVideo, 2000);
+		}
 
 		function stopVideo() {
             
@@ -83,19 +94,31 @@
     }
     
 	function scriptLesson2(action, delay) {
-		
+
+		var hand = document.getElementById("hand");
 		var vplayer = document.getElementById("videoplayer2");
 		var aplayer = document.getElementById("audioplayer2");
+		var thplayer = document.getElementById("targethitplayer");
+
+		var all_targets = getTargets();
+		var tutor_targets = getSourceTargets(all_targets, "112_leikattu.mp4");
+		
+		var hand_target = tutor_targets[0];
+		var update_hand_interval_id = null;
+		
+
 		var inst = document.getElementById("instruction2");
 		
 		function readInstruction() {
 			inst.style.display = "block";
 			aplayer.play();
-			setTimeout(video, 9000);
+			setTimeout(startVideo, 9000);
 		}
 		
-		function video() {
+		function startVideo() {
 			inst.style.display = "none";
+			
+			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer2); }, 200);
 			vplayer.playbackRate = 0.5;
 			vplayer.play();
         }
@@ -104,20 +127,32 @@
     }
 	
 	function scriptLesson3(action, delay) {
-		
+
+		var hand = document.getElementById("hand");
+		var thplayer = document.getElementById("targethitplayer");
 		var vplayer = document.getElementById("videoplayer3");
 		var aplayer = document.getElementById("audioplayer3");
 		var inst = document.getElementById("instruction3");
+		
+		var all_targets = getTargets();
+		var tutor_targets = getSourceTargets(all_targets, "1_paaty.mp4");
+		
+		var hand_target = tutor_targets[0];
+		var update_hand_interval_id = null;
 		
 		
 		function readInstruction() {
 			inst.style.display = "block";
 			aplayer.play();
-			setTimeout(video, 14000);
+			setTimeout(startVideo, 14000);
 		}
 		
-		function video() {
+		function startVideo() {
 			inst.style.display = "none";
+			
+			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer3); }, 200);
+			
+			
 			vplayer.play();
         }
 		
@@ -208,6 +243,9 @@
         <audio id="audioplayer4" src=""></audio>      
     </div>
         
-    <div id="hand">Rairairaira</div>
+    <div id="hand"><img class="hand" src="media/hand.png" /></div>
+	
+	<audio id="targethitplayer" src="media/targethit.mp3"></audio>
+
 </body>
 </html>

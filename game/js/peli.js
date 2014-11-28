@@ -35,11 +35,10 @@ var clipset_num; // which set loaded from session storage in onready
 var clipset_pos = 0; // position within a set
 
 
-var correct_hit_interval = 2.5;
 var video_started_t; // used to group hits by clip presentation
 
 var cached_targets = null;
-
+var cached_current_targets = null;
 
 function findInsertIndex(arr, val) {
     /*
@@ -81,7 +80,7 @@ function hideElementAfter(elem_id, timeout) {
 
 function loadLocalTargets() {
     // Load targets from JSON data stored on localstorage, from item "targets"
-    var targets = null;
+	var targets = null;
     var targets_s = localStorage.getItem("targets");
 	
     try {
@@ -107,14 +106,20 @@ function loadTargetsFrom(json_file) { // not used because ajax calls with local 
 	
 }
 
+
+function cacheCurrentTargets() {
+	var vplayer = document.getElementById("videoplayer");
+	var all_targets = getTargets();
+	cached_current_targets = getSourceTargets(all_targets, vplayer.src);
+}
+
 function getSourceTargets(all_targets, src) {
     
     // Helper function to get an array of targets for the specific video
     // The file name of the clip is parsed, and is used as the key to pick the right targets, regardless of
     // the path of the clip.
     // If the clipname is not present, an empty array is returned for convenience. 
-    console.log('src ' + src);
-	console.log(all_targets);
+
     var clipname = src.split("/").pop();
     var src_trgs = all_targets[clipname];
     //console.log(src +" - "+ clipname + " - " + src_trgs);
@@ -138,10 +143,9 @@ function checkTargetHit(shot){
 	Return info if hitted, otherwise empty
     */
     
-    var all_targets = getTargets();
 	
-    var trgs = getSourceTargets(all_targets, shot.src);
-	    
+    var trgs = cached_current_targets;
+	
 	var hit_target = []; // which targets are hitted
 	var hit_loc = []; // the index location within each target
 	var first_hit = []; // the first hit to the target or not
@@ -161,8 +165,8 @@ function checkTargetHit(shot){
 				hit_target.push(trg);
 				hit_loc.push(loc);
 				
-				if (! hitmiss.has(trg.t[trg.t.length-1])) { // mark the FIRST shot as hitted
-					hitmiss.set(trg.t[trg.t.length-1], {hitmiss_realt: shot.realt,
+				if (! hitmiss.has(trg.id)) { // mark the FIRST shot as hitted
+					hitmiss.set(trg.id, {hitmiss_realt: shot.realt,
 												target_end_t: trg.t[trg.t.length-1],
 												hit: true,
 												shot_t: shot.t,
@@ -178,17 +182,32 @@ function checkTargetHit(shot){
 	return {target: hit_target, location: hit_loc, first_hit: first_hit};
 };
 
-function acknowledgeMissedTarget() {
+function acknowledgeMissedTarget(ev) {
+	console.log("acknowledgeMissedTarget called");
+
+	var x = ev.clientX;
+	var y = ev.clientY;
+	
     var missed = document.getElementById("missed_target");
     missed.style.display = "none";
     
 	// register the acknowledgement time 
-	var missed_end_t = missed._trubike_missed_end_t;
-	var mt = hitmiss.get(missed_end_t)
+	var missed_id = missed._trubike_missed_id;
+	
+	var mt = hitmiss.get(missed_id)
 	mt.ack_realt = Date.now(); 
+
+	
+	showShot(x, y, true);
 	
     var vplayer = document.getElementById("videoplayer");
-    vplayer.play();
+	
+	if (vplayer.currentTime > (vplayer.duration - 1)) {
+		videoEnded();
+	} else {
+	
+		vplayer.play();
+	}
 }
 
 function handleMissedTarget(missed_trg) {
@@ -197,9 +216,9 @@ function handleMissedTarget(missed_trg) {
     var missplayer = document.getElementById("missplayer");
 	
     pauseVideo();
-        
+	console.log("pause video at ", vplayer.currentTime, " due to target at ", missed_trg.t.slice(-1).pop());
 
-	hitmiss.set(missed_trg.end_t, {hitmiss_realt: Date.now(),
+	hitmiss.set(missed_trg.id, {hitmiss_realt: Date.now(),
 									hit: false,
 									target_end_t: missed_trg.t.slice(-1).pop(),
 									shot_t: -1,
@@ -237,11 +256,13 @@ function handleMissedTarget(missed_trg) {
 	// occlusions
 	if (missed_trg.target_type == 'occlusion')  {
 		missed.style.borderRadius = "0%";
+	} else {
+		missed.style.borderRadius = "50%";	
 	}
 	
     missed.style.position = "absolute";
     missed.style.display = "block"; 
-    missed._trubike_missed_end_t = missed_trg.t.slice(-1).pop();	
+    missed._trubike_missed_id = missed_trg.id; 	
 
     missplayer.play(); 
 
@@ -271,35 +292,47 @@ function startVideo() {
     /* called in the beginning of the test */
     /* playing event (peli.html) is should be used to handle stuff which is related to 
     start of the playing, and this is called when a trial begins */
-    var vplayer = document.getElementById("videoplayer");
+        
+	
+	
+	var vplayer = document.getElementById("videoplayer");
     vplayer.src = clippath + clipsets[clipset_num][clipset_pos];
-    vplayer.play();
-    // correct_shots = [];  
+    
+	cacheCurrentTargets();
+	
 	
     shots = [];				// tyhjentää shotslistan
     hitmiss = new Map();
 	
     video_started_t = Date.now(); // this is used to group shots per clip presentation
 
+	vplayer.play();
+    
 };
 
-function checkMissedTargets(targets) {
+function checkMissedTargets() {
     var vplayer = document.getElementById("videoplayer");
     var ctime = vplayer.currentTime;
     
+	var targets = cached_current_targets; 
+	
+	
     for (var tx=0; tx<targets.length; tx++) {
         var current_trg = targets[tx];
         // check if the target end is passed and the target has not been hit yet
-        if ((current_trg.t.slice(-1).pop() < ctime) & (! hitmiss.has(current_trg.t.slice(-1).pop()))) {
+		var end_t = current_trg.t.slice(-1).pop();
+		var id = current_trg.id;
+		
+        if ((end_t < ctime) & (! hitmiss.has(id))) {
             var hitted = false;
             for (var sx=shots.length-1; sx >= 0; sx--) {
-                if (shots[sx].target_end_t == current_trg.t.slice(-1).pop()) {
+                if (shots[sx].target_end_t == end_t) {
                     hitted = true;
                     break;
                 }
             }
             if (! hitted) {
-				console.log(current_trg);
+				console.log("will call handleMissedTarget at ", ctime, " due to target at ", end_t);
                 handleMissedTarget(current_trg);
             }
         }
@@ -321,7 +354,6 @@ function stopVideo() {
 function videoClicked(ev) {
     
     var vplayer = document.getElementById("videoplayer");
-    var thplayer = document.getElementById("targethitplayer");
     var ctime = vplayer.currentTime;
 	var hitted = document.getElementById("hitted_target");
     
@@ -344,10 +376,8 @@ function videoClicked(ev) {
 			// keep track of hitted targets and points
 			// for updating the points
 			game_points.set("" + hit.target[h].t.slice(-1).pop(),  1) //{target: hit_target, location: hit_loc};);
-			points += 1; //game_points.size;
 		
 			// show points
-			
 			if (hit.first_hit[h]) {
 				var point_tmpl = document.getElementById("point_tmpl"); 		
 				var pnt = point_tmpl.cloneNode(true);										
@@ -374,42 +404,54 @@ function videoClicked(ev) {
 				pnt.style.left = (hitted_x) + "px";
 				pnt.style.top =  (hitted_y - 100) + "px";
 				console.log("point coords: " + hitted_x + " - " + hitted_y);	
-			}
-
-
-			/*
-			var client_coords = rel2Client(hit.target.x[hit.location], 
-										   hit.target.y[hit.location]);
-			var hitted_x = client_coords[0];
-			var hitted_y = client_coords[1];
-			var hitted_width = vplayer.offsetWidth * hit.target.rel_width;
-			var hitted_height = vplayer.offsetWidth * hit.target.rel_width;
 			
-			hitted.style.left = (hitted_x - 0.5*hitted_width) + "px";
-			hitted.style.top =  (hitted_y - 0.5*hitted_height) + "px";
-
-			hitted.style.width = hitted_width + "px";
-			hitted.style.height = hitted_height + "px";
-
-			hitted.style.display = "block"; 								
-			hitted.style.position = "absolute";
-			setTimeout( function(){ hitted.style.display = "none"}, 250); // hide it soon
-			 */
+				// increase also game points count
+				points += 1;
+			}
 		}	
-
-		// shot feedback
-		var hp_tmpl = document.getElementById("hitpoint_tmpl"); 				//etsii hitpoint_tmpl nimisen divin html-tiedostosta
-        var hp = hp_tmpl.cloneNode();										//kloonaa sen
-        hp.id = "hitpoint_" + Math.round(ctime*1000); 						 // antaa kloonille (hp) id:n "hitpoint_" ja ajan millisekunteina
-        setTimeout( function(){ hp.style.display = "none"}, 250); 			 // setTimeout kutsuu anonyymin funktion: eli (piilottaa hp:n, 250 ms kuluttua)
-        document.body.appendChild(hp);  										//dokumenttiin lisätään uusi klooni hp
 		
-        hp.style.display = "block"; 										// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
-        hp.style.position = "absolute" 										// displayataan absoluuttisesti x:n ja y:n mukaan 
-        
-
+		var is_hit = false;
+		if (hit.target.length > 0) {
+			is_hit = true;
+		}
 		
-		// show the hit point as green and play hit audio
+		showShot(x, y, is_hit);
+	}
+}
+
+function showShot(x, y, is_hit) {
+	
+	var thplayer = document.getElementById("targethitplayer");
+	
+	// shot feedback
+	var hp_tmpl = document.getElementById("hitpoint_tmpl"); 	// etsii hitpoint_tmpl nimisen divin html-tiedostosta
+	var hp = hp_tmpl.cloneNode();								// kloonaa sen
+	hp.id = "hitpoint_" + Date.now(); 						 	// antaa kloonille (hp) id:n "hitpoint_" ja ajan millisekunteina
+	setTimeout( function(){ hp.style.display = "none"}, 250); 	// setTimeout kutsuu anonyymin funktion: eli (piilottaa hp:n, 250 ms kuluttua)
+	document.body.appendChild(hp);  							// dokumenttiin lisätään uusi klooni hp
+	
+	hp.style.display = "block"; 								// displayaa hp:n, style eli ulkonäkö määritetty css:ssä
+	hp.style.position = "absolute" 								// displayataan absoluuttisesti x:n ja y:n mukaan 
+	
+	// show the hit point as green and play hit audio
+	if (is_hit) {
+		hp.style.background = "green"; 
+		hp.style.width = "8em";
+		hp.style.height = "8em";
+		
+		// update points and play the audio
+		showPoints()
+		thplayer.currentTime = 0.0 								// asettaa audioplayerin nollaan.
+		thplayer.play()  										// soittaa audioplayerista äänen että osuttiin oikeaan
+	} 
+	
+	var centering = [0.5 * hp.offsetWidth, 
+					 0.5 * hp.offsetHeight];
+	hp.style.left = (x - centering[0]) + "px";
+	hp.style.top =  (y - centering[1]) + "px";
+}
+
+/* 		// show the hit point as green and play hit audio
 		if (hit.target.length > 0) {
 
 			hp.style.background = "green"; 
@@ -433,15 +475,14 @@ function videoClicked(ev) {
 			hp.style.top =  (y - centering[1]) + "px";
 			
 		}
- 
-		
-        
-    }
-}
+    } 
+*/
 
 
 
 function videoEnded(ev) {
+	console.log("videoEnded called");
+	
 	var temp_videoshots = []
 	var line = ""
   	for (var i=0; i<shots.length; i++) {
@@ -450,7 +491,8 @@ function videoEnded(ev) {
 	temp_videoshots.push(line)
 
     sessionStorage.setItem("videoshots_" + (clipset_pos+1), temp_videoshots)    //tekee sessionstorageen shotslistan nimeltä "videoshots_0"  jonka value on ekan videon shotit, sitten videoshots_1.....
-        
+    
+    
 	var video = document.getElementById("videoplayer")
     video.src = "" 
     clipset_pos += 1
@@ -461,12 +503,17 @@ function videoEnded(ev) {
 		$("#tasonloppu").show();
 	}
 
-	printToLog()
+	// printToLog()
+
+
+	
+	var clip_counter = document.getElementById("clip_counter");
+   
+	clip_counter.innerHTML = "" + clipsets[clipset_num][clipset_pos].substring(0, 3);
+
 
 	sessionStorage.setItem("Points", points);
-
-    saveStats();
-	alert(clipsets[clipset_num][clipset_pos].substring(0, 3));
+    saveStats();	
 }
 
 function saveStats() {
@@ -477,7 +524,6 @@ function saveStats() {
     } else {
         shots_stats = JSON.parse(shots_stats_str);
     }
-
 
     var hitmiss_stats_str = localStorage.getItem("hitmiss_stats");
     var hitmiss_stats = null;
@@ -620,3 +666,70 @@ function rel2Video(hprelX,hprelY){
     //return "Absolute height " + absoluteH +" and absolute width " + absoluteW;
     return [absoluteX, absoluteY];
 }
+
+
+function setupGameInteraction() {
+		
+	$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
+		var instr = document.getElementById("instruction")
+		instr.style.display = "none"; 
+		console.log("Aloitetaan toisto")
+		startVideo(); 
+	}); 
+	
+	$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
+		console.log("Seuraava video")  
+		var elem = document.getElementById("klipinloppu")
+		elem.style.display = "none"; 			
+		startVideo();		
+	});
+	
+	// set check for missed targets
+	var vplayer = document.getElementById("videoplayer");
+	var check_missed_targets_interval_id = null;
+	
+	vplayer.addEventListener("playing", function() {
+		if (check_missed_targets_interval_id == null) { // do not make duplicates
+			check_missed_targets_interval_id = setInterval( function(){ checkMissedTargets() },
+																	    check_missed_target_interval_size); 
+			}
+	});
+
+	vplayer.addEventListener("pause", function() {
+		clearInterval(check_missed_targets_interval_id);
+		check_missed_targets_interval_id = null;
+	});
+	
+	
+	 // Keypresses
+	$(document).keypress(function(event){
+		switch (event.which) {
+			case "a".charCodeAt(0):
+				var cp = clipset_pos - 1;
+				videoEnded();
+				clipset_pos = cp;
+			
+				break;
+			case "z".charCodeAt(0):
+				var cp = clipset_pos + 1;
+				videoEnded();
+				clipset_pos = cp;
+			
+				break;
+			case 'f'.charCodeAt(0):
+				 var fv = sessionStorage.getItem("feedback_version");
+				 var f = "";
+				 if (fv == 'nohighlight') {
+					f = "highlight";
+				} else {
+					f = "nohighlight";
+				}
+				sessionStorage.setItem("feedback_version", f);
+				alert("Feedback set to " + f);
+				break;
+		}
+	});
+	
+}
+	
+	

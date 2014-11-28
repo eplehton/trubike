@@ -48,8 +48,11 @@ videoplayer {
 #hand {
     width: 10em;
     height: 10m;
-    background-color: red;   
     position: absolute;
     display: none;
     z-index: 10;
+}
+
+img.hand {
+	width: 100px;
 }

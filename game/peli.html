@@ -10,10 +10,10 @@
     <script type="text/javascript" src="js/peli.js"></script>
     <!-- <script type="text/javascript" src="js/kirjautuminen.js"></script> -->
     <script language="javascript" type="text/javascript">
-        $(document).ready(function(){	
+        $(document).ready(function(){
         
             // load targets with ajax call (and hope that it completes before the game begins...)
-			loadTargetsFrom('trubike_targets-20141118.json');
+			loadTargetsFrom('trubike_targets_20141124.json');
 			
 			
 			var cns = sessionStorage.getItem("clipset_num");
@@ -23,69 +23,9 @@
                 clipset_num = parseInt(cns);
 			}
 			
-            
-            $("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
-                var instr = document.getElementById("instruction")
-                instr.style.display = "none"; 
-                console.log("Aloitetaan toisto")
-                startVideo(); 
-            }); 
-                //showPoints();
-
-            $("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
-                console.log("Seuraava video")  
-                var elem = document.getElementById("klipinloppu")
-                elem.style.display = "none"; 			
-                startVideo();		
-            });
-            
-            // set check for missed targets
-            var vplayer = document.getElementById("videoplayer");
-            var check_missed_targets_interval_id = null;
-            
-            vplayer.addEventListener("playing", function() {
-                if (check_missed_targets_interval_id == null) { // do not make duplicates
-                    var all_targets = getTargets();        
-                    var trgs = getSourceTargets(all_targets, vplayer.src);
-                    check_missed_targets_interval_id = setInterval( function(){ checkMissedTargets(trgs) },
-                                                                             check_missed_target_interval_size); 
-                    }
-            });
-        
-            vplayer.addEventListener("pause", function() {
-                clearInterval(check_missed_targets_interval_id);
-                check_missed_targets_interval_id = null;
-            });
-			
-			
-			 // Keypresses
-			$(document).keypress(function(event){
-				switch (event.which) {
-					case "a".charCodeAt(0):
-						clipset_pos -= 1;
-						startVideo()
-						break;
-					case "z".charCodeAt(0):
-						clipset_pos += 1;
-						startVideo()
-						break;
-					case 'f'.charCodeAt(0):
-						 var fv = sessionStorage.getItem("feedback_version");
-						 var f = "";
-						 if (fv == 'nohighlight') {
-						    f = "highlight";
-					    } else {
-							f = "nohighlight";
-						}
-						sessionStorage.setItem("feedback_version", f);
-						alert("Feedback set to " + f);
-						break;
-				}
-			});
-			
-			
-				
-        });
+			setupGameInteraction();
+		});
+		
     </script>
 
 </head>
@@ -98,16 +38,14 @@
     </div>
 
     <div class="ohjeruutu" id="instruction">
-        <p>Pyöräillessä on hyvä varmistua siitä, ettei kukaan tule yllättäen eteen. Kun pystyy ennakoimaan,
-     		ei joudu kolariin tai tekemään äkkijarrutusta. 
-		   Etsi liikenteestä autoja tai muita tiellä kulkijoita, jotka ovat tulossa eteesi ja klikkaa niitä. 
-		   Hyvistä havainnoista saat pisteitä.</p> 
+        <p>Muista instruktio! Hyvistä havainnoista saat pisteitä.</p> 
 		   
 		   <p>Klikkaa tätä ruutua aloittaaksesi pelin. </p>
     </div>
 
     <div class="ohjeruutu hidden" id="klipinloppu">
         <p> Jatka seuraavaan videoon klikkaamalla tätä ruutua. </p>
+		<p id="clip_counter"></p>
     </div>
 
     <a href="index.html">
@@ -128,11 +66,12 @@
         <div id="hitpoint_tmpl" class="hitpoint"></div>
 		<div id="hitted_target"></div>
 		<div id="point_tmpl" class="point"><p class="point">+1</p></div>
-        <div id="missed_target" onclick="acknowledgeMissedTarget()"></div>
+        <div id="missed_target" onclick="acknowledgeMissedTarget(event)"></div>
     </div>
    
     <audio id="targethitplayer" src="media/targethit.mp3"></audio>
     <audio id="missplayer" src="media/188039__antumdeluge__bicycle-horn.wav"></audio>
+	<audio autoplay id="instructionplayer" src="media/game_starts_show.wav"></audio>
 
     
     
