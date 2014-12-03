@@ -10,8 +10,8 @@
 	<script language="javascript" type="text/javascript">
 
 	// load targets with ajax call (and hope that it completes before the game begins...)
-	loadTargetsFrom('trubike_targets-20141118.json');
-
+	//loadTargetsFrom('trubike_targets-20141118.json');
+	loadTargetsFrom('trubike_targets_20141201.json');
 
 
 	function updateHandPosition(hand, trg, videoplayer) {
@@ -35,7 +35,7 @@
 			console.log(videoCoords, centering);
 			
 			hand.style.left = (videoCoords[0] - centering[0]) + "px";
-			hand.style.top = (videoCoords[1] - centering[1]) + "px";
+			hand.style.top = (videoCoords[1] - centering[1] + 50) + "px";
 			
 			hand.style.display = "block";
 			
@@ -53,7 +53,9 @@
         
 		var hand = document.getElementById("hand");
 		var vplayer = document.getElementById("videoplayer1");
-		var aplayer = document.getElementById("audioplayer1");
+		var aplayer1a = document.getElementById("audioplayer1a");
+		var aplayer1b = document.getElementById("audioplayer1b");
+		
 		var thplayer = document.getElementById("targethitplayer");
 
 		var inst = document.getElementById("instruction1");
@@ -67,7 +69,7 @@
 		
 		function readInstruction() {
 			inst.style.display = "block";
-			aplayer.play();
+			aplayer1a.play();
 			setTimeout(startVideo, 7000);
 		}
 		
@@ -76,18 +78,19 @@
 			
 			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer1); }, 200);
 			vplayer.play();
-			setTimeout(click, 8400);
+			setTimeout(click, 7400);
         }
 
 		function click() {
-			thplayer.play();
-			setTimeout(stopVideo, 2000);
-		}
-
-		function stopVideo() {
-            
 			clearInterval(update_hand_interval_id);
-        }
+
+			vplayer.pause();
+			
+			//aplayer1b.play();
+			
+			setTimeout(function() { showLesson(2); }, 2000);
+			
+		}
 		
 		readInstruction();
 		
@@ -110,18 +113,30 @@
 		var inst = document.getElementById("instruction2");
 		
 		function readInstruction() {
+			hand.style.display = "none";
+			
 			inst.style.display = "block";
 			aplayer.play();
-			setTimeout(startVideo, 9000);
+			setTimeout(startVideo, 10000);
 		}
 		
 		function startVideo() {
 			inst.style.display = "none";
 			
 			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer2); }, 200);
-			vplayer.playbackRate = 0.5;
+			// vplayer.playbackRate = 0.5;
 			vplayer.play();
+			setTimeout(click, 4000);
         }
+		
+		function click() {
+			clearInterval(update_hand_interval_id);
+			vplayer.pause();
+			//thplayer.play();
+			
+			setTimeout(function() { showLesson(3); }, 4000);
+		}
+		
 		
 		readInstruction();
     }
@@ -134,6 +149,8 @@
 		var aplayer = document.getElementById("audioplayer3");
 		var inst = document.getElementById("instruction3");
 		
+		hand.style.display = "none";
+		
 		var all_targets = getTargets();
 		var tutor_targets = getSourceTargets(all_targets, "1_paaty.mp4");
 		
@@ -144,19 +161,36 @@
 		function readInstruction() {
 			inst.style.display = "block";
 			aplayer.play();
-			setTimeout(startVideo, 14000);
+			setTimeout(startVideo, 15000);
 		}
 		
 		function startVideo() {
 			inst.style.display = "none";
 			
 			update_hand_interval_id = setInterval(function() { updateHandPosition(hand, hand_target, videoplayer3); }, 200);
-			
-			
+					
 			vplayer.play();
+			
+			setTimeout(click, 2000);
         }
 		
-				
+		
+		
+		function click() {
+			clearInterval(update_hand_interval_id);
+			vplayer.pause();
+			setTimeout(showEnd, 2000);
+		}
+		
+		function showEnd() {
+			hand.style.display = "none";
+			vplayer.play();
+			
+			setTimeout(function() { document.location.href = "../index.html";}, 2000);
+		}
+
+
+
 		readInstruction();
     }
 
@@ -200,49 +234,40 @@
 <body>    
     <div class="lesson" id="lesson1">
         <div id="instruction1" class="instruction">
-           <p class="instruction_text">Huomio muut tienkäyttäjät, kuten  jalankulkijat, 
+           <p class="instruction_text">Huomio muut tienkäyttäjät, kuten jalankulkijat, 
 		     pyöräilijät ja autot, jotka voivat tulla eteesi.
 		    </p>
         </div>
         <video id="videoplayer1" src="media/154_leikattu.mp4" muted></video>
-        <audio id="audioplayer1" src="media/tilanne1.wav"></audio>
-        
-        <div class="forward" onclick="showLesson(2);">Ok!</div>
+        <audio id="audioplayer1a" src="media/tilanne1.wav"></audio>
+		
+        <!-- <div class="forward" onclick="showLesson(2);">Ok!</div> -->
     </div>
 
     <div class="lesson" id="lesson2">
         <div id="instruction2" class="instruction">
-           <p  class="instruction_text">Huomioi muut samaan tai vastakkaiseen suuntaan kulkevat tienkäyttäjät,  
+           <p  class="instruction_text">Huomioi samaan tai vastakkaiseen suuntaan kulkevat tienkäyttäjät,  
 		     kuten jalankulkijat, pyöräilijät ja autot, jotka voivat kääntyä eteesi.
 		    </p>
         </div>
         <video id="videoplayer2" src="media/112_leikattu.mp4" muted></video>
         <audio id="audioplayer2" src="media/tilanne2.wav"></audio>  
         
-        <div class="forward" onclick="showLesson(3);">Ok!</div>
+        <!-- <div class="forward" onclick="showLesson(3);">Ok!</div> -->
     </div>
     
     <div class="lesson" id="lesson3">
          <div id="instruction3" class="instruction">
-           <p  class="instruction_text">Huomioi muut tienkäyttäjät, kuten jalankulkijat, pyöräilijät ja autot, 
-		   jotka voivat tulla eteesi näköesteen takaa. Näköesteitä ovat esimerkiksi talon kulmat, 
-		   pysäköidyt autot ja pensaat tai puut.
+           <p  class="instruction_text">Huomioi myös näköesteet, joiden takaa joku voi yllättäen tulla eteesi. 
+		   Näköesteitä ovat esimerkiksi talon kulmat, pysäköidyt autot ja pensaat tai puut.
 		    </p>
         </div>
         <video id="videoplayer3" src="media/1_paaty.mp4" muted></video>
         <audio id="audioplayer3" src="media/tilanne3.wav"></audio>  
         
-        <div class="forward" onclick="showLesson(4);">Ok!</div>
+        <!-- <div class="forward" onclick="showLesson(4);">Ok!</div> -->
     </div>
-    
-    <div class="lesson" id="lesson4">
-        <p>
-            siinä ompi konsti verraton!    
-        </p>
-        <video id="videoplayer4" src="" muted></video>
-        <audio id="audioplayer4" src=""></audio>      
-    </div>
-        
+            
     <div id="hand"><img class="hand" src="media/hand.png" /></div>
 	
 	<audio id="targethitplayer" src="media/targethit.mp3"></audio>

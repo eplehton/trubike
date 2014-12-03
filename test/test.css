@@ -2,6 +2,9 @@
 
 body { 
 	background-color: grey;
+	padding: 0;
+	
+	font-family: sans;
 }
 
 .banner {
@@ -73,13 +76,31 @@ body {
 
 #videoplayer {
 	width: 100%;
+	display: none;
 }
 
 #screen {
-	text-align: center; 
-	vertical-align: middle;
+	position: absolute;	
 	width: 80%;
-	margin: auto;
+	height: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+
+	margin-top: 3%;
+
+	padding: 0;
+	/*width: 80%;
+	text-align: center; 
+	vertical-align: middle;	
+	*/
+	
+	
+	
+	border-style: none;
+    /*border-width: 5%;
+	border-color: black;*/
+	background-color: #999;
+
 
 }
 
@@ -87,8 +108,9 @@ body {
 	display: absolute;
 	float: right;
 	height: 3em;
-	margin-top: 60%;
+	margin-top: 1%;;
 }
+
 
 /*Napit*/
 .btn {

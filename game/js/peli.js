@@ -96,9 +96,8 @@ function saveLocalTargets(all_targets) {
     localStorage.setItem("targets", JSON.stringify(all_targets))
 }
 
-//'trubike_targets-20141118.json'
 
-function loadTargetsFrom(json_file) { // not used because ajax calls with local files do not work always
+function loadTargetsFrom(json_file) { 
     
     $.getJSON(json_file, function(data) {
         cached_targets = data;
@@ -192,13 +191,13 @@ function acknowledgeMissedTarget(ev) {
     missed.style.display = "none";
     
 	// register the acknowledgement time 
-	var missed_id = missed._trubike_missed_id;
+	var missed_id = missed._trubike_missed_target.id;
 	
 	var mt = hitmiss.get(missed_id)
 	mt.ack_realt = Date.now(); 
 
 	
-	showShot(x, y, true);
+	showShot(x, y, missed._trubike_missed_target);
 	
     var vplayer = document.getElementById("videoplayer");
 	
@@ -246,8 +245,8 @@ function handleMissedTarget(missed_trg) {
     missed.style.height = missed_height + "px";
 
 
-    var feedback_version = sessionStorage.getItem("feedback_version");
-    if (feedback_version == "nohighlight") {
+    var search_version = sessionStorage.getItem("search_version");
+    if (search_version == "search") {
 		missed.style.opacity = 0.0;
     } else {
 		missed.style.opacity = 1.0;
@@ -262,7 +261,7 @@ function handleMissedTarget(missed_trg) {
 	
     missed.style.position = "absolute";
     missed.style.display = "block"; 
-    missed._trubike_missed_id = missed_trg.id; 	
+    missed._trubike_missed_target = missed_trg; 	
 
     missplayer.play(); 
 
@@ -293,6 +292,8 @@ function startVideo() {
     /* playing event (peli.html) is should be used to handle stuff which is related to 
     start of the playing, and this is called when a trial begins */
         
+	
+	
 	
 	
 	var vplayer = document.getElementById("videoplayer");
@@ -377,6 +378,9 @@ function videoClicked(ev) {
 			// for updating the points
 			game_points.set("" + hit.target[h].t.slice(-1).pop(),  1) //{target: hit_target, location: hit_loc};);
 		
+			showShot(x, y, hit.target[h]);
+
+			
 			// show points
 			if (hit.first_hit[h]) {
 				var point_tmpl = document.getElementById("point_tmpl"); 		
@@ -410,16 +414,16 @@ function videoClicked(ev) {
 			}
 		}	
 		
-		var is_hit = false;
-		if (hit.target.length > 0) {
-			is_hit = true;
+
+		if (hit.target.length == 0) {
+			showShot(x, y, null);
 		}
 		
-		showShot(x, y, is_hit);
+
 	}
 }
 
-function showShot(x, y, is_hit) {
+function showShot(x, y, hitted_target) {
 	
 	var thplayer = document.getElementById("targethitplayer");
 	
@@ -434,7 +438,7 @@ function showShot(x, y, is_hit) {
 	hp.style.position = "absolute" 								// displayataan absoluuttisesti x:n ja y:n mukaan 
 	
 	// show the hit point as green and play hit audio
-	if (is_hit) {
+	if (hitted_target != null) {
 		hp.style.background = "green"; 
 		hp.style.width = "8em";
 		hp.style.height = "8em";
@@ -443,7 +447,16 @@ function showShot(x, y, is_hit) {
 		showPoints()
 		thplayer.currentTime = 0.0 								// asettaa audioplayerin nollaan.
 		thplayer.play()  										// soittaa audioplayerista äänen että osuttiin oikeaan
+	
+		if (hitted_target.target_type == 'occlusion') {
+			hp.style.borderRadius = "0%";
+		} else {
+			hp.style.borderRadius = "50%";
+		}
+		
 	} 
+	
+	
 	
 	var centering = [0.5 * hp.offsetWidth, 
 					 0.5 * hp.offsetHeight];
@@ -717,15 +730,15 @@ function setupGameInteraction() {
 			
 				break;
 			case 'f'.charCodeAt(0):
-				 var fv = sessionStorage.getItem("feedback_version");
+				 var fv = sessionStorage.getItem("search_version");
 				 var f = "";
-				 if (fv == 'nohighlight') {
-					f = "highlight";
+				 if (fv == 'nosearch') {
+					f = "search";
 				} else {
-					f = "nohighlight";
+					f = "nosearch";
 				}
-				sessionStorage.setItem("feedback_version", f);
-				alert("Feedback set to " + f);
+				sessionStorage.setItem("search_version", f);
+				alert("Search set to " + f);
 				break;
 		}
 	});
