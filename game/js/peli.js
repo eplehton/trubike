@@ -1,12 +1,16 @@
-function Shot(x, y, t, src, video_started_t) {
-	this.video_started_t = video_started_t;
-    this.t = t;
-    this.x = x;
+function Shot(x, y, t, src, video_started_realt) {
+	this.src = src; // clipname
+	this.video_started_realt = video_started_realt; // real t when video started
+	this.realt = Date.now(); // real t of shot
+    this.t = t;  // video t
+    this.x = x;  
     this.y = y;
+	this.hit_target_id = -1;
+	this.hit_target_loc = -1;
     this.target_end_t = null;
 	this.target_loc = null;
-    this.src = src;
-    this.realt = Date.now();
+    
+
     this.hit = false;
 }
 
@@ -35,7 +39,7 @@ var clipset_num; // which set loaded from session storage in onready
 var clipset_pos = 0; // position within a set
 
 
-var video_started_t; // used to group hits by clip presentation
+var video_started_realt; // used to group hits by clip presentation
 
 var cached_targets = null;
 var cached_current_targets = null;
@@ -161,16 +165,28 @@ function checkTargetHit(shot){
 			var d2 = Math.sqrt(Math.pow(shot.x - trg.x[loc], 2) + Math.pow(shot.y - trg.y[loc], 2));
 				
 			if (d2 < (0.5*trg.rel_width)) {
+				
+				// It's a hit
+				// modify shot properties
+				shot.hit_target_id = trg.id;
+				shot.hit_target_loc = loc;
+				
+				// keep track of hitted and missed targets (for the program and for the ease of analysis
 				hit_target.push(trg);
 				hit_loc.push(loc);
 				
 				if (! hitmiss.has(trg.id)) { // mark the FIRST shot as hitted
-					hitmiss.set(trg.id, {hitmiss_realt: shot.realt,
-												target_end_t: trg.t[trg.t.length-1],
-												hit: true,
-												shot_t: shot.t,
-												location: loc,
-												ack_realt: -1});
+					hitmiss.set(trg.id, {
+										src : shot.src,
+										video_started_realt : video_started_realt,
+										target_id : trg.id,
+										target_loc : loc,
+										hit_realt : shot.realt,
+										hit_t : shot.t,
+										miss_realt : -1,
+										miss_t : -1,
+										hit: true,
+										ack_realt: -1});
 					first_hit.push(true);
 				} else {
 					first_hit.push(false);
@@ -210,20 +226,17 @@ function acknowledgeMissedTarget(ev) {
 }
 
 function handleMissedTarget(missed_trg) {
-    var missed = document.getElementById("missed_target");
+   									
+	
+	var missed = document.getElementById("missed_target");
     var vplayer = document.getElementById("videoplayer");
     var missplayer = document.getElementById("missplayer");
 	
     pauseVideo();
 	console.log("pause video at ", vplayer.currentTime, " due to target at ", missed_trg.t.slice(-1).pop());
 
-	hitmiss.set(missed_trg.id, {hitmiss_realt: Date.now(),
-									hit: false,
-									target_end_t: missed_trg.t.slice(-1).pop(),
-									shot_t: -1,
-									location: -1,
-									ack_realt: -1});
-	
+									
+									
 	
     var lastx = missed_trg.x.length-1;
     var relx = missed_trg.x[lastx];
@@ -280,7 +293,7 @@ function registerShot(x, y, t) {
 	
 	var target_end_t = null;
     
-    var shot = new Shot(relCoords[0], relCoords[1], t, src, video_started_t);
+    var shot = new Shot(relCoords[0], relCoords[1], t, src, video_started_realt);
 	
     shots.push(shot);
     return shot;
@@ -305,7 +318,7 @@ function startVideo() {
     shots = [];				// tyhjentää shotslistan
     hitmiss = new Map();
 	
-    video_started_t = Date.now(); // this is used to group shots per clip presentation
+    video_started_realt = Date.now(); // this is used to group shots per clip presentation
 
 	vplayer.play();
     
@@ -314,9 +327,8 @@ function startVideo() {
 function checkMissedTargets() {
     var vplayer = document.getElementById("videoplayer");
     var ctime = vplayer.currentTime;
-    
 	var targets = cached_current_targets; 
-	
+	var video_src = vplayer.src;
 	
     for (var tx=0; tx<targets.length; tx++) {
         var current_trg = targets[tx];
@@ -333,6 +345,21 @@ function checkMissedTargets() {
                 }
             }
             if (! hitted) {
+				// keep track of hitted and missed
+				hitmiss.set(trg.id, {
+									src : video_src,
+									video_started_realt : video_started_realt,
+									target_id : trg.id,
+									target_loc : -1,
+									hit_realt : -1,
+									hit_t : -1,
+									miss_realt : Date.now(),
+									miss_t : ctime,
+									hit: false,
+									ack_realt: -1});
+		
+	
+				
 				console.log("will call handleMissedTarget at ", ctime, " due to target at ", end_t);
                 handleMissedTarget(current_trg);
             }
@@ -370,10 +397,12 @@ function videoClicked(ev) {
         console.log("hitted target: " + hit);
 		    
 		for (var h=0; h<hit.target.length; h++) {	
+			
+			/* move modification of shot properties regarding hits to checkTargetHit
 			shot.hit = true;
             shot.target_end_t = hit.target[h].t.slice(-1).pop();
 			shot.target_loc = hit.location[h];
-			
+			*/
 			// keep track of hitted targets and points
 			// for updating the points
 			game_points.set("" + hit.target[h].t.slice(-1).pop(),  1) //{target: hit_target, location: hit_loc};);
@@ -526,19 +555,39 @@ function videoEnded(ev) {
 
 
 	sessionStorage.setItem("Points", points);
-    saveStats();	
+    saveGameStats();	
 }
 
-function saveStats() {
-    var shots_stats_str = localStorage.getItem("shots_stats");
+function saveGameStats() {
+	var shot_stats_key = "trubike.game.shot_stats";
+	var hitmiss_stats_key = "trubike.game.hitmiss_stats";
+	
+    var player_id = sessionStorage.getItem("player_id");
+    if (player_id == null) {
+        alert("player_id is null, set to anonymous");
+        player_id = "anonymous";
+    }
+	
+	// shots
+	var shots_stats_str = localStorage.getItem(shot_stats_key);
     var shots_stats = null;
     if (shots_stats_str == null) {
         shots_stats = {};
     } else {
         shots_stats = JSON.parse(shots_stats_str);
     }
-
-    var hitmiss_stats_str = localStorage.getItem("hitmiss_stats");
+	//console.log("shots_stats recovered as ", shots_stats);
+	
+	if (! shots_stats.hasOwnProperty(player_id) )  {
+		shots_stats[player_id] = [];
+	}
+	
+    shots_stats[player_id].push(shots); 
+	
+	localStorage.setItem(shot_stats_key, JSON.stringify(shots_stats));
+	
+	// hitmiss
+    var hitmiss_stats_str = localStorage.getItem(hitmiss_stats_key);
     var hitmiss_stats = null;
     if (hitmiss_stats_str == null) {
         hitmiss_stats = {};
@@ -546,33 +595,23 @@ function saveStats() {
         hitmiss_stats = JSON.parse(hitmiss_stats_str);
     }
 
+	//console.log("hitmiss_stats recovered as ", hitmiss_stats);    
     
-    var player_id = sessionStorage.getItem("player_id");
-    if (player_id == null) {
-        alert("player_id is null, set to anonymous");
-        player_id = "anonymous";
-    }
-	
-	if (! shots_stats.hasOwnProperty(player_id) )  {
-		shots_stats[player_id] = [];
-	}
 	
 	if (! hitmiss_stats.hasOwnProperty(player_id) )  {
 		hitmiss_stats[player_id] = [];
 	}
 	
-    shots_stats[player_id].push(shots); // concat would be nicer
 	
-    // convert Maps to something easier to json, actually, just the the values...
+    // convert Maps to something easier to json, actually, just the values...
     var hitmiss_lst = []; 
     for (v of hitmiss.values()) { // we don't need the keys, because the key is included in the value object
         hitmiss_lst.push(v);
     }
     
-    hitmiss_stats[player_id].push(hitmiss_lst);  // concat would be nicer
+    hitmiss_stats[player_id].push(hitmiss_lst); 
 	
-    localStorage.setItem("shot_stats", JSON.stringify(shots_stats));
-	localStorage.setItem("hitmiss_stats", JSON.stringify(hitmiss_stats));
+    localStorage.setItem(hitmiss_stats_key, JSON.stringify(hitmiss_stats));
 }
 
 

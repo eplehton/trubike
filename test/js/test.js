@@ -5,6 +5,8 @@ var cached_targets = null;
 
 var query_id = -1;
 var query_box_present_color = 'green';
+var query_started_realt = null; // global var which is used when registering not presence (should be something neater...)
+
 
 var test_clips = ['../clips/157_isoroba.mp4', 
                     '../clips/157_isoroba.mp4'];
@@ -80,7 +82,7 @@ var clipsets = [["101t_arkadiankatu.mp4",
 "159t_jalankulkija_porttikongi.mp4"
 */
 
-function  annoTargets2TestQuery(clipname, all_targets) {
+function annoTargets2TestQuery(clipname, all_targets) {
 	var cur_trgs = all_targets[clipname];
 	
 	if (cur_trgs[0] === undefined) {
@@ -121,11 +123,30 @@ function clearQueries() {
 		node.parentNode.removeChild(node);
 	}		
 	
-	
-	//var qbanner = document.getElementById("query_banner");
-	//query_banner.style.display = "none";
+
 }
 
+
+function confirmAnswers() {
+	
+	if (query_id >= 0) {
+		var query = test_queries[query_id];
+
+
+		for (var box_id=0; box_id<query.items.length; box_id++) {
+			var qitem = query.items[box_id];
+			var query_box_id = "query_box_" + query_id + '_' + box_id;
+			
+			var qbox = document.getElementById(query_box_id);
+			var status = getQueryBoxStatus(qbox);
+			if (status == 'notpresent') {
+			
+				registerPresence(query, query_id, box_id, "notpresent", query_started_realt);
+			}
+		}
+	}
+	
+}
 
 
 function loadTargetsFrom(json_file) { 
@@ -214,34 +235,34 @@ function registerIdentity(query_id, box_id, answer, query_started_realt) {
 }
 
 
-function registerPresence(qitem, query_id, box_id, answer, query_started_realt) {
+function registerPresence(query, query_id, box_id, answer, query_started_realt) {
 	/* 
 		Registers if a query box is labeled as having something.
 	*/
-
-	console.log("registerPresence called");
+	var query_items = query.items;
 	
 	var query_box_id = "query_box_" + query_id + '_' + box_id;
-	console.log('query_box_id', query_box_id);
 		
 	var player_id = sessionStorage.getItem("player_id");
 	
 	var answer_latency = (Date.now() - query_started_realt) / 1000;
 	
+	console.log("reg presence ", query);
+	
 	var answer = { player_id : player_id,
+				   src : query.clip,
+		           src_stop_time : query.stop_time,
 				   query_id : query_id,
 				   box_id : box_id,
 				   query_started_realt : query_started_realt,
 				   answer_latency : answer_latency,
 				   answer : answer,
-				   target_id :  qitem.target_id,
-		           target_type : qitem.targeT_type,
-				   target_x : qitem.x,
-		           target_y : qitem.y};
+				   target_id :  query_items[box_id].target_id,
+		           target_type : query_items[box_id].target_type,
+				   target_x : query_items[box_id].x,
+		           target_y : query_items[box_id].y};
 				   
 	test_answers.push(answer);
-
-	
 }
 
 
@@ -258,8 +279,10 @@ function rel2Client(videoplayer, relx, rely) {
 }   
 
 
-function showQuery(query_items) {	
-	console.log("showQuery called with ", query_items);
+function showQuery(query) {
+	var query_items = query.items;
+	
+	console.log("showQuery called");
 	
 	var vplayer = document.getElementById("videoplayer");
 	var nbutton = document.getElementById("nextbutton");
@@ -277,7 +300,7 @@ function showQuery(query_items) {
 	
 	vplayer.pause();
 	
-	var query_started_realt = Date.now();
+	query_started_realt = Date.now();
 	
 		
 	for (var box_id=0; box_id<query_items.length; box_id++) {
@@ -308,7 +331,7 @@ function showQuery(query_items) {
 
 		function makeCallbackTB(qi, q_id, b_id) {
 			return function() { var status = toggleQueryBox(q_id, b_id); 
-							    registerPresence(qi, q_id, b_id, status, query_started_realt); } 
+							    registerPresence(query, q_id, b_id, status, query_started_realt); } 
 		}
 		
 		pedestrian.addEventListener("click", makeCallbackRA(query_id, box_id, "pedestrian"), false);
@@ -342,23 +365,31 @@ function showQuery(query_items) {
 	
 }
 
-function saveTestAnswers() {	
+function saveTestAnswers() {
+	var answers_key = "trubike.test.answers";
+	
 	var player_id = sessionStorage.getItem("player_id");
-	var local_answers_str = localStorage.getItem("trubike.test.answers");
+	var local_answers_str = localStorage.getItem(answers_key);
 
 	var local_answers = JSON.parse(local_answers_str);
 	if (local_answers === null) {
 		local_answers = {};
 	}
 	
-	var local_answers = local_answers[player_id];
-	if (local_answers != null) {
-		local_answers = local_answers.concat(test_answers);
-	} else {
-		local_answers = test_answers;
+	console.log("trubike.test.answers recovered from localStorage: ", local_answers);
+	
+	if (! local_answers.hasOwnProperty(player_id) )  {
+		local_answers[player_id] = [];
 	}
 	
-	localStorage.setItem("trubike.test.answers", JSON.stringify(local_answers));
+	
+	local_answers[player_id].push(test_answers);
+	
+	console.log("local_answers with player_id ", local_answers[player_id]);
+	
+	localStorage.setItem(answers_key, JSON.stringify(local_answers));
+	
+	
 }
 	 
 
@@ -394,28 +425,50 @@ function startNextClip() {
 		
 		console.log(query_id, query.items, 'stop_time*1000', query.stop_time * 1000);
 		
-		setTimeout(function() { showQuery(query.items); }, query.stop_time * 1000);
+		setTimeout(function() { showQuery(query); }, query.stop_time * 1000);
 	} else {
 		document.location.href = "../index.html";
 	}
 }
 
+
 function toggleQueryBox(query_id, box_id) {
 	var query_box_id = "query_box_" + query_id + '_' + box_id;
 	
 	var qbox = document.getElementById(query_box_id);
-	var qbt = qbox.getElementsByClassName("query_box_target").item(0);
+
+	var status = getQueryBoxStatus(qbox);
+	var newstatus = null;
+	if (status == 'present') {
+		newstatus = 'notpresent';
 	
+	} else {
+		newstatus = 'present';
+	}
+	setQueryBoxStatus(qbox, newstatus);
+	return newstatus;
+}
+
+
+
+function getQueryBoxStatus(qbox) {
+	var qbt = qbox.getElementsByClassName("query_box_target").item(0);
 	var bgcolor = qbt.style.backgroundColor;
-	console.log(query_box_id, bgcolor);
 	
 	var status = null;
 	if (bgcolor != query_box_present_color) {
-		bgcolor = query_box_present_color;
-		status = 'present';
-	} else {
-		bgcolor = 'transparent';
 		status = 'notpresent';
+	} else {
+		status = 'present';
+	}
+	return status;
+}
+
+function setQueryBoxStatus(qbox, status) {
+	var qbt = qbox.getElementsByClassName("query_box_target").item(0);
+	var bgcolor = 'transparent';
+	if (status == 'present') {
+		bgcolor = query_box_present_color;
 	}
 	qbt.style.backgroundColor = bgcolor;
 	return status;
