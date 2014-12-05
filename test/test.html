@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="test.css" />
+	<title> Test </title>
+	
+	<script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="js/test.js"></script>
+	
+	<script language="javascript" type="text/javascript">
+        
+		loadTargetsFrom('js/trubike_targets_20141202.json');
+
+
+		$(document).ready(function(){	
+			
+            
+            
+            //document.getElementById("ready_banner").style.display = "block";
+			
+			setupInteraction();
+        });
+    </script>
+
+</head>
+
+<body>
+
+	<a id="stop" href="../index.html" class="btn btn-large">Keskeytä
+    </a>
+
+	
+
+    <div class="target" id="target_template"></div>
+	
+
+	<div id="screen">
+	
+		
+		<!-- <div class="banner" id="ready_banner">
+				   <p>Klikkaa! </p>
+		</div> -->
+
+		<!-- <div class="banner" id="query_banner"> -->
+	
+	
+        <video id="videoplayer" 
+            src="../clips/157_isoroba.mp4"
+			muted>
+        </video> 
+   
+    </div>
+	
+			<button id="nextbutton" onclick="confirmAnswers(); startNextClip();">Seuraava</button>
+		</div>
+   
+
+
+	<div class="query_box" id="query_box_template"> 
+		<div class="query_box_target">
+		</div>
+		<div class="query_box_buttons"</div>
+			<div class="query_box_item pedestrian">J</div>
+			<div class="query_box_item bicycle">P</div>
+			<div class="query_box_item car">A</div>
+			<div class="query_box_item occlusion">O</div>
+			<div class="query_box_item nothing">Ei</div> 
+		</div>
+	</div>
+
+    
+</body>
+</html>
