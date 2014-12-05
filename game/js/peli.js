@@ -544,10 +544,6 @@ function videoEnded(ev) {
     } else {
 		$("#tasonloppu").show();
 	}
-
-	// printToLog()
-
-
 	
 	var clip_counter = document.getElementById("clip_counter");
    
@@ -723,17 +719,20 @@ function rel2Video(hprelX,hprelY){
 function setupGameInteraction() {
 		
 	$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
-		var instr = document.getElementById("instruction")
+		var instr = document.getElementById("instruction");
 		instr.style.display = "none"; 
 		console.log("Aloitetaan toisto")
 		startVideo(); 
 	}); 
 	
-	$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */
-		console.log("Seuraava video")  
-		var elem = document.getElementById("klipinloppu")
-		elem.style.display = "none"; 			
+	$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */		
+		var elem = document.getElementById("klipinloppu");
+		elem.style.display = "none"; 
 		startVideo();		
+	});
+	
+	$("#tasonloppu").click(function(){ /* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */		
+		document.location.href = '../index.html';		
 	});
 	
 	// set check for missed targets
