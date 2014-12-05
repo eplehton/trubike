@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link type="text/css" rel="stylesheet" href="game/pyora.css" />
+	<title> Pelaa </title>
+	<script type="text/javascript" src="game/js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="game/js/PopUp.js"></script>
+	<script type="text/javascript" src="game/js/peli.js"></script>
+    <script language="javascript" type="text/javascript">
+
+	
+	
+		$(document).ready(function(){	
+			
+			var player_id = sessionStorage.getItem("player_id");
+			if (player_id == null) {
+				var b = document.getElementById("kirjautumiskentta")
+				b.style.display = "block";
+				
+				sessionStorage.setItem("design_type", null); // clear the design type also
+			}
+
+
+			var name = sessionStorage.getItem("player_id");
+			if (name == null) {
+				$("#kirjautuneena").html("");
+			} else {
+				$("#kirjautuneena").html("Pelaaja: " + name );
+			}
+			
+			var design_type = sessionStorage.getItem("design_type");
+			if (design_type != null) { 
+				
+				if (design_type == '2circle') {
+					createLinks(2, "circle");
+				} else if (design_type == '2search') {
+					createLinks(2, "search");
+				} else if (design_type == '1circle') {
+					createLinks(1, "circle");
+				} else if (design_type == '1search') {
+					createLinks(1, "search");
+				}
+			}
+
+		});  
+
+		function setDesignType(satest, search) {
+					
+			if (satest == 2) {
+				if (search) {
+					design_type = "2search";
+					sessionStorage.setItem("search_version", "search");
+				} else {
+					design_type = "2circle";
+					sessionStorage.setItem("search_version", "nosearch");
+				}
+			} else {
+				if (search) {
+					design_type = "1search";
+					sessionStorage.setItem("search_version", "search");
+				} else {
+					design_type = "1circle";
+					sessionStorage.setItem("search_version", "nosearch");
+				}
+			}
+			sessionStorage.setItem("design_type", design_type);
+		}
+
+		function startClipset(set_num) {
+			sessionStorage.setItem("clipset_num", set_num);
+			var x = window.location.href.lastIndexOf("/");
+			document.location.href = window.location.href.slice(0, x) +  "/game/peli.html";
+		}
+
+		function startTest(set_num) {
+			sessionStorage.setItem("testset_num", set_num);
+			var x = window.location.href.lastIndexOf("/");
+			document.location.href = window.location.href.slice(0, x) +  "/test/test.html";
+		}
+		
+		function createSATestLink(setnum) {
+
+			html =  '<div class="col-1-6 mobile-col-1-3">' +
+				    '<div class="level" onclick="startTest(' + setnum + ')">' +
+				    '<div class="level-picture">' +
+					'<img src="game/img/Road.jpg">' +
+					'</div>' +
+					'<h3>Havaintotehtävä ' + (setnum + 1) + '</h3>' +
+					'</div>' + 
+					'</div>';
+			return html;
+
+		}
+
+		function createGameLink(setnum) {
+
+			html =  '<div class="col-1-6 mobile-col-1-3">' +
+				    '<div class="level" onclick="startClipset(' + setnum + ')">' +
+				    '<div class="level-picture">' +
+					'<img src="game/img/Road.jpg">' +
+					'</div>' +
+					'<h3>Peli</h3>' +
+					'</div>' + 
+					'</div>';
+			return html;
+
+
+		}
+
+		function createTutorialLink() {
+			html =  '<div class="col-1-6 mobile-col-1-3">' +
+				    '<a href="game/tutorial.html">' +
+					'<div class="level">' +
+				    '<div class="level-picture">' +
+					'<img src="game/img/Road.jpg">' +
+					'</div>' +
+					'<h3>Tutorial</h3>' +
+					'</div>' + 
+					'</a>' +
+					'</div>';
+			return html;
+		}
+		
+		
+		function createLinks(satest, search) {
+		
+			
+			html = "";
+			
+			html += createTutorialLink();
+			
+			if (satest === 2) {
+				html += createSATestLink(0);
+				html += createSATestLink(1);
+			} else {
+				html += createSATestLink(0);
+			}
+			
+			html += createGameLink(0);
+			
+			if (satest !== 2) {
+				html += createSATestLink(1);
+				html += createSATestLink(2);
+			} else {
+				html += createSATestLink(2);
+			}
+			
+			var container = document.getElementById("level_container");
+			
+			container.innerHTML = html;
+		}
+		
+		
+		function selectDesignType(satest, search) {
+			setDesignType(satest, search); 
+			document.location.reload(true);
+		}
+		
+    </script>
+
+</head>
+<body>
+    <div class="background">
+
+	
+	
+	
+    <header>
+        <div class="grid grip-pad">
+        <nav>
+            <ul>
+				<!--<li class="col-1-2">Pisteet</li>  -->
+				<li id="kirjautuneena" class="col-1-3"> Ei ketään</li>
+                <li id="ohje" class="col-1-3">Ohje</li>
+                <li id="kirjauduulos" class="col-1-3">Kirjaudu ulos</li>
+            </ul>
+        </nav>
+        </div>
+    </header>
+    
+    
+
+    <div class="ohjeruutu col-1-3 push-1-3">
+		<h1> Ohjeet </h1><p>Tässä pelissä sinun tehtävänäsi on bla bla bla bla. Valitse valikosta haluamasi taso. Et voi suorittaa tasoja ennen kuin olet päässyt edellisestä läpi. Pisteesi näkyvät sivun alalaidassa. Klikkaa tätä ohjeruutua sulkeaksesi sen. </p>	
+    </div>
+		
+
+	<div id="level_container" class="grid grid-pad">
+		<div class="grid grid-pad">
+		
+			<div class="col-1-6 mobile-col-1-3">
+				<div class="level" onclick='selectDesignType(2, false);'>
+					<div class="level-picture">
+						<img src="game/img/Road.jpg">
+					</div>
+					<h3>2 testiä, ympyrä</h3>
+				</div>
+			</div>
+
+			<div class="col-1-6 mobile-col-1-3">
+				<div class="level" onclick='selectDesignType(2, true);'>
+					<div class="level-picture">
+						<img src="game/img/Road.jpg">
+					</div>
+					<h3>2 testiä, haku</h3>
+				</div>
+			</div>
+		</div>
+
+		<div class="grid grid-pad">
+			<div class="col-1-6 mobile-col-1-3">
+				<div class="level" onclick='selectDesignType(1, false);'>
+					<div class="level-picture">
+						<img src="game/img/Road.jpg">
+					</div>
+					<h3>1 testi, ympyrä</h3>
+				</div>
+			</div>
+
+			<div class="col-1-6 mobile-col-1-3">
+				<div class="level" onclick='selectDesignType(1, true);'>
+					<div class="level-picture">
+						<img src="game/img/Road.jpg">
+					</div>
+					<h3>1 testi, haku</h3>
+				</div>
+			</div>
+		</div>
+		
+	<!--
+	<div class="col-1-6 mobile-col-1-3">
+        <div class="level">
+            <div class="level-picture">
+                <img src="game/img/Road.jpg">
+            </div>
+            <h3>Taso 1</h3>
+			<div class="start">
+				<h4 onclick='startClipset(0)'>PELAA</h4>     
+			</div>
+        </div> 
+    </div>
+
+	<div class="col-1-6 mobile-col-1-3">
+        <div class="level">
+            <div class="level-picture">
+                <img src="game/img/Road.jpg">
+            </div>
+            <h3>Taso 2</h3>
+		 	<div class="start">
+				<h4 onclick='startClipset(1)'>PELAA</h4>     
+			</div>
+		</div>
+	</div>		
+			
+	<div class="col-1-6 mobile-col-1-3">
+		<div class="level">
+			<div class="level-picture">
+				<img src="game/img/Road.jpg">
+			</div>
+			<h3>Havaintotesti</h3>
+			<div class="start" onClick="startTest(0)">
+				<h4>Havaintotesti 1</h4>     
+			</div>
+		</div>
+	</div>
+
+	<div class="col-1-6 mobile-col-1-3">
+		<div class="level">
+			<div class="level-picture">
+				<img src="game/img/Road.jpg">
+			</div>
+			<h3>Havaintotesti</h3>
+			<div class="start" onClick="startTest(1)">
+				<h4>Havaintotesti 2</h4>     
+			</div>
+		</div>
+    </div>
+
+
+	<div class="col-1-6 mobile-col-1-3">
+		<div class="level">
+			<div class="level-picture">
+				<img src="game/img/Road.jpg">
+			</div>
+			<h3>Havaintotesti</h3>
+			<div class="start" onClick="startTest(2)">
+				<h4>Havaintotesti 3</h4>     
+			</div>
+		</div>
+    </div>
+	-->
+	
+	</div>
+
+	<div id="kirjautumiskentta">
+            <p>Anna pelaajanimesi aloittaaksesi pelin:</p>
+            
+            <div id="kirjautumisruutu">
+			<form>
+                <input id="kayttaja" type="text"  placeholder="Käyttäjänimi" /> <br/><br/>
+                <input id="submit_login" type="submit" value="Kirjaudu" />
+			</form>
+            </div>   
+    </div>
+</div>
+</body>
+</html>
