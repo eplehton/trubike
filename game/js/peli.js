@@ -721,12 +721,22 @@ function rel2Video(hprelX,hprelY){
 
 function setupGameInteraction() {
 		
-	$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
+	
+	$("#instructionplayer").on("ended", function() {
+		
 		var instr = document.getElementById("instruction");
-		instr.style.display = "none"; 
-		console.log("Aloitetaan toisto")
-		startVideo(); 
-	}); 
+		instr.innerHTML = "<p>Klikkaa aloitaaksesi pelin!</p>";
+		
+		
+		$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
+   		    var instr = document.getElementById("instruction");
+		    instr.style.display = "none"; 
+		    startVideo();
+		});
+	    });
+	
+	
+	    
 	
 	$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */		
 		var elem = document.getElementById("klipinloppu");
@@ -784,6 +794,15 @@ function setupGameInteraction() {
 		}
 	});
 	
+	
+			var instrplayer = document.getElementById("instructionplayer");
+
+    var src = "media/game_starts_show.wav"
+    if (sessionStorage.getItem("search_version") == 'search') {
+	src = "media/game_starts_search.wav"	
+    }
+    instrplayer.src = src;
+    instrplayer.play();
 }
 	
 	
