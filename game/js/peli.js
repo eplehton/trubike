@@ -331,10 +331,10 @@ function checkMissedTargets() {
 	var video_src = vplayer.src;
 	
     for (var tx=0; tx<targets.length; tx++) {
-        var current_trg = targets[tx];
+        var trg = targets[tx];
         // check if the target end is passed and the target has not been hit yet
-		var end_t = current_trg.t.slice(-1).pop();
-		var id = current_trg.id;
+		var end_t = trg.t.slice(-1).pop();
+		var id = trg.id;
 		
         if ((end_t < ctime) & (! hitmiss.has(id))) {
             var hitted = false;
@@ -361,7 +361,7 @@ function checkMissedTargets() {
 	
 				
 				console.log("will call handleMissedTarget at ", ctime, " due to target at ", end_t);
-                handleMissedTarget(current_trg);
+                handleMissedTarget(trg);
             }
         }
     }
@@ -725,7 +725,7 @@ function setupGameInteraction() {
 	$("#instructionplayer").on("ended", function() {
 		
 		var instr = document.getElementById("instruction");
-		instr.innerHTML = "<p>Klikkaa aloitaaksesi pelin!</p>";
+		instr.innerHTML = "<p>Klikkaa aloittaaksesi pelin!</p>";
 		
 		
 		$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
