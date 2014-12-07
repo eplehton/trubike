@@ -31,7 +31,11 @@ var test_answers = [];
 
 var clippath = "../clips_test/";
 
-var clipsets = [["101t_arkadiankatu.mp4",
+var clipsets = [[
+				"154t_leikattu.mp4",
+				"112t_mikonkatu.mp4",
+				"1t_paaty.mp4", // NE
+				"101t_arkadiankatu.mp4",
 				"156t_edesta_vas.kaantyva_auto.mp4",     // NE
 				"142t_auto_tiella.mp4",
 				"157t_isoroba.mp4",

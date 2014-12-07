@@ -546,9 +546,12 @@ function videoEnded(ev) {
 	}
 	
 	var clip_counter = document.getElementById("clip_counter");
-   
-	clip_counter.innerHTML = "" + clipsets[clipset_num][clipset_pos].substring(0, 3);
-
+	var clip_id = "" + clipsets[clipset_num][clipset_pos].substring(0, 3);
+	var clip_n = clipsets[clipset_num].length;
+	
+	var txt = (clipset_pos + 1) + "/"+ clip_n + " (" + clip_id + ")"; 
+	
+	clip_counter.innerHTML = txt;
 
 	sessionStorage.setItem("Points", points);
     saveGameStats();	
