@@ -10,8 +10,8 @@
 	<script language="javascript" type="text/javascript">
 
 	// load targets with ajax call (and hope that it completes before the game begins...)
-	//loadTargetsFrom('trubike_targets-20141118.json');
-	loadTargetsFrom('trubike_targets_20141201.json');
+
+	loadTargetsFrom('js/trubike_targets_20141202.json');
 
 
 	function updateHandPosition(hand, trg, videoplayer) {
@@ -238,7 +238,7 @@
 		     pyöräilijät ja autot, jotka voivat tulla eteesi.
 		    </p>
         </div>
-        <video id="videoplayer1" src="media/154_leikattu.mp4" muted></video>
+        <video id="videoplayer1" src="../clips/154_leikattu.mp4" muted></video>
         <audio id="audioplayer1a" src="media/tilanne1.wav"></audio>
 		
         <!-- <div class="forward" onclick="showLesson(2);">Ok!</div> -->
@@ -250,7 +250,7 @@
 		     kuten jalankulkijat, pyöräilijät ja autot, jotka voivat kääntyä eteesi.
 		    </p>
         </div>
-        <video id="videoplayer2" src="media/112_leikattu.mp4" muted></video>
+        <video id="videoplayer2" src="../clips/112_leikattu.mp4" muted></video>
         <audio id="audioplayer2" src="media/tilanne2.wav"></audio>  
         
         <!-- <div class="forward" onclick="showLesson(3);">Ok!</div> -->
@@ -258,11 +258,12 @@
     
     <div class="lesson" id="lesson3">
          <div id="instruction3" class="instruction">
-           <p  class="instruction_text">Huomioi myös näköesteet, joiden takaa joku voi yllättäen tulla eteesi. 
-		   Näköesteitä ovat esimerkiksi talon kulmat, pysäköidyt autot ja pensaat tai puut.
+           <p  class="instruction_text">Huomioi myös sellaiset kohdat, joiden takaa joku voi yllättäen tulla eteesi. 
+		   Tällaisia näköesteitä, joiden takaa joku voi yllättäen tulla eteesi, voivat olla esimerkiksi 
+		   talon kulmat ja pysähtyneet autot. 
 		    </p>
         </div>
-        <video id="videoplayer3" src="media/1_paaty.mp4" muted></video>
+        <video id="videoplayer3" src="../clips/1_paaty.mp4" muted></video>
         <audio id="audioplayer3" src="media/tilanne3.wav"></audio>  
         
         <!-- <div class="forward" onclick="showLesson(4);">Ok!</div> -->
