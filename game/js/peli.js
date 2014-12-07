@@ -124,7 +124,6 @@ function getSourceTargets(all_targets, src) {
     // If the clipname is not present, an empty array is returned for convenience. 
 
     var clipname = src.split("/").pop();
-
     var src_trgs = all_targets[clipname];
     //console.log(src +" - "+ clipname + " - " + src_trgs);
     if (typeof src_trgs == "undefined") { // if empty
@@ -328,14 +327,14 @@ function startVideo() {
 function checkMissedTargets() {
     var vplayer = document.getElementById("videoplayer");
     var ctime = vplayer.currentTime;
-    var targets = cached_current_targets; 
-    var video_src = vplayer.src;
-
+	var targets = cached_current_targets; 
+	var video_src = vplayer.src;
+	
     for (var tx=0; tx<targets.length; tx++) {
-        var trg = targets[tx];
+        var current_trg = targets[tx];
         // check if the target end is passed and the target has not been hit yet
-		var end_t = trg.t.slice(-1).pop();
-		var id = trg.id;
+		var end_t = current_trg.t.slice(-1).pop();
+		var id = current_trg.id;
 		
         if ((end_t < ctime) & (! hitmiss.has(id))) {
             var hitted = false;
@@ -346,23 +345,23 @@ function checkMissedTargets() {
                 }
             }
             if (! hitted) {
-		// keep track of hitted and missed
-		hitmiss.set(trg.id, {
-					src : video_src,
-					video_started_realt : video_started_realt,
-					target_id : trg.id,
-					target_loc : -1,
-					hit_realt : -1,
-					hit_t : -1,
-					miss_realt : Date.now(),
-					miss_t : ctime,
-					hit: false,
-					ack_realt: -1});
+				// keep track of hitted and missed
+				hitmiss.set(trg.id, {
+									src : video_src,
+									video_started_realt : video_started_realt,
+									target_id : trg.id,
+									target_loc : -1,
+									hit_realt : -1,
+									hit_t : -1,
+									miss_realt : Date.now(),
+									miss_t : ctime,
+									hit: false,
+									ack_realt: -1});
 		
 	
 				
-		console.log("will call handleMissedTarget at ", ctime, " due to target at ", end_t);
-                handleMissedTarget(trg);
+				console.log("will call handleMissedTarget at ", ctime, " due to target at ", end_t);
+                handleMissedTarget(current_trg);
             }
         }
     }
@@ -721,24 +720,13 @@ function rel2Video(hprelX,hprelY){
 
 
 function setupGameInteraction() {
-	
-	
-	
-	$("#instructionplayer").on("ended", function() {
 		
+	$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
 		var instr = document.getElementById("instruction");
-		instr.innerHTML = "<p>Klikkaa aloitaaksesi pelin!</p>";
-		
-		
-		$("#instruction").click(function(){ /* kun alun ohjeruutua klikkaa, soitetaan eka video ja piilotetaan ohjeruutu */
-   		    var instr = document.getElementById("instruction");
-		    instr.style.display = "none"; 
-		    startVideo();
-		});
-	    });
-	
-	
-	    
+		instr.style.display = "none"; 
+		console.log("Aloitetaan toisto")
+		startVideo(); 
+	}); 
 	
 	$("#klipinloppu").click(function(){/* kun klipinloppua klikkaa, soitetaan seuraava video ja piilotetaan klipinloppu-ruutu */		
 		var elem = document.getElementById("klipinloppu");
@@ -795,18 +783,6 @@ function setupGameInteraction() {
 				break;
 		}
 	});
-	
-	
-	var instrplayer = document.getElementById("instructionplayer");
-    console.log("reaRARARAU");
-
-    var src = "media/game_starts_show.wav"
-    if (sessionStorage.getItem("search_version") == 'search') {
-	src = "media/game_starts_search.wav"	
-    }
-    instrplayer.src = src;
-    instrplayer.play();
-
 	
 }
 	

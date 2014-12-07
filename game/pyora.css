@@ -621,3 +621,7 @@ header nav ul li:active {
     position: absolute;
 }
 
+
+#clip_counter {
+	font-size: x-small;
+}
