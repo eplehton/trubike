@@ -4,7 +4,7 @@ var clipsets = [[
 "154_autot_jalankulkijat_pyorailija.mp4",
 "112_mikonkatu.mp4",
 "1_paaty.mp4",
-"177_somerontie.mp4",
+//"177_somerontie.mp4",  tokkii, saali mutta kannata ottaa kun ei toimine
 "160_jalankulkijat.mp4",
 "163_jalankulkijat_suojatie.mp4",
 "165_jalankulkijoita_ja_pyorailija.mp4",
