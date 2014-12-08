@@ -7,10 +7,6 @@ function Shot(x, y, t, src, video_started_realt) {
     this.y = y;
 	this.hit_target_id = -1;
 	this.hit_target_loc = -1;
-    this.target_end_t = null;
-	this.target_loc = null;
-    
-
     this.hit = false;
 }
 
@@ -30,7 +26,7 @@ var points = 0;
 var shots = [];
 var hitmiss = new Map();
 
-var game_points = new Map(); // for calculating points during a game
+//var game_points = new Map(); // for calculating points during a game
 
 var check_missed_target_interval_size = 50; // how often targets are checked for misses (ms)
 
@@ -170,12 +166,13 @@ function checkTargetHit(shot){
 				// modify shot properties
 				shot.hit_target_id = trg.id;
 				shot.hit_target_loc = loc;
+				shot.hit = true;
 				
 				// keep track of hitted and missed targets (for the program and for the ease of analysis
 				hit_target.push(trg);
 				hit_loc.push(loc);
 				
-				if (! hitmiss.has(trg.id)) { // mark the FIRST shot as hitted
+				if (! hitmiss.has(trg.id)) { // mark the shot as the first hit
 					hitmiss.set(trg.id, {
 										src : shot.src,
 										video_started_realt : video_started_realt,
@@ -194,7 +191,7 @@ function checkTargetHit(shot){
 			};
 	    };
 	};
-	return {target: hit_target, location: hit_loc, first_hit: first_hit};
+	return {target: hit_target, loc: hit_loc, first_hit: first_hit};
 };
 
 function acknowledgeMissedTarget(ev) {
@@ -405,41 +402,12 @@ function videoClicked(ev) {
 			*/
 			// keep track of hitted targets and points
 			// for updating the points
-			game_points.set("" + hit.target[h].t.slice(-1).pop(),  1) //{target: hit_target, location: hit_loc};);
+			//game_points.set("" + hit.target[h].t.slice(-1).pop(),  1) //{target: hit_target, location: hit_loc};);
 		
 			showShot(x, y, hit.target[h]);
-
-			
-			// show points
 			if (hit.first_hit[h]) {
-				var point_tmpl = document.getElementById("point_tmpl"); 		
-				var pnt = point_tmpl.cloneNode(true);										
-				var pnt_id = "point_" + Date.now(); 
-				pnt.id = pnt_id;
-
-				hideElementAfter(pnt_id, 250)
-				
-				document.body.appendChild(pnt);  										
-				
-				
-				pnt.style.display = "block";					
-				pnt.style.position = "absolute";
-			
-				
-				var client_coords = rel2Client(vplayer, 
-											   hit.target[h].x[hit.location[h]], 
-											   hit.target[h].y[hit.location[h]]);
-				var hitted_x = client_coords[0];
-				var hitted_y = client_coords[1];
-				var centering = [0.5 * pnt.offsetWidth, 
-								 0.5 * pnt.offsetHeight];
-				//  - centering[0] - centering[1]
-				pnt.style.left = (hitted_x) + "px";
-				pnt.style.top =  (hitted_y - 100) + "px";
-				console.log("point coords: " + hitted_x + " - " + hitted_y);	
-			
-				// increase also game points count
-				points += 1;
+				showNewPoint(hit.target[h].x[hit.loc[h]], 
+							 hit.target[h].y[hit.loc[h]]);
 			}
 		}	
 		
@@ -473,7 +441,7 @@ function showShot(x, y, hitted_target) {
 		hp.style.height = "8em";
 		
 		// update points and play the audio
-		showPoints()
+		
 		thplayer.currentTime = 0.0 								// asettaa audioplayerin nollaan.
 		thplayer.play()  										// soittaa audioplayerista äänen että osuttiin oikeaan
 	
@@ -492,6 +460,47 @@ function showShot(x, y, hitted_target) {
 	hp.style.left = (x - centering[0]) + "px";
 	hp.style.top =  (y - centering[1]) + "px";
 }
+
+
+
+function showNewPoint(x, y) {
+	console.log("Show new point");
+	// show new point
+	
+	var vplayer = document.getElementById("videoplayer");
+	
+	var point_tmpl = document.getElementById("point_tmpl"); 		
+	var pnt = point_tmpl.cloneNode(true);										
+	var pnt_id = "point_" + Date.now(); 
+	pnt.id = pnt_id;
+
+	hideElementAfter(pnt_id, 500)
+	
+	document.body.appendChild(pnt);  										
+	
+	
+	pnt.style.display = "block";					
+	pnt.style.position = "absolute";
+
+	
+	var client_coords = rel2Client(vplayer, x, y);
+	var hitted_x = client_coords[0];
+	var hitted_y = client_coords[1];
+	var centering = [0.5 * pnt.offsetWidth, 
+					 0.5 * pnt.offsetHeight];
+	//  - centering[0] - centering[1]
+	pnt.style.left = (hitted_x) + "px";
+	pnt.style.top =  (hitted_y - 100) + "px";
+	console.log("point coords: " + hitted_x + " - " + hitted_y);	
+
+	// increase also game points count
+	points += 1;
+	
+	// counter
+	showPoints();
+}		
+
+
 
 /* 		// show the hit point as green and play hit audio
 		if (hit.target.length > 0) {

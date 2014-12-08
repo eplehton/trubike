@@ -409,6 +409,8 @@ function startNextClip() {
 	
 	
 	saveTestAnswers();
+	test_answers = []; // clear it, so that is wont be duplicated
+	
 	clearQueries();
 	
 	var nbutton = document.getElementById("nextbutton");
