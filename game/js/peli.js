@@ -28,7 +28,7 @@ var hitmiss = new Map();
 
 //var game_points = new Map(); // for calculating points during a game
 
-var check_missed_target_interval_size = 50; // how often targets are checked for misses (ms)
+var check_missed_target_interval_size = 100; // how often targets are checked for misses (ms)
 
 var clipsets;
 var clipset_num; // which set loaded from session storage in onready

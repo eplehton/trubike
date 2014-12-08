@@ -55,11 +55,11 @@ var clipsets = [[
 				"125t_hameentie2.mp4"], 
 				
 				["137t_pyorailija_oikealta.mp4",
-				"105t_kaantyva_auto.mp4",
+				"105t_kaantyva_auto.mp4",     // NE (v2)
 				"138t_sturenkatu2.mp4",
 				"135t_paaskylanrinne.NE.mp4",    // NE
 				"108t_karkikolmio.mp4",
-				"133t_mansku_pysakoituauto.NE.mp4",  // NE
+				"133t_mansku_pysakoituauto.NE.mp4",  // NE (samalla auto)
 				"149t_jalankulkija.mp4",
 				"124t_alppila_jalankulkija_pyoratie.mp4"
 				]];
