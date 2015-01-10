@@ -11,7 +11,7 @@
 
 	// load targets with ajax call (and hope that it completes before the game begins...)
 
-	loadTargetsFrom('js/trubike_targets_20141202.json');
+	loadTargetsFrom('js/trubike_targets_20150105.json');
 
 
 	function updateHandPosition(hand, trg, videoplayer) {
@@ -154,14 +154,14 @@
 		var all_targets = getTargets();
 		var tutor_targets = getSourceTargets(all_targets, "1_paaty.mp4");
 		
-		var hand_target = tutor_targets[0];
+		var hand_target = tutor_targets[0]; // this is the same as in the game clips :(
 		var update_hand_interval_id = null;
 		
 		
 		function readInstruction() {
 			inst.style.display = "block";
 			aplayer.play();
-			setTimeout(startVideo, 15000);
+			setTimeout(startVideo, 17000);
 		}
 		
 		function startVideo() {
@@ -260,7 +260,7 @@
          <div id="instruction3" class="instruction">
            <p  class="instruction_text">Huomioi myös sellaiset kohdat, joiden takaa joku voi yllättäen tulla eteesi. 
 		   Tällaisia näköesteitä, joiden takaa joku voi yllättäen tulla eteesi, voivat olla esimerkiksi 
-		   talon kulmat ja pysähtyneet autot. 
+		   talon kulmat tai pysähtyneet autot. 
 		    </p>
         </div>
         <video id="videoplayer3" src="../clips/1_paaty.mp4" muted></video>

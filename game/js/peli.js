@@ -28,7 +28,17 @@ var hitmiss = new Map();
 
 //var game_points = new Map(); // for calculating points during a game
 
-var check_missed_target_interval_size = 100; // how often targets are checked for misses (ms)
+// first 12 participants played a game with 100 ms 
+// because it was hoped that it would help the
+// video freezing problems
+// it didn't, but the offset for targets increased
+// this offset could be bad for searching the target after 
+// it has fired, because the actual target could be already 
+// partially out of the video view if the target was at the 
+// edge of the video
+
+var check_missed_target_interval_size = 50; // how often targets are checked for misses (ms)
+
 
 var clipsets;
 var clipset_num; // which set loaded from session storage in onready
