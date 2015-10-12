@@ -1,4 +1,4 @@
-function Shot(x, y, t, src, video_started_realt) {
+/* function Shot(x, y, t, src, video_started_realt) {
 	this.src = src; // clipname
 	this.video_started_realt = video_started_realt; // real t when video started
 	this.realt = Date.now(); // real t of shot
@@ -19,7 +19,9 @@ function Target(){
 	this.target_type = null;
 	
 }
+ */
 
+// common.js must be sourced before this script
 
 var points = 0;
 
@@ -84,36 +86,11 @@ function hideElementAfter(elem_id, timeout) {
 	*/
 	setTimeout( function(){ document.getElementById(elem_id).style.display = "none"}, timeout); 	
 }
-		
+
 // Targets loading saving function
 
 
-function loadLocalTargets() {
-    // Load targets from JSON data stored on localstorage, from item "targets"
-	var targets = null;
-    var targets_s = localStorage.getItem("targets");
-	
-    try {
-		targets = JSON.parse(targets_s);
-    } catch(e1) { // if not available e.g. empty, make empty dict
-		targets = {}
-	}
-    return targets;
-}
 
-function saveLocalTargets(all_targets) {
-    // save targets to localStorage as JSON
-    localStorage.setItem("targets", JSON.stringify(all_targets))
-}
-
-
-function loadTargetsFrom(json_file) { 
-    
-    $.getJSON(json_file, function(data) {
-        cached_targets = data;
-    });
-	
-}
 
 
 function cacheCurrentTargets() {
@@ -241,9 +218,7 @@ function handleMissedTarget(missed_trg) {
 	
     pauseVideo();
 	console.log("pause video at ", vplayer.currentTime, " due to target at ", missed_trg.t.slice(-1).pop());
-
-									
-									
+    
 	
     var lastx = missed_trg.x.length-1;
     var relx = missed_trg.x[lastx];
@@ -291,8 +266,10 @@ function handleMissedTarget(missed_trg) {
 
 
 function registerShot(x, y, t) {
+    var vplayer = document.getElementById('videoplayer')
+    
     var src = clipsets[clipset_num][clipset_pos];
-    var relCoords = client2Rel(x, y);
+    var relCoords = client2Rel(vplayer, x, y);
 
     //console.log("x=" + x + " y=" + y + " time=" + t + " src=" + src);
     //console.log("Suhteellinen sijainti: " + relCoords);
@@ -462,9 +439,7 @@ function showShot(x, y, hitted_target) {
 		}
 		
 	} 
-	
-	
-	
+    
 	var centering = [0.5 * hp.offsetWidth, 
 					 0.5 * hp.offsetHeight];
 	hp.style.left = (x - centering[0]) + "px";
@@ -474,9 +449,8 @@ function showShot(x, y, hitted_target) {
 
 
 function showNewPoint(x, y) {
-	console.log("Show new point");
-	// show new point
-	
+	// Called to display +1 over the hitpoint, and to update the points counter
+    
 	var vplayer = document.getElementById("videoplayer");
 	
 	var point_tmpl = document.getElementById("point_tmpl"); 		
@@ -698,9 +672,9 @@ function dataUlos() {
     };
 };
 
+/* 
 function client2Rel(x, y) {
-    /* Client coordinatest to the relative. Useful for converting mouse click positions to rel coords.
-    */
+    ///Client coordinates to the relative. Useful for converting mouse click positions to rel coords.
     var vplayer = document.getElementById("videoplayer");
     //console.log(x + " " + y + " " + vplayer.offsetLeft +" " + vplayer.offsetTop + " " + vplayer.offsetWidth + " " + vplayer.offsetHeight)
     var relx = (x - vplayer.offsetLeft) / vplayer.offsetWidth
@@ -736,7 +710,7 @@ function rel2Video(hprelX,hprelY){
     //return "Absolute height " + absoluteH +" and absolute width " + absoluteW;
     return [absoluteX, absoluteY];
 }
-
+ */
 
 function setupGameInteraction() {
 		

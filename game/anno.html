@@ -46,21 +46,52 @@
         position: absolute;
     }
 
-
+    .hitpoint {
+        width: 2em;
+        height: 2em;
+        border-radius: 50%;
+        background-color: white;
+        opacity: 0.5;
+        z-index: 2;
+        display: none;
+        position: absolute;
+    }
+    
+    #options {
+        background-color: #fff;
+        width: 80%;
+        height: 100%;
+        position: absolute;
+        z-index: 10;
+        display: none;
+    }
+    
+    .playback_shot {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0.5;
+    z-index: 2;
+    display: none;
+    position: absolute;
+    }
 
     </style>
     <script language="javascript" type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
     <script language="javascript" type="text/javascript" src="js/FileSaver.js"></script>
-	<script type="text/javascript" src="js/peli.js"></script>
+	<script language="javascript" type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/peli.js"></script>
     <script type="text/javascript">
     
     var anno_targets = null;
     var anno_target_icons = []; // icon elements to display each target
     var current_anno_target = null;
-    var update_target_icon_interval = 100;
-    var update_target_icon_interval_id = null;
+    var UPDATE_DISPLAY_INTERVAL = 100;
     var gui_append_mode;
-	
+    var CACHED_PLAYBACK_SHOTS = null;
+
+
     addTargetPoint = function(trg, x, y, t) {
         var loc = findInsertIndex(trg.t, t);
         trg.t.splice(loc, 0, t);
@@ -110,17 +141,7 @@
 		
     }
 
-    /*function findFirstPosIndex(arr) {
-        for (var i=0; i<arr.length; i++) {
-            if (arr[i] > 0) { 
-                return i;
-            }
-        }
-        return null;
-    }
-    */
     function findLastNegIndex(arr) {
-        //console.log("arr: " + arr)
         var lni = null;
         for (var i=0; i<arr.length; i++) {
             if (arr[i] < 0) { 
@@ -160,21 +181,44 @@
        vplayer.src = src;
        
        // load video specific targets
-       var all_targets = loadLocalTargets();
+       var all_targets = loadTargetsFromLocalStorage();
+       console.log("all_targets", all_targets);
        anno_targets = getSourceTargets(all_targets, vplayer.src);
         
        //setInterval( function(){ updateTargetList() }, 200)
     }
 
+    function getPlaybackShots() {
+        function getClipShots(src) {
+            var shots = JSON.parse(sessionStorage.getItem("playback_shots"));
+            
+            var selectedShots = []
+            for (var player_id in shots) {
+                shots[player_id].forEach( function(clip_shots, i, arr) {
+                    for (var i=0; i<clip_shots.length; i++) {;
+                        if (clip_shots[i].src == src) {
+                            selectedShots.push(clip_shots[i]);
+                        }
+                    }
+                });
+            }
+            return selectedShots;
+        }
+        
+        if (CACHED_PLAYBACK_SHOTS == null) {
+            CACHED_PLAYBACK_SHOTS = getClipShots($("#videoplayer").prop("src").split("/").pop());
+        
+        }
+        
+        return CACHED_PLAYBACK_SHOTS;
+    }
 
-	function saveAsFile() {
-	
+	function guiSaveTargets() {
 		var targets = localStorage.getItem("targets");
-		
 		var blob = new Blob([targets], {type : "text/plain;charset=utf-8"});
 		saveAs(blob, "trubike_targets.json");
 	}
-
+    
     function shotClicked(ev) {
         
         var vplayer = document.getElementById("videoplayer");
@@ -195,8 +239,47 @@
 			
             updateTargetList()
         }
+    }
+
+    function updatePlaybackShots() {
         
+        var playbackShotDisplayTime = 0.250;
+    
+        function isWithinWindow(s) {
+            var ctime = $("#videoplayer").prop("currentTime");
+            return (ctime <= s.t & s.t < (ctime + playbackShotDisplayTime));
+        }
         
+        function showShot(x, y, bg, borderRadius) {
+            var se = document.getElementById("playback_shot_tmpl").cloneNode(true);						
+            se.id = "playback_shot_" + Date.now();		 	
+            document.getElementById("videobox").appendChild(se);      		
+            
+            se.style.display = "block";
+            var centering = [0.5 * se.offsetWidth, 
+                             0.5 * se.offsetHeight];
+            
+            se.style.left =  (x - centering[0]) + "px";
+            se.style.top = (y - centering[1]) + "px";
+        }
+        
+        // hide previous shots
+        $(".playback_shot").hide();
+        
+        var playback_shots = getPlaybackShots();
+        
+        for (var i=0; i<playback_shots.length; i++) {
+            var s = playback_shots[i];
+            
+            if (isWithinWindow(s)) {
+                var coords = rel2Client(document.getElementById("videoplayer"), s.x, s.y);
+                var colour = 'white';
+                if (s.hit) {
+                    colour = 'green';
+                }
+			    showShot(coords[0], coords[1], colour, "50%");
+            }
+        }
     }
 
     
@@ -251,7 +334,7 @@
 				var ticon_width = vplayer.offsetWidth * trg.rel_width;
 				var ticon_height = vplayer.offsetWidth * trg.rel_width;
 						
-				console.log(ticon_width + " - " + ticon_height);
+				// console.log(ticon_width + " - " + ticon_height);
 				
 				var videoCoords = rel2Client(vplayer, trg.x[loc], trg.y[loc]);
                 var centering = [ticon_width / 2.0, 
@@ -379,12 +462,11 @@
         targetlist.innerHTML = html;
     }
     
-    function updateVideoPosition() {
+    function updateVideoPositionIndicator() {
         var vplayer = document.getElementById("videoplayer");
         var vpos = document.getElementById("videoposition");
         
         var posval = vplayer.currentTime.toPrecision(3);
-        console.log('rai' + posval);
         vpos.value = posval;
     }
     
@@ -422,7 +504,7 @@
         var src = document.getElementById("videoplayer").src;
         var clipname = src.split("/").pop();
 
-        var all_targets = loadLocalTargets();
+        var all_targets = loadTargetsFromLocalStorage();
         
         if (! all_targets.hasOwnProperty(clipname)) { 
             all_targets[clipname] = [];
@@ -430,7 +512,7 @@
         //console.log(typeof targets);
         all_targets[clipname] = anno_targets;
         
-        saveLocalTargets(all_targets);
+        saveTargetsToLocalStorage(all_targets);
     }
     
     /*function scaleCurrentAnnoTarget() {
@@ -465,25 +547,27 @@
     }
     
     $(document).ready(function(){	
+        var update_display_interval_id = null;
            
-        // Events
-        // When video is playing or seeked, update the target icons
         var vplayer = document.getElementById("videoplayer");
         
+        function updateDisplay() {
+                updateTargetIcon();
+                updateVideoPositionIndicator();
+                updatePlaybackShots();
+        }
+        
         vplayer.addEventListener("playing", function() {
-            if (update_target_icon_interval_id == null) { // do not make duplicates
-                update_target_icon_interval_id = setInterval( function(){ 
-                    updateTargetIcon();
-                    updateVideoPosition();
-                }, update_target_icon_interval); 
+            if (update_display_interval_id == null) { // do not make duplicates
+                update_display_interval_id = setInterval( updateDisplay, UPDATE_DISPLAY_INTERVAL); 
             }
         });
         
         vplayer.addEventListener("pause", function() {
-            clearInterval(update_target_icon_interval_id);
-            update_target_icon_interval_id = null;
-            updateVideoPosition();
-			
+            clearInterval(update_display_interval_id);
+            update_display_interval_id = null;
+            
+            updateDisplay();
 			// save the anno targets when video pauses
 			// we want to avoid saving during the video presentation/clicking, because it
 			// saving may take some time and create conflicts
@@ -492,8 +576,7 @@
                 
                 
         vplayer.addEventListener("seeked", function() { 
-            updateTargetIcon();
-            updateVideoPosition();
+            updateDisplay();
         });
 
         vplayer.addEventListener("canplay", function() { updateTargetList() });
@@ -501,28 +584,51 @@
         var videosrc = document.getElementById("videosrc");
         videosrc.addEventListener("change", function() {
             loadVideo(videosrc.value);   
-            
-			
             updateTargetList();
             updateTargetIcon();
+            
+            CACHED_PLAYBACK_SHOTS = null; // clear them
         });
 
+        /* When a new postion is entered manually. */
         var vpos = document.getElementById("videoposition");
         vpos.addEventListener("change", function() {
             var newpos = parseFloat(vpos.value);
             seekVideo(newpos, false);
         });
-
-
-        /*var aclips = document.getElementById("annotated_clips");
-        aclips.addEventListener("change", function() {
-            //console.log(aclips.value);
-            loadVideo(aclips.value);  
-            //updateTargetList();
-            //updateClipList();
-        });
-		*/
         
+        /* Loading targets from JSON file */
+        $("#targetssrc").change( function(ev) {
+            var file = ev.target.files[0];
+            console.log(file);
+            result = window.confirm("Loading targets from json file will OVERWRITE your current targets permanently!");
+            if (result) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log("reader done");
+                    var targets_s = e.target.result;
+                    targets = JSON.parse(targets_s);
+                    console.log(targets);
+                    saveTargetsToLocalStorage(targets);
+                    };
+                reader.readAsText(file);
+            }
+        });
+
+        /* Loading playback shots from JSON file */
+        $("#shotssrc").change( function(ev) {
+            var file = ev.target.files[0];
+            console.log(file);
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var shots_s = e.target.result;
+                sessionStorage.setItem("playback_shots", shots_s);                
+                };
+            reader.readAsText(file);
+        });
+
+
+
         // Keypresses
         $(document).keypress(function(event){	
             //console.log("rairairai" + event.which + " " + "2".charCodeAt(0))
@@ -553,11 +659,7 @@
 		//	console.log("beforeunload: saving anno targets");
 		//	saveAnnoTargets(); // save possible changes if user is reloading the page while video is still playing...
 		//};
-       
-        
     });
-    
-    
     
     </script>
 </head>
@@ -571,9 +673,15 @@
     <!-- <select id="annotated_clips" name="annotated_clips">
     </select> -->
 	
-	<button onclick="saveAsFile();">Save as...</button>
+    <button onclick="guiSaveTargets();">Save targets</button> 
+    <button onclick='$("#options").show()'>Options</button>
 </div>
 
+<div id="options"> 
+    <p>Load targets: <input id="targetssrc" type="file" /></p>
+    <p>Load shots: <input id="shotssrc" type="file" /></p>
+    <p><button onclick='$("#options").hide()'>Close</button></p>
+</div>
 
 <div id="annobox">
 	<div id="targetlist"></div>
@@ -609,13 +717,8 @@
 </div>
 
 
-<div class="target_icon" id="target_icon_tmpl" onclick="shotClicked(event)">
-</div>
-
-
-
-
-
+<div id="target_icon_tmpl" class="target_icon" onclick="shotClicked(event)"></div>
+<div id="playback_shot_tmpl" class="playback_shot"></div>
 
 
 </body>
